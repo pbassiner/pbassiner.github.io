@@ -16,16 +16,16 @@ val currentDate = {
 
 val postFiles = ls! cwd/'posts
 val unsortedPosts = for(path <- postFiles) yield {
-  val Array(prefix, suffix) = path.last.split("-")
-  (prefix.toInt, suffix, path)
+  val Array(date, postFilename, _) = path.last.split("\\.")
+  (date, postFilename, path)
 }
 def mdNameToHtml(name: String) = {
-  name.stripSuffix(".md").replace(" ", "-").toLowerCase + ".html"
+  name.replace(" ", "-").toLowerCase + ".html"
 }
 def mdNameToTitle(name: String) = {
-  name.stripSuffix(".md").replace("_", " ")
+  name.replace("_", " ")
 }
-val sortedPosts = unsortedPosts.sortBy(_._1)
+val sortedPosts = unsortedPosts.sortBy(_._1).reverse
 
 object htmlContent {
   import scalatags.Text.all._
@@ -58,7 +58,7 @@ object htmlContent {
 
   val footerContent =
     footer(`class` := "blog-footer")(
-      p("Last build on ", currentDate),
+      p("Last published on ", currentDate),
       p("This blog is hosted on ", a("GitHub", href := "https://github.com/"),
         ", built using ", a("Scala", href := "http://www.scala-lang.org/"), ", ",
         a("Ammonite", href := "https://github.com/lihaoyi/Ammonite"), ", and ",
@@ -76,19 +76,19 @@ object htmlContent {
   println("POSTS")
   sortedPosts.foreach(println)
 
-  for((_, suffix, path) <- sortedPosts) {
+  for((postDate, postFilename, path) <- sortedPosts) {
     import org.commonmark.html.HtmlRenderer
     import org.commonmark.node._
     import org.commonmark.parser.Parser
 
-    val postName = mdNameToTitle(suffix)
+    val postName = mdNameToTitle(postFilename)
     val parser = Parser.builder().build()
     val document = parser.parse(read! path)
     val renderer = HtmlRenderer.builder().build()
     val output = renderer.render(document)
 
     write(
-      cwd/'blog/mdNameToHtml(suffix),
+      cwd/'blog/mdNameToHtml(postFilename),
       html(
         head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet",  href := "../blog.css")),
         body(
@@ -100,6 +100,7 @@ object htmlContent {
               div(`class` := "col-sm-8 blog-main")(
                 div(`class` := "blog-post")(
                   h2(`class` := "blog-post-title")(postName),
+                  p(`class` := "blog-post-meta")(postDate),
                   raw(output)
                 )
               ),
@@ -123,8 +124,8 @@ object htmlContent {
           ),
           div(`class` := "row")(
             div(`class` := "col-sm-8 blog-main")(
-              for((_, suffix, _) <- sortedPosts)
-              yield h2(a(mdNameToTitle(suffix), href := ("blog/" + mdNameToHtml(suffix))))
+              for((_, postFilename, _) <- sortedPosts)
+              yield h2(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename))))
             ),
             sidebar
           )
