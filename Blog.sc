@@ -48,6 +48,7 @@ object htmlContent {
       div(`class` := "sidebar-module sidebar-module-inset")(
         h4("About"),
         p("This is a personal blog. The opinions expressed here represent my own and not those of my employer."),
+        p(strong("Pol Bassiner"), br, "Software Engineer", br, "Java & Scala developer", br, "CTO @ Netquest"),
         ul(`class` := "list-unstyled", style := "color: #000000; font-weight: bold",
           li(a(i(`class` := "fa fa-twitter-square"), " Twitter", href := "https://twitter.com/polbassiner", target := "_blank")),
           li(a(i(`class` := "fa fa-linkedin-square"), " LinkedIn", href := "https://es.linkedin.com/in/polbassiner", target := "_blank")),
