@@ -3,28 +3,33 @@ import $ivy.`com.atlassian.commonmark:commonmark:0.5.1`
 
 import ammonite.ops._
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
 // Cleanup
 rm! cwd/"index.html"
 rm! cwd/'blog
 
-val currentDate = {
-  import java.text.SimpleDateFormat
-  import java.util.Calendar
+val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
+val monthYearDateFormatter = new SimpleDateFormat("MMMM yyyy")
 
-  new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime())
-}
+val currentDate = dateFormatter.format(Calendar.getInstance().getTime())
 
 val postFiles = ls! cwd/'posts
+
 val unsortedPosts = for(path <- postFiles) yield {
   val Array(date, postFilename, _) = path.last.split("\\.")
   (date, postFilename, path)
 }
+
 def mdNameToHtml(name: String) = {
   name.replace(" ", "-").toLowerCase + ".html"
 }
+
 def mdNameToTitle(name: String) = {
   name.replace("_", " ")
 }
+
 val sortedPosts = unsortedPosts.sortBy(_._1).reverse
 
 object htmlContent {
@@ -115,7 +120,7 @@ object htmlContent {
   }
 
   val HTML = {
-
+    var currIndexMonth = ""
     html(
       head(scalatags.Text.tags2.title(blogTitle), bootstrapCss, link(rel := "stylesheet",  href := "blog.css")),
       body(
@@ -125,8 +130,20 @@ object htmlContent {
           ),
           div(`class` := "row")(
             div(`class` := "col-sm-8 blog-main")(
-              for((_, postFilename, _) <- sortedPosts)
-              yield h2(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename))))
+              for((postDate, postFilename, _) <- sortedPosts)
+              yield {
+
+                val monthYearHeader = monthYearDateFormatter.format(dateFormatter.parse(postDate))
+                val monthYearStyle = monthYearHeader match {
+                  case s: String if s != currIndexMonth => "margin-bottom: 10em;"
+                  case _ => "display: none;"
+                }
+                currIndexMonth = monthYearHeader
+                div(
+                  span(`class` := "blog-post-meta", style := monthYearStyle)(monthYearHeader),
+                  h2(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename))))
+                )
+              }
             ),
             sidebar
           )
