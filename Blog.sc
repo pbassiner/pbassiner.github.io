@@ -1,6 +1,8 @@
 import $ivy.`com.lihaoyi::scalatags:0.6.0`
 import $ivy.`com.atlassian.commonmark:commonmark:0.5.1`
 
+import $file.GitHubClient, GitHubClient._
+
 import ammonite.ops._
 
 import java.text.SimpleDateFormat
@@ -10,8 +12,10 @@ import java.util.Calendar
 rm! cwd/"index.html"
 rm! cwd/'blog
 
+val utcFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
 val monthYearDateFormatter = new SimpleDateFormat("MMMM yyyy")
+val commentDateFormatter = new SimpleDateFormat("MMM dd, yyyy")
 
 val currentDate = dateFormatter.format(Calendar.getInstance().getTime())
 
@@ -79,6 +83,17 @@ object htmlContent {
       )
     )
 
+    val commentsPostFooter = {
+      import org.commonmark.html.HtmlRenderer
+      import org.commonmark.parser.Parser
+
+      val commentsPostFooterPath = cwd/'common/"footer.md"
+      val parser = Parser.builder().build()
+      val document = parser.parse(read! commentsPostFooterPath)
+      val renderer = HtmlRenderer.builder().build()
+      renderer.render(document)
+    }
+
   println("POSTS")
   sortedPosts.foreach(println)
 
@@ -92,6 +107,23 @@ object htmlContent {
     val document = parser.parse(read! path)
     val renderer = HtmlRenderer.builder().build()
     val output = renderer.render(document)
+
+    val gitHubIssue = issueHtmlUrl(postFilename)
+
+    val postComments = commentsByPost(postFilename)
+
+    val comments: scalatags.Text.Modifier = postComments.length match {
+      case 0 => blockquote(p(`class` := "blog-comment")("There are no comments yet."))
+      case _ => for ((author, comment, date) <- postComments)
+        yield {
+          val commentDate = commentDateFormatter.format(utcFormatter.parse(date))
+          div(
+            h4(`class` := "blog-comment-author")(author),
+            p(`class` := "blog-comment-meta")(commentDate),
+            blockquote(p(`class` := "blog-comment")(comment))
+          )
+        }
+      }
 
     write(
       cwd/'blog/mdNameToHtml(postFilename),
@@ -107,7 +139,9 @@ object htmlContent {
                 div(`class` := "blog-post")(
                   h2(`class` := "blog-post-title")(postName),
                   p(`class` := "blog-post-meta")(postDate),
-                  raw(output)
+                  raw(output),
+                  raw(commentsPostFooter.replace("ISSUE_LINK", gitHubIssue)),
+                  comments
                 )
               ),
               sidebar
@@ -139,6 +173,7 @@ object htmlContent {
                   case _ => "display: none;"
                 }
                 currIndexMonth = monthYearHeader
+
                 div(
                   span(`class` := "blog-post-meta", style := monthYearStyle)(monthYearHeader),
                   h2(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename))))

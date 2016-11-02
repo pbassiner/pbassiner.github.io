@@ -164,3 +164,23 @@ h6, .h6 {
 .blog-footer p:last-child {
   margin-bottom: 0;
 }
+
+
+/* Custom */
+code {
+  white-space: nowrap;
+}
+
+.blog-comment {
+  font-size: 16px;
+}
+
+.blog-comment-author {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.blog-comment-meta {
+  font-size: 16px;
+  color: #999;
+}
