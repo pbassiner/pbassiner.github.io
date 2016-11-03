@@ -166,14 +166,13 @@ object htmlContent {
             div(`class` := "col-sm-8 blog-main")(
               for((postDate, postFilename, _) <- sortedPosts)
               yield {
-
                 val monthYearHeader = monthYearDateFormatter.format(dateFormatter.parse(postDate))
                 val monthYearStyle = monthYearHeader match {
                   case s: String if s != currIndexMonth => "margin-bottom: 10em;"
                   case _ => "display: none;"
                 }
                 currIndexMonth = monthYearHeader
-
+                
                 div(
                   span(`class` := "blog-post-meta", style := monthYearStyle)(monthYearHeader),
                   h2(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename))))
