@@ -61,7 +61,7 @@ object htmlContent {
         h4("About"),
         p("This is a personal blog. The opinions expressed here represent my own and not those of my employer."),
         p(strong("Pol Bassiner"), br, "Software Engineer", br, "Java & Scala developer", br, "CTO @ Netquest"),
-        ul(`class` := "list-unstyled", style := "color: #000000; font-weight: bold",
+        ul(`class` := "list-unstyled about-social",
           li(a(i(`class` := "fa fa-twitter-square"), " Twitter", href := "https://twitter.com/polbassiner", target := "_blank")),
           li(a(i(`class` := "fa fa-linkedin-square"), " LinkedIn", href := "https://es.linkedin.com/in/polbassiner", target := "_blank")),
           li(a(i(`class` := "fa fa-github-square"), " GitHub", href := "https://github.com/pbassiner", target := "_blank"))
@@ -143,9 +143,11 @@ object htmlContent {
                 div(`class` := "blog-post")(
                   h2(`class` := "blog-post-title")(postName),
                   p(`class` := "blog-post-meta")(postDate),
-                  raw(output),
-                  raw(commentsPostFooter.replace("ISSUE_LINK", gitHubIssue)),
-                  comments
+                  div(`class` := "blog-post-body")(
+                    raw(output),
+                    raw(commentsPostFooter.replace("ISSUE_LINK", gitHubIssue)),
+                    comments
+                  )
                 )
               ),
               sidebar
