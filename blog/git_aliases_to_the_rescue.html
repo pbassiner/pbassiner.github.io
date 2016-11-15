@@ -1,0 +1,75 @@
+<html><head><title>Git Aliases to the Rescue</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /></head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2 class="blog-post-title">Git Aliases to the Rescue</h2><p class="blog-post-meta">2016-11-15</p><div class="blog-post-body"><p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/branch-and-history.png" alt="git" />
+ </p>
+<p>The more I use <a href="https://git-scm.com/">Git</a>, the less I believe how I could work without it. Although its usage is widely spread (is there anyone out there using SVN voluntarily?), it's common to start with the basics (<code>fetch</code>, <code>pull</code>, <code>add</code>, <code>commit</code>, <code>push</code>, ...), memorize them as you've been told, and move on.</p>
+<p>As with most things in software engineering, you can't use something properly until you have a good grasp of how it works. There's a difference between using Git and <em>using</em> Git.</p>
+<p>The best way to start is to dig deeper into the commands you already know by using the <code>--help</code> option:</p>
+<pre><code class="language-bash">git &lt;command&gt; --help
+</code></pre>
+<p>You'll soon realize how complex and powerful Git can be, and once you go down that road, there's no coming back.</p>
+<p>I'm constantly learning new commands or options, and I try to focus on them one at a time until I start using it automatically. It's also possible that I don't get to that spot, and I end up either dismissing it or, creating an alias to it, hence the subject of this post.</p>
+<p>You can define global Git aliases by using the <code>git-config</code> command or writing them directly in the <code>~/.gitconfig</code> file.</p>
+<p>I use Git aliases for two scenarios:</p>
+<ul>
+<li>shorten the most used commands (for instance, the command I think I use the most is <code>checkout</code>, which I've aliased into <code>co</code>)</li>
+<li>simplify commands with multiple options</li>
+</ul>
+<p>Let's see some examples.</p>
+<h2>git commit</h2>
+<h3>amend</h3>
+<p>It's common to amend commits, especially the <em>WIP</em> ones, and I usually don't need to edit the commit message. You can skip the message edition with the <code>--no-edit</code> option, and I use the following alias for that (credit goes to <a href="https://twitter.com/kannonboy">Tim Pettersen</a>):</p>
+<pre><code class="language-bash">commend = commit --amend --no-edit
+</code></pre>
+<h3>fixup</h3>
+<p>It's also common while developing to make near-to-atomic commits that you'll eventually <em>fixup</em>. When you do so by rebasing interactively, you have to manually replace all <code>pick</code> commands with <code>fixup</code>s. But there's a way to leave a hint on <code>fixup</code>s that will eventually happen:</p>
+<pre><code class="language-bash">git commit --fixup &lt;commit&gt;
+</code></pre>
+<p>where <code>&lt;commit&gt;</code> is the first commit you'd include in a <em>rebase</em>. You'll end up with a history similar to this:</p>
+<pre><code class="language-bash">608601e - fixup! first commit
+032d432 - fixup! first commit
+c4d1469 - first commit
+6ce0a04 - base commit
+</code></pre>
+<p>Then when you run <code>git rebase -i 6ce0a04</code> the prompt will show:</p>
+<pre><code class="language-bash">pick c4d1469 first commit
+fixup 032d432 fixup! first commit
+fixup 608601e fixup! first commit
+</code></pre>
+<p>I've aliased this into <code>git cf</code>:</p>
+<pre><code class="language-bash">cf = commit --fixup
+</code></pre>
+<h2>git push</h2>
+<p>When pushing changes you might need to use the <code>--force</code> option which, by the way, should never be used against shared branches. Instead, the <code>--force-with-lease</code> option will check that your local tree is up-to-day before you can overwrite it (check out this <a href="https://developer.atlassian.com/blog/2015/04/force-with-lease/">post on Atlassian Developers blog</a> about force-pushing). To simplify its usage I have the following alias (credit goes to <a href="https://twitter.com/kannonboy">Tim Pettersen</a>):</p>
+<pre><code class="language-bash">please = push --force-with-lease
+</code></pre>
+<h2>git diff</h2>
+<p><code>git diff</code> shows the <em>unstaged</em> changes by default, but sometimes you also want to check out the <em>staged</em> changes (<code>git diff --staged</code>), or even all of them at once (<code>git diff HEAD</code>). These are my <code>diff</code> related aliases:</p>
+<pre><code class="language-bash">diffs = diff --staged
+diffh = diff HEAD
+</code></pre>
+<h2>git ls-remote</h2>
+<p>Sometimes it's useful to list the branches and tags of the remote repository without the need of a UI (i.e. GitHub):</p>
+<pre><code class="language-bash">lsrh = ls-remote --heads
+lsrt = ls-remote --tags
+</code></pre>
+<h2>git stash</h2>
+<p>This is one of my favorite Git commands. I mainly use it to store work in progress that I'd rather not push yet to the remote repository, when I have to temporarily switch to another branch to fulfill a quick task. I also use it to store local environment-dependent changes in configuration files, which I could easily rewrite if I switched workstations.</p>
+<p>The <em>stash</em> is like a stack where you can push your current state to save it for later. You can then apply those changes and either keep them in the <em>stash</em> or choose to discard them.</p>
+<p>While saving the state you can attach a description message to identify the changes each <em>stash</em> entry includes, by using <code>git stash save -u &quot;my description message&quot;</code>. You can then list the stash content with <code>git stash list</code>. To retrieve changes from the <em>stash</em>, you can apply them using <code>git stash apply stash@{&lt;index&gt;}</code> or apply and remove them from the <em>stash</em> using <code>git stash pop stash@{&lt;index&gt;}</code>, where <code>&lt;index&gt;</code> refers to the position of the set of changes in the <em>stash</em>. This is a really useful command but it can become annoying. Git aliases to the rescue!</p>
+<pre><code class="language-bash">sa = &quot;!sh -c \&quot;git stash apply 'stash@{$1}'\&quot; -&quot;
+sp = &quot;!sh -c \&quot;git stash pop 'stash@{$1}'\&quot; -&quot;
+ss = &quot;!sh -c \&quot;git stash save -u $1\&quot; -&quot;
+sl = stash list
+</code></pre>
+<h2>More</h2>
+<p>I use more aliases, especially for <code>git log</code> commands but these are almost mandatory if you want to take advantage of the many customization options it provides. My <code>.gitconfig</code> file is available at <a href="https://github.com/pbassiner/dev-env/blob/master/dotfiles/gitconfig">GitHub</a>. The template I used to start my own is <a href="https://github.com/aserrallerios/dotfiles/blob/master/gitconfig">this one</a> by Albert Serrallé.</p>
+<h2>References:</h2>
+<ul>
+<li><a href="https://github.com/aserrallerios/dotfiles/blob/master/gitconfig">Albert Serrallé's gitconfig</a></li>
+<li><a href="https://hackernoon.com/lesser-known-git-commands-151a1918a60">Lesser known Git commands</a> by <a href="https://twitter.com/kannonboy">Tim Pettersen</a></li>
+<li><a href="https://developer.atlassian.com/blog/2015/04/force-with-lease/">--force considered harmful; understanding git's --force-with-lease</a> post on <a href="https://developer.atlassian.com">Atlassian Developers blog</a></li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/3">this GitHub issue</a>. Your comment will appear here the next time the blog is rebuilt from the sources.</p>
+<blockquote><p class="blog-comment">There are no comments yet.</p></blockquote></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2016-11-15</p><p>This blog is hosted on <a href="https://github.com/">GitHub</a>, built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a>, and <a href="http://getbootstrap.com">Bootstrap</a> (with <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p><p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p></footer></body></html>
