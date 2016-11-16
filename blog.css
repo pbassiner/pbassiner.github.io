@@ -165,7 +165,6 @@ h6, .h6 {
   margin-bottom: 0;
 }
 
-
 /* Custom */
 .blog-post-body h1,
 .blog-post-body h3,
@@ -205,4 +204,31 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* RWD */
+@media only screen and (max-width: 800px) {
+  .container {
+    width: 95%;
+  }
+
+  .blog-main {
+    width: 100%;
+  }
+
+  .blog-post-body {
+    font-size: 18px;
+  }
+
+  .blog-sidebar {
+    width: 100%;
+    margin: 40px 0px 0px 0px;
+  }
+
+  .blog-footer {
+  }
+
+  code {
+    white-space: normal;
+  }
 }

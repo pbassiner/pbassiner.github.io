@@ -55,6 +55,8 @@ object htmlContent {
     )
   )
 
+  val metaViewport = meta(name := "viewport", content := "width=device-width, initial-scale=1.0")
+
   val sidebar =
     div(`class` := "col-sm-3 col-sm-offset-1 blog-sidebar")(
       div(`class` := "sidebar-module sidebar-module-inset")(
@@ -132,7 +134,7 @@ object htmlContent {
     write(
       pwd / 'blog / mdNameToHtml(postFilename),
       html(
-        head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet", href := "../blog.css")),
+        head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet", href := "../blog.css"), metaViewport),
         body(
           div(`class` := "container")(
             div(`class` := "blog-header")(
@@ -162,7 +164,7 @@ object htmlContent {
   val HTML = {
     var currIndexMonth = ""
     html(
-      head(scalatags.Text.tags2.title(blogTitle), bootstrapCss, link(rel := "stylesheet", href := "blog.css")),
+      head(scalatags.Text.tags2.title(blogTitle), bootstrapCss, link(rel := "stylesheet", href := "blog.css"), metaViewport),
       body(
         div(`class` := "container")(
           div(`class` := "blog-header")(
