@@ -1,5 +1,5 @@
-----------------------------------
-## Comments
-Would you like to leave a comment? Since this blog is hosted on [GitHub Pages](https://pages.github.com/) there's no straightforward way to do so.
+Last published on CURRENT_DATE
 
-Instead, you can add a comment in [this GitHub issue](ISSUE_LINK). Your comment will appear here the next time the blog is rebuilt from the sources.
+This blog is hosted on [GitHub](https://github.com/), built using [Scala](http://www.scala-lang.org/), [Ammonite](https://github.com/lihaoyi/Ammonite), and [Bootstrap](http://getbootstrap.com) (with [Blog Theme](http://getbootstrap.com/examples/blog/) by [@mdo](https://twitter.com/mdo)).
+
+The strategy on building this blog was heavily inspired by [Li Haoyi](https://twitter.com/li_haoyi)'s blog post [Scala Scripting and the 15 Minute Blog Engine](http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html).

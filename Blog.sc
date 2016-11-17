@@ -28,15 +28,25 @@ val unsortedPosts = for (
   (date, postFilename, path)
 }
 
-def mdNameToHtml(name: String) = {
+val sortedPosts = unsortedPosts.sortBy(_._1).reverse
+
+def mdNameToHtml(name: String): String = {
   name.replace(" ", "-").toLowerCase + ".html"
 }
 
-def mdNameToTitle(name: String) = {
+def mdNameToTitle(name: String): String = {
   name.replace("_", " ")
 }
 
-val sortedPosts = unsortedPosts.sortBy(_._1).reverse
+def mdToHtml(path: Path): String = {
+  import org.commonmark.html.HtmlRenderer
+  import org.commonmark.parser.Parser
+
+  val parser = Parser.builder().build()
+  val document = parser.parse(read ! path)
+  val renderer = HtmlRenderer.builder().build()
+  renderer.render(document)
+}
 
 object htmlContent {
 
@@ -71,51 +81,30 @@ object htmlContent {
       )
     )
 
-  val footerContent =
+  val footerContent = {
+    val footerPath = pwd / 'common / "footer.md"
+    val footerHtml = mdToHtml(footerPath)
+
     footer(`class` := "blog-footer")(
-      p("Last published on ", currentDate),
-      p("This blog is hosted on ", a("GitHub", href := "https://github.com/"),
-        ", built using ", a("Scala", href := "http://www.scala-lang.org/"), ", ",
-        a("Ammonite", href := "https://github.com/lihaoyi/Ammonite"), ", and ",
-        a("Bootstrap", href := "http://getbootstrap.com"),
-        " (with ", a("Blog Theme", href := "http://getbootstrap.com/examples/blog/"),
-        " by ", a("@mdo", href := "https://twitter.com/mdo"), ")."
-      ),
-      p("The strategy on building this blog was heavily inspired by ",
-        a("Li Haoyi", href := "https://twitter.com/li_haoyi"),
-        "'s blog post ", a("Scala Scripting and the 15 Minute Blog Engine",
-          href := "http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html"), "."
-      )
+      raw(footerHtml.replace("CURRENT_DATE", currentDate))
     )
+  }
 
-  val commentsPostFooter = {
-    import org.commonmark.html.HtmlRenderer
-    import org.commonmark.parser.Parser
-
-    val commentsPostFooterPath = pwd / 'common / "footer.md"
-    val parser = Parser.builder().build()
-    val document = parser.parse(read ! commentsPostFooterPath)
-    val renderer = HtmlRenderer.builder().build()
-    renderer.render(document)
+  val postCommentsFooter = {
+    val postCommentsFooterPath = pwd / 'common / "postCommentsFooter.md"
+    mdToHtml(postCommentsFooterPath)
   }
 
   println("POSTS")
   sortedPosts.foreach(println)
 
   for ((postDate, postFilename, path) <- sortedPosts) {
-    import org.commonmark.html.HtmlRenderer
     import org.commonmark.node._
-    import org.commonmark.parser.Parser
 
     val postName = mdNameToTitle(postFilename)
-    val parser = Parser.builder().build()
-    val document = parser.parse(read ! path)
-    val renderer = HtmlRenderer.builder().build()
-    val output = renderer.render(document)
-
     val gitHubIssue = issueHtmlUrl(postFilename)
-
     val postComments = commentsByPost(postFilename)
+    val postContent = mdToHtml(path)
 
     val comments: scalatags.Text.Modifier = postComments.length match {
       case 0 => blockquote(p(`class` := "blog-comment")("There are no comments yet."))
@@ -146,8 +135,8 @@ object htmlContent {
                   h2(`class` := "blog-post-title")(postName),
                   p(`class` := "blog-post-meta")(postDate),
                   div(`class` := "blog-post-body")(
-                    raw(output),
-                    raw(commentsPostFooter.replace("ISSUE_LINK", gitHubIssue)),
+                    raw(postContent),
+                    raw(postCommentsFooter.replace("ISSUE_LINK", gitHubIssue)),
                     comments
                   )
                 )
