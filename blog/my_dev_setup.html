@@ -1,0 +1,65 @@
+<html><head><title>My Dev Setup</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2 class="blog-post-title">My Dev Setup</h2><p class="blog-post-meta">2016-12-01</p><div class="blog-post-body"><p>Over time I've been adapting my development environment to increase productivity. This means trying out alternatives beyond the out-of-the-box tools you get in a specific OS. I run <a href="https://www.ubuntu.com/">Ubuntu</a>, 16.04 at the moment, and this is a recap of the tools I currently use to work.</p>
+<h2>TL;DR</h2>
+<p>As a takeaway, the most remarkable productivity boosts I've experienced so far have been due to:</p>
+<ul>
+<li>Using <a href="https://launchpad.net/terminator/">Terminator</a> instead of the default terminal</li>
+<li>Replacing the default shell with <a href="https://github.com/zsh-users/zsh">zsh</a></li>
+<li>Switching to <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>, for Java/Scala development</li>
+</ul>
+<h2>Basic tooling</h2>
+<h3>Terminals</h3>
+<p><a href="https://launchpad.net/terminator/">Terminator</a> is my default terminal. You can have multiple terminals in the same view (split panes) and multicast commands to all of them.</p>
+<p><a href="http://www.tecmint.com/wp-content/uploads/2014/01/31.jpeg"><img src="http://www.tecmint.com/wp-content/uploads/2014/01/31.jpeg" alt="terminator" /></a></p>
+<p>I also use <a href="https://github.com/Guake/guake/">Guake</a> which is a drop-down terminal, meaning you can hide it and it's not managed by the OS GUI as a running application. I mainly use it to run stuff in the background like setting up a VPN, tunnels or starting up local services I occasionally need.</p>
+<p><a href="http://guake-project.org/img/screenshot2.jpg"><img src="http://guake-project.org/img/screenshot2.jpg" alt="guake" /></a></p>
+<h3>shell</h3>
+<p>Let's face it, if you use the command line there's not much room to improve efficiency while using <a href="https://www.gnu.org/software/bash/bash.html">Bash</a>.</p>
+<p>I use <a href="https://github.com/zsh-users/zsh">zsh</a> instead, along with <a href="https://github.com/robbyrussell/oh-my-zsh">oh-my-zsh</a> to manage its configuration. It provides improved autocompletion for commands and its arguments, shared command history between all open shells and it lets you expand environment variables, among other features.</p>
+<p><a href="https://cloud.githubusercontent.com/assets/2618447/6316862/70f58fb6-ba03-11e4-82c9-c083bf9a6574.png"><img src="https://cloud.githubusercontent.com/assets/2618447/6316862/70f58fb6-ba03-11e4-82c9-c083bf9a6574.png" alt="zsh" /></a></p>
+<p>It's also <em>git-friendly</em> by allowing to customize the prompt to display the current git branch, commit and the number of staged and unstaged files, and enhances <code>git</code> autocompletion with description of the commands and arguments, including your own <code>git</code> aliases.</p>
+<p><code>oh-my-zsh</code>, on the other hand, adds the capability of installing themes and plugins. One of them is <a href="https://github.com/psprint/zsh-navigation-tools">zsh-navigation-tools</a> which provides visual navigation for many commands such as <code>history</code> or <code>kill</code>, so you can interactively browse and pick the history command to replay or the process to kill, respectively.</p>
+<p><a href="https://camo.githubusercontent.com/c7b779f8c3c9b831f9847ffbf961365e73303f50/687474703a2f2f696d616765736861636b2e636f6d2f612f696d673932312f353034362f627172306d6b2e706e67"><img src="https://camo.githubusercontent.com/c7b779f8c3c9b831f9847ffbf961365e73303f50/687474703a2f2f696d616765736861636b2e636f6d2f612f696d673932312f353034362f627172306d6b2e706e67" alt="zsh-navigation-tools" /></a></p>
+<h3>git</h3>
+<p>I use <a href="https://git-scm.com/">git</a> from the command line, along with a bunch of <a href="https://pbassiner.github.io/blog/git_aliases_to_the_rescue.html"><code>git</code> aliases</a>. Since I use <a href="https://github.com">GitHub</a> as the remote repository there are some things that need to be done through their UI, usually reviewing and merging PRs. While developing though, the only thing you need from GitHub is to open the PR, and I use <a href="https://github.com/github/hub">hub</a> for that. You can setup <code>git</code> as an alias to <code>hub</code> and then you can open a PR in GitHub just by running:</p>
+<pre><code class="language-bash">git pull-request -b BASE_BRANCH
+</code></pre>
+<h3>http</h3>
+<p>If you need to make requests to a REST API, the <code>curl</code> command is the usual choice. It was mine indeed, until I discovered <a href="https://github.com/jkbrzt/httpie">httpie</a>, a human-friendly command-line HTTP client. It lets you easily make HTTP requests with authentication, headers, body, etc. For instance, <a href="https://developer.github.com/v3/issues/comments/#create-a-comment">posting a comment on a GitHub issue</a> is as easy as:</p>
+<pre><code class="language-bash">http -a USERNAME POST https://api.github.com/repos/jkbrzt/httpie/issues/83/comments body='HTTPie is awesome! :heart:'
+</code></pre>
+<p>JSON is the implicit content type <code>httpie</code> uses by default. It makes it really simple to define the serialized JSON object in the request body:</p>
+<pre><code class="language-bash">http PUT example.org name=John email=john@example.org
+</code></pre>
+<p>And the response body is pretty printed for readability:</p>
+<pre><code class="language-bash">PUT / HTTP/1.1
+Accept: application/json, */*
+Accept-Encoding: gzip, deflate
+Content-Type: application/json
+Host: example.org
+
+{
+    &quot;name&quot;: &quot;John&quot;,
+    &quot;email&quot;: &quot;john@example.org&quot;
+}
+</code></pre>
+<h2>SDKs &amp; Runtimes</h2>
+<p>I mainly develop in <a href="https://www.java.com">Java</a> &amp; <a href="http://www.scala-lang.org/">Scala</a>, with <a href="https://maven.apache.org/">Maven</a> and <a href="http://www.scala-sbt.org/">Sbt</a> as build tools respectively. To avoid having to manually manage installation and upgrades I use <a href="http://sdkman.io/">sdkman</a>, a tool for managing parallel versions of multiple SDKs. Installing the latest version of <a href="http://www.scala-sbt.org/">Sbt</a> is simply:</p>
+<pre><code class="language-bash">sdk install sbt
+</code></pre>
+<p>It has a beta channel which offers early access to new features. For instance, it currently allows to install a Java SDK with a simple</p>
+<pre><code class="language-bash">sbt install java 8u111
+</code></pre>
+<p>Once this goes stable it will allow to setup most JVM related development environments with a single manager.</p>
+<h2>Editors &amp; IDEs</h2>
+<p>My IDE of choice is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>. It's slick and fast. I've used <a href="https://eclipse.org">Eclipse</a> and <a href="https://netbeans.org/">NetBeans</a> in the past and they can't even compete, at least regarding my needs.</p>
+<p>For other purposes like developing in Javascript or writing this blog I use <a href="https://github.com/atom/atom">Atom</a>, the text editor by <a href="https://github.com">GitHub</a>. Although I have to admit I still use <a href="https://www.sublimetext.com/">Sublime Text 3</a> for editing large files. So far Atom doesn't seem to be able to handle large files, I guess because it's <a href="http://blog.atom.io/2014/02/26/the-nucleus-of-atom.html">web-native</a>.</p>
+<h2>Automating the setup</h2>
+<p>I automated the setup process a while ago using <a href="https://www.ansible.com/">Ansible</a> to avoid installing all these tools and some more manually. The source code is available at <a href="https://github.com/pbassiner/dev-env">GitHub</a> and I plan to write a post about it in the near future.</p>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/8">this GitHub issue</a>. Your comment will appear here the next time the blog is rebuilt from the sources.</p>
+<blockquote><p class="blog-comment">There are no comments yet.</p></blockquote></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2016-12-01</p>
+<p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
+<p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
+</footer></body></html>
