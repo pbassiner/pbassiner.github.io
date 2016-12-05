@@ -2,9 +2,12 @@ import scalaj.http._
 
 case class Comment(author: String, body: String, date: String)
 
-def issueHtmlUrl(post: String) = {
+def issueHtmlUrl(post: String): (String, String) = {
   val issuesJson = getIssuesByLabel(post)
-  issuesJson.arr.head.obj.get("html_url").fold("")(_.str)
+  val first = issuesJson.arr.head.obj
+  val htmlUrl = first.get("html_url").fold("")(_.str)
+  val commentsUrl = first.get("comments_url").fold("")(_.str)
+  (htmlUrl, commentsUrl)
 }
 
 def commentsByPost(post: String) = {
