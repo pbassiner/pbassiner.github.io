@@ -198,6 +198,20 @@ code {
   color: #000000;
 }
 
+a.share-title {
+  text-decoration: none;
+  cursor: pointer;
+  color: #333;
+}
+
+a.share-title:hover {
+  color: #428bca
+}
+
+a.share-title .fa-twitter {
+  margin-left: 10px;
+}
+
 img {
   max-width:80%;
   max-height:80%;

@@ -5,6 +5,7 @@ import $file.GitHubClient, GitHubClient._
 
 import ammonite.ops._
 
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -46,6 +47,12 @@ def mdToHtml(path: Path): String = {
   val document = parser.parse(read ! path)
   val renderer = HtmlRenderer.builder().build()
   renderer.render(document)
+}
+
+def tweetPostUrl(postFilename: String): String = {
+  val text = mdNameToTitle(postFilename)
+  val url = s"https://pbassiner.github.io/blog/${mdNameToHtml(postFilename)}"
+  return s"https://twitter.com/intent/tweet?text=${URLEncoder.encode(text, "UTF-8")}&url=${URLEncoder.encode(url, "UTF-8")}&via=polbassiner"
 }
 
 object htmlContent {
@@ -132,7 +139,15 @@ object htmlContent {
             div(`class` := "row")(
               div(`class` := "col-sm-8 blog-main")(
                 div(`class` := "blog-post")(
-                  h2(`class` := "blog-post-title")(postName),
+                  h2(
+                    a(
+                      span(`class` := "blog-post-title")(postName),
+                      span(`class` := "fa fa-twitter"),
+                      `class` := "share-title",
+                      href := tweetPostUrl(postFilename),
+                      target := "_blank"
+                    )
+                  ),
                   p(`class` := "blog-post-meta")(postDate),
                   div(`class` := "blog-post-body")(
                     raw(postContent),
