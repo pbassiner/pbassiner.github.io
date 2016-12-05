@@ -74,6 +74,8 @@ object htmlContent {
 
   val metaViewport = meta(name := "viewport", content := "width=device-width, initial-scale=1.0")
 
+  val jQuery = script(`type` := "text/javascript", src := "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+
   val sidebar =
     div(`class` := "col-sm-3 col-sm-offset-1 blog-sidebar")(
       div(`class` := "sidebar-module sidebar-module-inset")(
@@ -109,28 +111,44 @@ object htmlContent {
     import org.commonmark.node._
 
     val postName = mdNameToTitle(postFilename)
-    val gitHubIssue = issueHtmlUrl(postFilename)
-    val postComments = commentsByPost(postFilename)
+    val (gitHubIssueUrl, gitHubCommentsUrl) = issueHtmlUrl(postFilename)
     val postContent = mdToHtml(path)
 
-    val comments: scalatags.Text.Modifier = postComments.length match {
-      case 0 => blockquote(p(`class` := "blog-comment")("There are no comments yet."))
-      case _ => for (
-        (author, comment, date) <- postComments
-      ) yield {
-        val commentDate = commentDateFormatter.format(utcFormatter.parse(date))
-        div(
-          h4(`class` := "blog-comment-author")(author),
-          p(`class` := "blog-comment-meta")(commentDate),
-          blockquote(p(`class` := "blog-comment")(comment))
-        )
-      }
-    }
+    val commentsJsScript = s"""
+      <script type="text/javascript">
+      $$(function() {
+        $$.ajax({
+          type: 'GET',
+          url: "$gitHubCommentsUrl",
+          headers: {Accept: "application/vnd.github.full+json"},
+          success: function(data) {
+            if (data.length === 0) {
+              $$("#comments").append("
+                <blockquote>
+                  <p class='blog-comment'>There are no comments yet</p>
+                </blockquote>
+              ");
+            } else {
+              for (var i=0; i<data.length; i++) {
+                $$("#comments").append("
+                  <div>
+                    <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>
+                    <p class='blog-comment-meta'>"+data[i].updated_at+"</p>
+                    <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>
+                  </div>
+                ");
+              }
+            }
+          }
+        });
+      });
+      </script>
+      """
 
     write(
       pwd / 'blog / mdNameToHtml(postFilename),
       html(
-        head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet", href := "../blog.css"), metaViewport),
+        head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet", href := "../blog.css"), metaViewport, jQuery, raw(commentsJsScript)),
         body(
           div(`class` := "container")(
             div(`class` := "blog-header")(
@@ -151,8 +169,8 @@ object htmlContent {
                   p(`class` := "blog-post-meta")(postDate),
                   div(`class` := "blog-post-body")(
                     raw(postContent),
-                    raw(postCommentsFooter.replace("ISSUE_LINK", gitHubIssue)),
-                    comments
+                    raw(postCommentsFooter.replace("ISSUE_LINK", gitHubIssueUrl)),
+                    div(id := "comments")
                   )
                 )
               ),
