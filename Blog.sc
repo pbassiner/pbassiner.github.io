@@ -207,7 +207,9 @@ object htmlContent {
 
                 div(
                   span(`class` := "blog-post-meta", style := monthYearStyle)(monthYearHeader),
-                  h2(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename))))
+                  h2(`class` := "blog-index-post-title",
+                    a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename)))
+                  )
                 )
               }
             ),
