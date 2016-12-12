@@ -9,13 +9,15 @@ import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
+import scala.collection.immutable.TreeMap
+
 // Cleanup
 rm ! pwd / "index.html"
 rm ! pwd / 'blog
 
-val utcFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
 val monthYearDateFormatter = new SimpleDateFormat("MMMM yyyy")
+val monthYearDateFormatterForSorting = new SimpleDateFormat("yyyy-MM")
 val commentDateFormatter = new SimpleDateFormat("MMM dd, yyyy")
 
 val currentDate = dateFormatter.format(Calendar.getInstance().getTime())
@@ -39,14 +41,22 @@ def mdNameToTitle(name: String): String = {
   name.replace("_", " ")
 }
 
-def mdToHtml(path: Path): String = {
+def mdToHtml(content: String): String = {
   import org.commonmark.html.HtmlRenderer
   import org.commonmark.parser.Parser
 
   val parser = Parser.builder().build()
-  val document = parser.parse(read ! path)
+  val document = parser.parse(content)
   val renderer = HtmlRenderer.builder().build()
   renderer.render(document)
+}
+
+def mdFileToHtml(path: Path): String = mdToHtml(read ! path)
+
+def first25WordsMdFileToHtml(path: Path): String = {
+  val line = (read.lines ! path).filter(line => !line.isEmpty && line.charAt(0).toString.matches("[a-zA-Z]"))(0)
+  val lineFirst25Words = line.split("\\s").take(25) mkString " "
+  mdToHtml(s"$lineFirst25Words...")
 }
 
 def tweetPostUrl(postFilename: String): String = {
@@ -92,7 +102,7 @@ object htmlContent {
 
   val footerContent = {
     val footerPath = pwd / 'common / "footer.md"
-    val footerHtml = mdToHtml(footerPath)
+    val footerHtml = mdFileToHtml(footerPath)
 
     footer(`class` := "blog-footer")(
       raw(footerHtml.replace("CURRENT_DATE", currentDate))
@@ -101,7 +111,7 @@ object htmlContent {
 
   val postCommentsFooter = {
     val postCommentsFooterPath = pwd / 'common / "postCommentsFooter.md"
-    mdToHtml(postCommentsFooterPath)
+    mdFileToHtml(postCommentsFooterPath)
   }
 
   println("POSTS")
@@ -111,8 +121,8 @@ object htmlContent {
     import org.commonmark.node._
 
     val postName = mdNameToTitle(postFilename)
-    val (gitHubIssueUrl, gitHubCommentsUrl) = issueHtmlUrl(postFilename)
-    val postContent = mdToHtml(path)
+    val (gitHubIssueUrl, gitHubCommentsUrl) = ("","")//TODO issueHtmlUrl(postFilename)
+    val postContent = mdFileToHtml(path)
 
     val commentsJsScript = s"""
       <script type="text/javascript">
@@ -163,6 +173,7 @@ object htmlContent {
                       span(`class` := "fa fa-twitter"),
                       `class` := "share-title",
                       href := tweetPostUrl(postFilename),
+                      title := "Share",
                       target := "_blank"
                     )
                   ),
@@ -183,8 +194,43 @@ object htmlContent {
     )
   }
 
+  val groupedPostsByMonth = sortedPosts.groupBy {
+    case (postDate, postFilename, _) => monthYearDateFormatterForSorting.format(dateFormatter.parse(postDate))
+  }
+
+  val groupedPostsHtmlByMonth = groupedPostsByMonth.map {
+    case (month, postList) => (month, postList map {
+      case (postDate, postFilename, path) =>
+        div(`class` := "row")(
+          div(`class` := "col-sm-6 col-md-12")(
+            div(`class` := "thumbnail")(
+              div(`class` := "caption")(
+                h3(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename)))),
+                raw(first25WordsMdFileToHtml(path)),
+                a(`class` := "btn btn-primary btn-sm", "Read more", href := ("blog/" + mdNameToHtml(postFilename))),
+                a(
+                  span(`class` := "fa fa-twitter"),
+                  `class` := "share",
+                  style := "float: right;",
+                  href := tweetPostUrl(postFilename),
+                  title := "Share",
+                  target := "_blank"
+                )
+              )
+            )
+          )
+        )
+    })
+  }
+
+  val groupedPostsHtml = TreeMap(groupedPostsHtmlByMonth.toArray:_*)(implicitly[Ordering[String]].reverse).map {
+    case (month, postList) => div(
+      span(`class` := "blog-post-meta")(monthYearDateFormatter.format(monthYearDateFormatterForSorting.parse(month))),
+      postList
+    )
+  }.toList
+
   val HTML = {
-    var currIndexMonth = ""
     html(
       head(scalatags.Text.tags2.title(blogTitle), bootstrapCss, link(rel := "stylesheet", href := "blog.css"), metaViewport),
       body(
@@ -194,24 +240,7 @@ object htmlContent {
           ),
           div(`class` := "row")(
             div(`class` := "col-sm-8 blog-main")(
-              for (
-                (postDate, postFilename, _) <- sortedPosts
-              ) yield {
-                val monthYearHeader = monthYearDateFormatter.format(dateFormatter.parse(postDate))
-                val monthYearStyle = monthYearHeader match {
-                  case s: String if s != currIndexMonth => "margin-bottom: 10em;"
-                  case _ => "display: none;"
-                }
-
-                currIndexMonth = monthYearHeader
-
-                div(
-                  span(`class` := "blog-post-meta", style := monthYearStyle)(monthYearHeader),
-                  h2(`class` := "blog-index-post-title",
-                    a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename)))
-                  )
-                )
-              }
+              groupedPostsHtml
             ),
             sidebar
           )
