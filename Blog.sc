@@ -1,16 +1,14 @@
 import $ivy.`com.lihaoyi::scalatags:0.6.0`
 import $ivy.`com.atlassian.commonmark:commonmark:0.5.1`
 
-import $file.GitHubClient, GitHubClient._
-import $file.MdToHtml, MdToHtml._
-
 import ammonite.ops._
-
-import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Calendar
-
 import scala.collection.immutable.TreeMap
+
+import $file.GitHubClient, GitHubClient._
+import $file.MdToHtml, MdToHtml._
+import $file.Twitter, Twitter._
 
 // Cleanup
 rm ! pwd / "index.html"
@@ -33,12 +31,6 @@ val unsortedPosts = for (
 }
 
 val sortedPosts = unsortedPosts.sortBy(_._1).reverse
-
-def tweetPostUrl(postFilename: String): String = {
-  val text = mdFilenameToTitle(postFilename)
-  val url = s"https://pbassiner.github.io/blog/${mdFilenameToHtmlFilename(postFilename)}"
-  return s"https://twitter.com/intent/tweet?text=${URLEncoder.encode(text, "UTF-8")}&url=${URLEncoder.encode(url, "UTF-8")}&via=polbassiner"
-}
 
 object htmlContent {
 
@@ -93,44 +85,20 @@ object htmlContent {
     import org.commonmark.node._
 
     val postName = mdFilenameToTitle(postFilename)
-    val (gitHubIssueUrl, gitHubCommentsUrl) = ("","")//TODO issueHtmlUrl(postFilename)
+    val (gitHubIssueUrl, gitHubCommentsJsScript) = ("","")//TODO issueHtmlUrl(postFilename)
     val postContent = mdFileToHtml(path)
-
-    val commentsJsScript = s"""
-      <script type="text/javascript">
-      $$(function() {
-        $$.ajax({
-          type: 'GET',
-          url: "$gitHubCommentsUrl",
-          headers: {Accept: "application/vnd.github.full+json"},
-          success: function(data) {
-            if (data.length === 0) {
-              $$("#comments").append("\\
-                <blockquote>\\
-                  <p class='blog-comment'>There are no comments yet</p>\\
-                </blockquote>\\
-              ");
-            } else {
-              for (var i=0; i<data.length; i++) {
-                $$("#comments").append("\\
-                  <div>\\
-                    <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\\
-                    <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\\
-                    <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\\
-                  </div>\\
-                ");
-              }
-            }
-          }
-        });
-      });
-      </script>
-      """
 
     write(
       pwd / 'blog / mdFilenameToHtmlFilename(postFilename),
       html(
-        head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet", href := "../blog.css"), metaViewport, jQuery, raw(commentsJsScript)),
+        head(
+          scalatags.Text.tags2.title(postName),
+          bootstrapCss,
+          link(rel := "stylesheet", href := "../blog.css"),
+          metaViewport,
+          jQuery,
+          raw(gitHubCommentsJsScript)
+        ),
         body(
           div(`class` := "container")(
             div(`class` := "blog-header")(
@@ -214,7 +182,12 @@ object htmlContent {
 
   val HTML = {
     html(
-      head(scalatags.Text.tags2.title(blogTitle), bootstrapCss, link(rel := "stylesheet", href := "blog.css"), metaViewport),
+      head(
+        scalatags.Text.tags2.title(blogTitle),
+        bootstrapCss,
+        link(rel := "stylesheet", href := "blog.css"),
+        metaViewport
+      ),
       body(
         div(`class` := "container")(
           div(`class` := "blog-header")(
