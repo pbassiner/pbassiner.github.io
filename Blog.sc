@@ -1,5 +1,4 @@
 import $ivy.`com.lihaoyi::scalatags:0.6.0`
-import $ivy.`com.atlassian.commonmark:commonmark:0.5.1`
 
 import ammonite.ops._
 import java.text.SimpleDateFormat
@@ -16,10 +15,14 @@ rm ! pwd / 'blog
 
 val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
 val monthYearDateFormatter = new SimpleDateFormat("MMMM yyyy")
-val monthYearDateFormatterForSorting = new SimpleDateFormat("yyyy-MM")
+val yearMonthDateFormatter = new SimpleDateFormat("yyyy-MM")
 val commentDateFormatter = new SimpleDateFormat("MMM dd, yyyy")
 
 val currentDate = dateFormatter.format(Calendar.getInstance().getTime())
+def yearMonthDayToYearMonth(date: String): String =
+  yearMonthDateFormatter.format(dateFormatter.parse(date))
+def yearMonthToMonthYear(date: String): String =
+  monthYearDateFormatter.format(yearMonthDateFormatter.parse(date))
 
 val postFiles = ls ! pwd / 'posts
 
@@ -32,6 +35,18 @@ val unsortedPosts = for (
 
 val sortedPosts = unsortedPosts.sortBy(_._1).reverse
 
+def logPosts(groupedPostsByMonth: Map[String, Iterable[(String, String, Path)]]): Unit = {
+  println("POSTS")
+  groupedPostsByMonth.foreach {
+    case (yearMonth, postList) => {
+      println(yearMonth)
+      postList foreach {
+        case (postDate, postFilename, path) => println(s"\t$postDate,$postFilename,$path")
+      }
+    }
+  }
+}
+
 object htmlContent {
 
   import scalatags.Text.all._
@@ -39,19 +54,13 @@ object htmlContent {
   val blogTitle = "Blog"
 
   val bootstrapCss = List(
-    link(
-      rel := "stylesheet",
-      href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    ),
-    link(
-      rel := "stylesheet",
-      href := "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
-    )
+    link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"),
+    link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css")
   )
 
   val metaViewport = meta(name := "viewport", content := "width=device-width, initial-scale=1.0")
 
-  val jQuery = script(`type` := "text/javascript", src := "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+  val jQuery = script(`type` := "text/javascript", src := "https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
 
   val sidebar =
     div(`class` := "col-sm-3 col-sm-offset-1 blog-sidebar")(
@@ -135,21 +144,13 @@ object htmlContent {
   }
 
   val groupedPostsByMonth = sortedPosts.groupBy {
-    case (postDate, postFilename, _) => monthYearDateFormatterForSorting.format(dateFormatter.parse(postDate))
+    case (postDate, postFilename, _) => yearMonthDayToYearMonth(postDate)
   }
 
-  println("POSTS")
-  groupedPostsByMonth.foreach {
-    case (month, postList) => {
-      println(month)
-      postList foreach {
-        case (postDate, postFilename, path) => println(s"\t$postDate,$postFilename,$path")
-      }
-    }
-  }
+  logPosts(groupedPostsByMonth)
 
   val groupedPostsHtmlByMonth = groupedPostsByMonth.map {
-    case (month, postList) => (month, postList map {
+    case (yearMonth, postList) => (yearMonth, postList map {
       case (postDate, postFilename, path) =>
         div(`class` := "row")(
           div(`class` := "col-sm-6 col-md-12")(
@@ -173,9 +174,9 @@ object htmlContent {
     })
   }
 
-  val groupedPostsHtml = TreeMap(groupedPostsHtmlByMonth.toArray: _*)(implicitly[Ordering[String]].reverse).map {
-    case (month, postList) => div(
-      span(`class` := "blog-post-meta")(monthYearDateFormatter.format(monthYearDateFormatterForSorting.parse(month))),
+  val sortedPostsHtml = TreeMap(groupedPostsHtmlByMonth.toArray: _*)(implicitly[Ordering[String]].reverse).map {
+    case (yearMonth, postList) => div(
+      span(`class` := "blog-post-meta")(yearMonthToMonthYear(yearMonth)),
       postList
     )
   }.toList
@@ -195,7 +196,7 @@ object htmlContent {
           ),
           div(`class` := "row")(
             div(`class` := "col-sm-8 blog-main")(
-              groupedPostsHtml
+              sortedPostsHtml
             ),
             sidebar
           )
