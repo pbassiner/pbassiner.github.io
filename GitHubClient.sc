@@ -1,13 +1,18 @@
 import scalaj.http._
 
-case class Comment(author: String, body: String, date: String)
+final case class GitHubIssue(htmlUrl: String, fetchCommentsAndAppendJs: String)
+object GitHubIssue {
+  def empty() = GitHubIssue("", "")
+}
 
-def issueHtmlUrl(post: String): (String, String) = {
+final case class Comment(author: String, body: String, date: String)
+
+def getGitHubIssueByPost(post: String): GitHubIssue = {
   val issuesJson = getIssuesByLabel(post)
   val first = issuesJson.arr.head.obj
   val htmlUrl = first.get("html_url").fold("")(_.str)
   val commentsUrl = first.get("comments_url").fold("")(_.str)
-  (htmlUrl, commentsJsScript(commentsUrl))
+  GitHubIssue(htmlUrl, fetchCommentsAndAppendJs(commentsUrl))
 }
 
 def commentsByPost(post: String) = {
@@ -27,9 +32,9 @@ def commentsByPost(post: String) = {
     login <- user.obj.get("login")
     body <- item.obj.get("body")
     date <- item.obj.get("updated_at")
-  } yield (login.str, body.str, date.str)
+  } yield Comment(login.str, body.str, date.str)
 
-  comments.sortBy(_._3).reverse
+  comments.sortBy(_.date).reverse
 }
 
 private[this] def getIssuesByLabel(label: String) = {
@@ -40,7 +45,7 @@ private[this] def getIssuesByLabel(label: String) = {
   )
 }
 
-private[this] def commentsJsScript(commentsUrl: String) = s"""
+private[this] def fetchCommentsAndAppendJs(commentsUrl: String) = s"""
   <script type="text/javascript">
   $$(function() {
     $$.ajax({

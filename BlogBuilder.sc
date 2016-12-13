@@ -63,16 +63,14 @@ object Common {
     )
   }
 
-  val postCommentsFooter = {
-    val postCommentsFooterPath = pwd / 'common / "postCommentsFooter.md"
-    mdFileToHtml(postCommentsFooterPath)
-  }
 }
 
 object Builder {
 
   import DateUtils._, Common._
   import scalatags.Text.all._
+
+  final case class Post(date: String, filename: String, path: Path)
 
   def cleanup = {
     rm ! pwd / "index.html"
@@ -85,24 +83,28 @@ object Builder {
       path <- postFiles
     ) yield {
       val Array(date, postFilename, _) = path.last.split("\\.")
-      (date, postFilename, path)
+      Post(date, postFilename, path)
     }
 
-    unsortedPosts.sortBy(_._1).reverse
+    unsortedPosts.sortBy(_.date).reverse
+  }
+
+  def postCommentsFooter(gitHubIssueHtmlUrl: String) = {
+    val postCommentsFooterPath = pwd / 'common / "postCommentsFooter.md"
+    mdFileToHtml(postCommentsFooterPath).replace("ISSUE_LINK", gitHubIssueHtmlUrl)
   }
 
   def writePosts(config: Configuration) = {
-    for ((postDate, postFilename, path) <- sortedPosts) {
-
-      val postName = mdFilenameToTitle(postFilename)
-      val (gitHubIssueUrl, gitHubCommentsJsScript) = config.gitHubIntegration match {
-        case Enabled => issueHtmlUrl(postFilename)
-        case Disabled => ("", "")
+    for (post <- sortedPosts) {
+      val postName = mdFilenameToTitle(post.filename)
+      val gitHubIssue = config.gitHubIntegration match {
+        case Enabled => getGitHubIssueByPost(post.filename)
+        case Disabled => GitHubIssue.empty
       }
-      val postContent = mdFileToHtml(path)
+      val postContent = mdFileToHtml(post.path)
 
       write(
-        pwd / 'blog / mdFilenameToHtmlFilename(postFilename),
+        pwd / 'blog / mdFilenameToHtmlFilename(post.filename),
         html(
           head(
             scalatags.Text.tags2.title(postName),
@@ -110,7 +112,7 @@ object Builder {
             link(rel := "stylesheet", href := "../blog.css"),
             metaViewport,
             jQuery,
-            raw(gitHubCommentsJsScript)
+            raw(gitHubIssue.fetchCommentsAndAppendJs)
           ),
           body(
             div(`class` := "container")(
@@ -125,15 +127,15 @@ object Builder {
                         span(`class` := "blog-post-title")(postName),
                         span(`class` := "fa fa-twitter"),
                         `class` := "share-title",
-                        href := tweetPostUrl(postFilename),
+                        href := tweetPostUrl(post.filename),
                         title := "Share",
                         target := "_blank"
                       )
                     ),
-                    p(`class` := "blog-post-meta")(postDate),
+                    p(`class` := "blog-post-meta")(post.date),
                     div(`class` := "blog-post-body")(
                       raw(postContent),
-                      raw(postCommentsFooter.replace("ISSUE_LINK", gitHubIssueUrl)),
+                      raw(postCommentsFooter(gitHubIssue.htmlUrl)),
                       div(id := "comments")
                     )
                   )
@@ -149,39 +151,39 @@ object Builder {
   }
 
   def indexSortedPostsList = {
-    def logPosts(groupedPostsByMonth: Map[String, Iterable[(String, String, Path)]]): Unit = {
+    def logPosts(groupedPostsByMonth: Map[String, Iterable[Post]]): Unit = {
       println("POSTS")
       groupedPostsByMonth.foreach {
         case (yearMonth, postList) => {
           println(yearMonth)
           postList foreach {
-            case (postDate, postFilename, path) => println(s"\t$postDate,$postFilename,$path")
+            case post: Post => println(s"\t$post")
           }
         }
       }
     }
 
     val groupedPostsByMonth = sortedPosts.groupBy {
-      case (postDate, postFilename, _) => yearMonthDayToYearMonth(postDate)
+      case post:Post => yearMonthDayToYearMonth(post.date)
     }
 
     logPosts(groupedPostsByMonth)
 
     val groupedPostsHtmlByMonth = groupedPostsByMonth.map {
       case (yearMonth, postList) => (yearMonth, postList map {
-        case (postDate, postFilename, path) =>
+        case post: Post =>
           div(`class` := "row")(
             div(`class` := "col-sm-6 col-md-12")(
               div(`class` := "thumbnail")(
                 div(`class` := "caption")(
-                  h3(a(mdFilenameToTitle(postFilename), href := ("blog/" + mdFilenameToHtmlFilename(postFilename)))),
-                  raw(mdFileFirst25WordsToHtml(path)),
-                  a(`class` := "btn btn-primary btn-sm", "Read more", href := ("blog/" + mdFilenameToHtmlFilename(postFilename))),
+                  h3(a(mdFilenameToTitle(post.filename), href := ("blog/" + mdFilenameToHtmlFilename(post.filename)))),
+                  raw(mdFileFirst25WordsToHtml(post.path)),
+                  a(`class` := "btn btn-primary btn-sm", "Read more", href := ("blog/" + mdFilenameToHtmlFilename(post.filename))),
                   a(
                     span(`class` := "fa fa-twitter"),
                     `class` := "share",
                     style := "float: right;",
-                    href := tweetPostUrl(postFilename),
+                    href := tweetPostUrl(post.filename),
                     title := "Share",
                     target := "_blank"
                   )
