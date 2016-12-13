@@ -3,7 +3,7 @@
  */
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   color: #555;
 }
 
@@ -132,25 +132,6 @@ h6, .h6 {
   border-radius: 30px;
 }
 
-/* Index */
-.caption {
-  position: relative;
-  padding: 14px !important;
-}
-
-.caption h3 {
-  font-size: 30px;
-}
-
-.caption p {
-  font-size: 16px;
-  color: #555;
-}
-
-.caption .btn-sm {
-  font-size: 14px;
-  padding: 4px 8px;
-}
 
 /*
  * Blog posts
@@ -184,60 +165,16 @@ h6, .h6 {
   margin-bottom: 0;
 }
 
-/* Custom */
-.blog-post-body h1,
-.blog-post-body h3,
-.blog-post-body h2,
-.blog-post-body h4,
-.blog-post-body h5,
-.blog-post-body h6 {
-  margin-top: 20px;
-}
+/********** Custom **********/
 
+/* General */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #555;
+}
 code {
   white-space: nowrap;
 }
-
-.blog-comment {
-  font-size: 16px;
-}
-
-.blog-comment-author {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.blog-comment-meta {
-  font-size: 16px;
-  color: #999;
-}
-
-.about-social {
-  font-weight: bold;
-  color: #000000;
-}
-
-a.share {
-  font-size: 24px;
-  position: absolute;
-  right: 9px;
-  bottom: 9px;
-}
-
-a.share-title {
-  text-decoration: none;
-  cursor: pointer;
-  color: #333;
-}
-
-a.share-title:hover {
-  color: #428bca
-}
-
-a.share-title .fa-twitter {
-  margin-left: 10px;
-}
-
 img {
   max-width:80%;
   max-height:80%;
@@ -246,18 +183,85 @@ img {
   margin-right: auto;
 }
 
+/* Index */
+.caption {
+  position: relative;
+  padding: 14px !important;
+}
+.caption h3 {
+  font-size: 30px;
+}
+.caption p {
+  font-size: 16px;
+  color: #555;
+}
+.caption .btn-sm {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+a.share {
+  font-size: 24px;
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+}
+
+/* Posts */
+.blog-post-body h1,
+.blog-post-body h3,
+.blog-post-body h2,
+.blog-post-body h4,
+.blog-post-body h5,
+.blog-post-body h6 {
+  margin-top: 20px;
+}
+a.share-title {
+  text-decoration: none;
+  cursor: pointer;
+  color: #333;
+}
+a.share-title:hover {
+  color: #428bca
+}
+a.share-title .fa-twitter {
+  margin-left: 10px;
+}
+
+/* Comments */
+.blog-comment {
+  font-size: 16px;
+}
+.blog-comment-author {
+  font-size: 16px;
+  font-weight: bold;
+}
+.blog-comment-meta {
+  font-size: 16px;
+  color: #999;
+}
+
+/* About */
+.about-social {
+  font-weight: bold;
+  color: #000000;
+}
+
 /* RWD */
 @media only screen and (max-width: 800px) {
-  .blog-index-post-title {
-    font-size: 24px;
+  code {
+    white-space: normal;
   }
-
+  
   .container {
     width: 95%;
   }
 
   .blog-main {
     width: 100%;
+  }
+
+  .blog-index-post-title {
+    font-size: 24px;
   }
 
   .blog-post-body {
@@ -270,9 +274,5 @@ img {
   }
 
   .blog-footer {
-  }
-
-  code {
-    white-space: normal;
   }
 }
