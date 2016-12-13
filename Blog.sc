@@ -114,14 +114,11 @@ object htmlContent {
     mdFileToHtml(postCommentsFooterPath)
   }
 
-  println("POSTS")
-  sortedPosts.foreach(println)
-
   for ((postDate, postFilename, path) <- sortedPosts) {
     import org.commonmark.node._
 
     val postName = mdNameToTitle(postFilename)
-    val (gitHubIssueUrl, gitHubCommentsUrl) = ("","")//TODO issueHtmlUrl(postFilename)
+    val (gitHubIssueUrl, gitHubCommentsUrl) = issueHtmlUrl(postFilename)
     val postContent = mdFileToHtml(path)
 
     val commentsJsScript = s"""
@@ -198,6 +195,16 @@ object htmlContent {
     case (postDate, postFilename, _) => monthYearDateFormatterForSorting.format(dateFormatter.parse(postDate))
   }
 
+  println("POSTS")
+  groupedPostsByMonth.foreach {
+    case (month, postList) => {
+      println(month)
+      postList foreach {
+        case (postDate, postFilename, path) => println(s"\t$postDate,$postFilename,$path")
+      }
+    }
+  }
+
   val groupedPostsHtmlByMonth = groupedPostsByMonth.map {
     case (month, postList) => (month, postList map {
       case (postDate, postFilename, path) =>
@@ -223,7 +230,7 @@ object htmlContent {
     })
   }
 
-  val groupedPostsHtml = TreeMap(groupedPostsHtmlByMonth.toArray:_*)(implicitly[Ordering[String]].reverse).map {
+  val groupedPostsHtml = TreeMap(groupedPostsHtmlByMonth.toArray: _*)(implicitly[Ordering[String]].reverse).map {
     case (month, postList) => div(
       span(`class` := "blog-post-meta")(monthYearDateFormatter.format(monthYearDateFormatterForSorting.parse(month))),
       postList

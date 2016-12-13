@@ -1,4 +1,33 @@
-<html><head><title>Git Aliases to the Rescue</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2><a class="share-title" href="https://twitter.com/intent/tweet?text=Git+Aliases+to+the+Rescue&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fgit_aliases_to_the_rescue.html&amp;via=polbassiner" target="_blank"><span class="blog-post-title">Git Aliases to the Rescue</span><span class="fa fa-twitter"></span></a></h2><p class="blog-post-meta">2016-11-15</p><div class="blog-post-body"><p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/branch-and-history.png" alt="git" />
+<html><head><title>Git Aliases to the Rescue</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+      <script type="text/javascript">
+      $(function() {
+        $.ajax({
+          type: 'GET',
+          url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/3/comments",
+          headers: {Accept: "application/vnd.github.full+json"},
+          success: function(data) {
+            if (data.length === 0) {
+              $("#comments").append("
+                <blockquote>
+                  <p class='blog-comment'>There are no comments yet</p>
+                </blockquote>
+              ");
+            } else {
+              for (var i=0; i<data.length; i++) {
+                $("#comments").append("
+                  <div>
+                    <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>
+                    <p class='blog-comment-meta'>"+data[i].updated_at+"</p>
+                    <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>
+                  </div>
+                ");
+              }
+            }
+          }
+        });
+      });
+      </script>
+      </head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2><a class="share-title" href="https://twitter.com/intent/tweet?text=Git+Aliases+to+the+Rescue&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fgit_aliases_to_the_rescue.html&amp;via=polbassiner" title="Share" target="_blank"><span class="blog-post-title">Git Aliases to the Rescue</span><span class="fa fa-twitter"></span></a></h2><p class="blog-post-meta">2016-11-15</p><div class="blog-post-body"><p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/branch-and-history.png" alt="git" />
  </p>
 <p>The more I use <a href="https://git-scm.com/">Git</a>, the less I believe how I could work without it. Although its usage is widely spread (is there anyone out there using SVN voluntarily?), it's common to start with the basics (<code>fetch</code>, <code>pull</code>, <code>add</code>, <code>commit</code>, <code>push</code>, ...), memorize them as you've been told, and move on.</p>
 <p>As with most things in software engineering, you can't use something properly until you have a good grasp of how it works. There's a difference between using Git and <em>using</em> Git.</p>
@@ -71,8 +100,8 @@ sl = stash list
 <hr />
 <h2>Comments</h2>
 <p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
-<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/3">this GitHub issue</a>. Your comment will appear here the next time the blog is rebuilt from the sources.</p>
-<blockquote><p class="blog-comment">There are no comments yet.</p></blockquote></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2016-12-05</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/3">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2016-12-13</p>
 <p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
 <p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
 </footer></body></html>
