@@ -91,13 +91,13 @@ object Builder {
     unsortedPosts.sortBy(_._1).reverse
   }
 
-  def writePosts(config: Config) = {
+  def writePosts(config: Configuration) = {
     for ((postDate, postFilename, path) <- sortedPosts) {
 
       val postName = mdFilenameToTitle(postFilename)
       val (gitHubIssueUrl, gitHubCommentsJsScript) = config.gitHubIntegration match {
-        case true => issueHtmlUrl(postFilename)
-        case _ => ("", "")
+        case Enabled => issueHtmlUrl(postFilename)
+        case Disabled => ("", "")
       }
       val postContent = mdFileToHtml(path)
 
@@ -224,7 +224,7 @@ object Builder {
       )
     )
 
-  def apply(config: Config): Writable = {
+  def apply(config: Configuration): Writable = {
     cleanup
     writePosts(config)
     index.render

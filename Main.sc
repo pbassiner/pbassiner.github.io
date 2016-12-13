@@ -4,10 +4,27 @@ import $file.Config, Config._
 import ammonite.ops._
 
 @main
-def main(gh: Boolean = false) = {
-  implicit val config: Config = new Config {
-    override val gitHubIntegration: Boolean = gh
-  }
+def publishDev() = {
+  build(
+    Configuration(
+      gitHubIntegration = Disabled
+    )
+  )
+}
+
+@main
+def publishProd() = {
+  build(
+    Configuration(
+      gitHubIntegration = Enabled
+    )
+  )
+}
+
+private[this] def build(configuration: Configuration) = {
+  println(configuration)
+
+  implicit val config: Configuration = configuration
 
   write(pwd / "index.html", Builder(config))
 }
