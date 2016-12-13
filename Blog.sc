@@ -2,6 +2,7 @@ import $ivy.`com.lihaoyi::scalatags:0.6.0`
 import $ivy.`com.atlassian.commonmark:commonmark:0.5.1`
 
 import $file.GitHubClient, GitHubClient._
+import $file.MdToHtml, MdToHtml._
 
 import ammonite.ops._
 
@@ -33,35 +34,9 @@ val unsortedPosts = for (
 
 val sortedPosts = unsortedPosts.sortBy(_._1).reverse
 
-def mdNameToHtml(name: String): String = {
-  name.replace(" ", "-").toLowerCase + ".html"
-}
-
-def mdNameToTitle(name: String): String = {
-  name.replace("_", " ")
-}
-
-def mdToHtml(content: String): String = {
-  import org.commonmark.html.HtmlRenderer
-  import org.commonmark.parser.Parser
-
-  val parser = Parser.builder().build()
-  val document = parser.parse(content)
-  val renderer = HtmlRenderer.builder().build()
-  renderer.render(document)
-}
-
-def mdFileToHtml(path: Path): String = mdToHtml(read ! path)
-
-def first25WordsMdFileToHtml(path: Path): String = {
-  val line = (read.lines ! path).filter(line => !line.isEmpty && line.charAt(0).toString.matches("[a-zA-Z]"))(0)
-  val lineFirst25Words = line.split("\\s").take(25) mkString " "
-  mdToHtml(s"$lineFirst25Words...")
-}
-
 def tweetPostUrl(postFilename: String): String = {
-  val text = mdNameToTitle(postFilename)
-  val url = s"https://pbassiner.github.io/blog/${mdNameToHtml(postFilename)}"
+  val text = mdFilenameToTitle(postFilename)
+  val url = s"https://pbassiner.github.io/blog/${mdFilenameToHtmlFilename(postFilename)}"
   return s"https://twitter.com/intent/tweet?text=${URLEncoder.encode(text, "UTF-8")}&url=${URLEncoder.encode(url, "UTF-8")}&via=polbassiner"
 }
 
@@ -117,8 +92,8 @@ object htmlContent {
   for ((postDate, postFilename, path) <- sortedPosts) {
     import org.commonmark.node._
 
-    val postName = mdNameToTitle(postFilename)
-    val (gitHubIssueUrl, gitHubCommentsUrl) = issueHtmlUrl(postFilename)
+    val postName = mdFilenameToTitle(postFilename)
+    val (gitHubIssueUrl, gitHubCommentsUrl) = ("","")//TODO issueHtmlUrl(postFilename)
     val postContent = mdFileToHtml(path)
 
     val commentsJsScript = s"""
@@ -153,7 +128,7 @@ object htmlContent {
       """
 
     write(
-      pwd / 'blog / mdNameToHtml(postFilename),
+      pwd / 'blog / mdFilenameToHtmlFilename(postFilename),
       html(
         head(scalatags.Text.tags2.title(postName), bootstrapCss, link(rel := "stylesheet", href := "../blog.css"), metaViewport, jQuery, raw(commentsJsScript)),
         body(
@@ -212,9 +187,9 @@ object htmlContent {
           div(`class` := "col-sm-6 col-md-12")(
             div(`class` := "thumbnail")(
               div(`class` := "caption")(
-                h3(a(mdNameToTitle(postFilename), href := ("blog/" + mdNameToHtml(postFilename)))),
-                raw(first25WordsMdFileToHtml(path)),
-                a(`class` := "btn btn-primary btn-sm", "Read more", href := ("blog/" + mdNameToHtml(postFilename))),
+                h3(a(mdFilenameToTitle(postFilename), href := ("blog/" + mdFilenameToHtmlFilename(postFilename)))),
+                raw(mdFileFirst25WordsToHtml(path)),
+                a(`class` := "btn btn-primary btn-sm", "Read more", href := ("blog/" + mdFilenameToHtmlFilename(postFilename))),
                 a(
                   span(`class` := "fa fa-twitter"),
                   `class` := "share",
