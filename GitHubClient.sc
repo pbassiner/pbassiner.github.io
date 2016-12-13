@@ -1,13 +1,18 @@
 import scalaj.http._
 
-case class Comment(author: String, body: String, date: String)
+final case class GitHubIssue(htmlUrl: String, fetchCommentsAndAppendJs: String)
+object GitHubIssue {
+  def empty() = GitHubIssue("", "")
+}
 
-def issueHtmlUrl(post: String): (String, String) = {
+final case class Comment(author: String, body: String, date: String)
+
+def getGitHubIssueByPost(post: String): GitHubIssue = {
   val issuesJson = getIssuesByLabel(post)
   val first = issuesJson.arr.head.obj
   val htmlUrl = first.get("html_url").fold("")(_.str)
   val commentsUrl = first.get("comments_url").fold("")(_.str)
-  (htmlUrl, commentsUrl)
+  GitHubIssue(htmlUrl, fetchCommentsAndAppendJs(commentsUrl))
 }
 
 def commentsByPost(post: String) = {
@@ -27,9 +32,9 @@ def commentsByPost(post: String) = {
     login <- user.obj.get("login")
     body <- item.obj.get("body")
     date <- item.obj.get("updated_at")
-  } yield (login.str, body.str, date.str)
+  } yield Comment(login.str, body.str, date.str)
 
-  comments.sortBy(_._3).reverse
+  comments.sortBy(_.date).reverse
 }
 
 private[this] def getIssuesByLabel(label: String) = {
@@ -39,3 +44,34 @@ private[this] def getIssuesByLabel(label: String) = {
       .body
   )
 }
+
+private[this] def fetchCommentsAndAppendJs(commentsUrl: String) = s"""
+  <script type="text/javascript">
+  $$(function() {
+    $$.ajax({
+      type: 'GET',
+      url: "$commentsUrl",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $$("#comments").append("\\
+            <blockquote>\\
+              <p class='blog-comment'>There are no comments yet</p>\\
+            </blockquote>\\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $$("#comments").append("\\
+              <div>\\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\\
+              </div>\\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  """
