@@ -7,19 +7,19 @@
           headers: {Accept: "application/vnd.github.full+json"},
           success: function(data) {
             if (data.length === 0) {
-              $("#comments").append("
-                <blockquote>
-                  <p class='blog-comment'>There are no comments yet</p>
-                </blockquote>
+              $("#comments").append("\
+                <blockquote>\
+                  <p class='blog-comment'>There are no comments yet</p>\
+                </blockquote>\
               ");
             } else {
               for (var i=0; i<data.length; i++) {
-                $("#comments").append("
-                  <div>
-                    <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>
-                    <p class='blog-comment-meta'>"+data[i].updated_at+"</p>
-                    <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>
-                  </div>
+                $("#comments").append("\
+                  <div>\
+                    <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                    <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                    <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+                  </div>\
                 ");
               }
             }
