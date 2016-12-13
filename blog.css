@@ -132,6 +132,25 @@ h6, .h6 {
   border-radius: 30px;
 }
 
+/* Index */
+.caption {
+  position: relative;
+  padding: 14px !important;
+}
+
+.caption h3 {
+  font-size: 30px;
+}
+
+.caption p {
+  font-size: 16px;
+  color: #555;
+}
+
+.caption .btn-sm {
+  font-size: 14px;
+  padding: 4px 8px;
+}
 
 /*
  * Blog posts
@@ -196,6 +215,13 @@ code {
 .about-social {
   font-weight: bold;
   color: #000000;
+}
+
+a.share {
+  font-size: 24px;
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
 }
 
 a.share-title {
