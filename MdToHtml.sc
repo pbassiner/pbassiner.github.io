@@ -1,4 +1,4 @@
-import $ivy.`com.atlassian.commonmark:commonmark:0.5.1`
+import $ivy.`com.atlassian.commonmark:commonmark:0.8.0`
 
 import ammonite.ops._
 
@@ -17,7 +17,7 @@ def mdFileFirst25WordsToHtml(path: Path): String = {
 }
 
 private[this] def mdToHtml(content: String): String = {
-  import org.commonmark.html.HtmlRenderer
+  import org.commonmark.renderer.html.HtmlRenderer
   import org.commonmark.parser.Parser
 
   val parser = Parser.builder().build()
