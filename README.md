@@ -1,4 +1,5 @@
 [![Website](https://img.shields.io/website-up-down-green-red/https/pbassiner.github.io.svg)](https://pbassiner.github.io/)
+[![Travis](https://img.shields.io/travis/pbassiner/pbassiner.github.io/master.svg)](https://travis-ci.org/pbassiner/pbassiner.github.io)
 
 # Disclaimer
 This is a personal blog. The opinions expressed here represent my own and not those of my employer.

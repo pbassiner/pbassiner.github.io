@@ -1,0 +1,10 @@
+language: scala
+scala:
+   - 2.12.0
+jdk:
+  - oraclejdk8
+before_install:
+  - wget -O amm https://github.com/lihaoyi/Ammonite/releases/download/0.8.1/0.8.1
+  - chmod +x amm
+script:
+  - ./amm Main.sc publishDev
