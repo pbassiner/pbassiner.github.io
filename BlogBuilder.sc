@@ -70,11 +70,14 @@ object Builder {
   import DateUtils._, Common._
   import scalatags.Text.all._
 
+  val indexFilename = "index.html"
+  val generatedBlogPostsFolder = "blog"
+
   final case class Post(date: String, filename: String, path: Path)
 
   def cleanup = {
-    rm ! pwd / "index.html"
-    rm ! pwd / 'blog
+    rm ! pwd / indexFilename
+    rm ! pwd / generatedBlogPostsFolder
   }
 
   def sortedPosts = {
@@ -104,7 +107,7 @@ object Builder {
       val postContent = mdFileToHtml(post.path)
 
       write(
-        pwd / 'blog / mdFilenameToHtmlFilename(post.filename),
+        pwd / generatedBlogPostsFolder / mdFilenameToHtmlFilename(post.filename),
         html(
           head(
             scalatags.Text.tags2.title(postName),
@@ -117,7 +120,7 @@ object Builder {
           body(
             div(`class` := "container")(
               div(`class` := "blog-header")(
-                h1(`class` := "blog-title")(a(blogTitle, href := "../index.html"))
+                h1(`class` := "blog-title")(a(blogTitle, href := "../" + indexFilename))
               ),
               div(`class` := "row")(
                 div(`class` := "col-sm-8 blog-main")(
@@ -171,14 +174,15 @@ object Builder {
 
     val groupedPostsHtmlByMonth = groupedPostsByMonth.map {
       case (yearMonth, postList) => (yearMonth, postList map {
-        case post: Post =>
+        case post: Post => {
+          val postRelUrl = generatedBlogPostsFolder + "/" + mdFilenameToHtmlFilename(post.filename)
           div(`class` := "row")(
             div(`class` := "col-sm-6 col-md-12")(
               div(`class` := "thumbnail")(
                 div(`class` := "caption")(
-                  h3(a(mdFilenameToTitle(post.filename), href := ("blog/" + mdFilenameToHtmlFilename(post.filename)))),
+                  h3(a(mdFilenameToTitle(post.filename), href := postRelUrl)),
                   raw(mdFileFirst25WordsToHtml(post.path)),
-                  a(`class` := "btn btn-primary btn-sm", "Read more", href := ("blog/" + mdFilenameToHtmlFilename(post.filename))),
+                  a(`class` := "btn btn-primary btn-sm", "Read more", href := postRelUrl),
                   a(
                     span(`class` := "fa fa-twitter"),
                     `class` := "share",
@@ -191,6 +195,7 @@ object Builder {
               )
             )
           )
+        }
       })
     }
 
@@ -226,10 +231,10 @@ object Builder {
       )
     )
 
-  def apply(config: Configuration): Writable = {
+  def apply(config: Configuration): Unit = {
     cleanup
     writePosts(config)
-    index.render
+    write(pwd / indexFilename, index.render)
   }
 
 }
