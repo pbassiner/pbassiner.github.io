@@ -7,4 +7,4 @@ before_install:
   - wget -O amm https://github.com/lihaoyi/Ammonite/releases/download/0.8.1/0.8.1
   - chmod +x amm
 script:
-  - ./amm Main.sc publishDev
+  - ./amm Runner.sc publish dev

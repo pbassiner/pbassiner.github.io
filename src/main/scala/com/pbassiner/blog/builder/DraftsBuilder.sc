@@ -1,12 +1,12 @@
 import scala.util.{Try, Success}
 
-import $file.Git
+import $file.^.git.Git
 
-val master = "master"
-val test = "test"
-val excludedBranches = Set(master, test, "bootstrap4")
+private[this] val master = "master"
+private[this] val test = "test"
+private[this] val excludedBranches = Set(master, test, "bootstrap4")
 
-def publishDrafts(): Try[Unit] =
+def publish(): Try[Unit] =
   Git runIfClean { () =>
     Git checkout master
     Git checkoutNewBranchAndRun(test, () => {
@@ -15,7 +15,7 @@ def publishDrafts(): Try[Unit] =
     })
   }
 
-def cleanDrafts(): Try[Unit] =
+def clean(): Try[Unit] =
   Git runIfClean { () =>
     Git checkout master
     Git deleteBranch test

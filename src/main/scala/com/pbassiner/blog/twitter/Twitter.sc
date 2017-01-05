@@ -1,6 +1,6 @@
 import java.net.URLEncoder
 
-import $file.MdToHtml, MdToHtml._
+import $file.^.builder.MdToHtml, MdToHtml._
 
 def tweetPostUrl(postFilename: String): String = {
   val text = mdFilenameToTitle(postFilename)

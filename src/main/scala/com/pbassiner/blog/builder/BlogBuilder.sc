@@ -7,12 +7,15 @@ import java.util.Calendar
 import scala.collection.immutable.TreeMap
 import scalatags.Text.all._
 
-import $file.Config, Config._
-import $file.GitHubClient, GitHubClient._
 import $file.MdToHtml, MdToHtml._
-import $file.Twitter, Twitter._
+import $file.^.Config, Config._
+import $file.^.github.GitHubClient, GitHubClient._
+import $file.^.twitter.Twitter, Twitter._
 
-object DateUtils {
+val indexFilename = "index.html"
+val generatedBlogPostsFolder = "blog"
+
+private[this] object DateUtils {
   val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
   val monthYearDateFormatter = new SimpleDateFormat("MMMM yyyy")
   val yearMonthDateFormatter = new SimpleDateFormat("yyyy-MM")
@@ -26,7 +29,7 @@ object DateUtils {
     monthYearDateFormatter.format(yearMonthDateFormatter.parse(date))
 }
 
-object Common {
+private[this] object Common {
   import DateUtils._
 
   val blogTitle = "Blog"
@@ -70,17 +73,14 @@ object Builder {
   import DateUtils._, Common._
   import scalatags.Text.all._
 
-  val indexFilename = "index.html"
-  val generatedBlogPostsFolder = "blog"
+  private[this] final case class Post(date: String, filename: String, path: Path)
 
-  final case class Post(date: String, filename: String, path: Path)
-
-  def cleanup = {
+  private[this] def cleanup = {
     rm ! pwd / indexFilename
     rm ! pwd / generatedBlogPostsFolder
   }
 
-  def sortedPosts = {
+  private[this] def sortedPosts = {
     val postFiles = ls ! pwd / 'posts
     val unsortedPosts = for (
       path <- postFiles
@@ -92,12 +92,12 @@ object Builder {
     unsortedPosts.sortBy(_.date).reverse
   }
 
-  def postCommentsFooter(gitHubIssueHtmlUrl: String) = {
+  private[this] def postCommentsFooter(gitHubIssueHtmlUrl: String) = {
     val postCommentsFooterPath = pwd / 'common / "postCommentsFooter.md"
     mdFileToHtml(postCommentsFooterPath).replace("ISSUE_LINK", gitHubIssueHtmlUrl)
   }
 
-  def writePosts(config: Configuration) = {
+  private[this] def writePosts(config: Configuration) = {
     for (post <- sortedPosts) {
       val postName = mdFilenameToTitle(post.filename)
       val gitHubIssue = config.gitHubIntegration match {
@@ -153,7 +153,7 @@ object Builder {
     }
   }
 
-  def indexSortedPostsList = {
+  private[this] def indexSortedPostsList = {
     def logPosts(groupedPostsByMonth: Map[String, Iterable[Post]]): Unit = {
       println("POSTS")
       groupedPostsByMonth.foreach {
@@ -207,7 +207,7 @@ object Builder {
     }.toList
   }
 
-  def index =
+  private[this] def index =
     html(
       head(
         scalatags.Text.tags2.title(blogTitle),
