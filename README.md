@@ -16,16 +16,18 @@ The strategy on building this blog was heavily inspired by [Li Haoyi](https://tw
 * Live fetching of comments from GitHub issues through Javascript
 * Twitter sharing through [Tweet Web Intent](https://dev.twitter.com/web/tweet-button/web-intent)
 
+## Strategy
+* Generation scripts written in Scala
+* Each post written in `Markdown`, filename being `yyyy-MM-dd.Post_Name.md`
+* Blog footer and post comments section in its own `Markdown` file
+* Blog index shows reverse sorted list of posts, grouped by month, displaying the first 25 words
+* `HTML` content generated from `Markdown` files
+
 ## Dependencies used
 * [Scala](http://www.scala-lang.org/) `2.12.0`
 * [Ammonite](https://github.com/lihaoyi/Ammonite) `0.8.1`
 * [scalatags](https://github.com/lihaoyi/scalatags) `0.6.2`
 * [commonmark](https://github.com/atlassian/commonmark-java) `0.8.0`
-
-## Strategy
-* Each post written in `Markdown`, filename being `yyyy-MM-dd.Post_Name.md`
-* Blog footer and post comments section in its own `Markdown` file
-* Blog index shows reverse sorted list of posts, grouped by month, displaying the first 25 words
 
 # License
 [MIT License](LICENSE)
