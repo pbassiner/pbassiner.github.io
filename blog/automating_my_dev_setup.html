@@ -1,0 +1,164 @@
+<html><head><title>Automating My Dev Setup</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/15/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2><a class="share-title" href="https://twitter.com/intent/tweet?text=Automating+My+Dev+Setup&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fautomating_my_dev_setup.html&amp;via=polbassiner" title="Share" target="_blank"><span class="blog-post-title">Automating My Dev Setup</span><span class="fa fa-twitter"></span></a></h2><p class="blog-post-meta">2017-01-10</p><div class="blog-post-body"><p>Switching to a new workstation can be a painful process until you manage to have the exact same setup you did in the previous one.</p>
+<p>The last time I was about to upgrade my workstation I began by analyzing which stuff I had installed, which I'd need in the new one and I came up with a list (<a href="https://pbassiner.github.io/blog/my_dev_setup.html">this recent post</a> goes over most of them).</p>
+<p>It wasn't that long but installing everything manually felt like a waste of time, especially because eventually I'd have to upgrade the OS through an installation from scratch or even switch to a newer workstation again.</p>
+<p>So I began to look for how did everyone else automate their development environment setup. Most examples were using bash scripts but I also found some that were using <a href="https://www.ansible.com/">Ansible</a>, a configuration management tool like <a href="https://puppet.com/">Puppet</a> or <a href="https://www.chef.io/chef/">Chef</a>. I started reading a bit about it and then focused on how to configure a local machine instead of a remote server, which is the common scenario.</p>
+<h2>About Ansible</h2>
+<p>I'm not gonna get into much details about Ansible itself, mainly because my only experience with it is building the <em>playbooks</em> (Ansible's configuration language) to automate the setup of my development environment. All I can say about it is that it makes installation and configuration much easier than, say, using bash scripts.</p>
+<p>For instance, the following <em>playbook</em> installs a debian package using <code>apt-get</code>, through the <code>apt</code> module:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_single_package.yml"></script>
+<p>The key here is that you can parametrize it using the <code>with_items</code> loop statement:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_packages_with_items.yml"></script>
+<p>Ansible also allows to combine <em>playbooks</em> so, for instance, the list of packages to install can be defined in a separate file and included in others.</p>
+<h2>Automating the process</h2>
+<p>The applications and tools to be installed may be distributed differently:</p>
+<ul>
+<li>Debian packages available through <code>apt-get</code></li>
+<li>Debian packages that need to be manually downloaded and installed</li>
+<li><code>tar.gz</code> files</li>
+<li>Binaries</li>
+<li>Other package managers</li>
+</ul>
+<p>That implies that each type of distribution method requires specific installation steps. After having the applications and tools installed, we can also apply a custom configuration like setting up our own <em>dot files</em>.</p>
+<h3>Parameters</h3>
+<p>I chose to separate the installation steps from the actual things to be installed. In the <code>vars.yml</code> file I defined the list of stuff to install (for convenience, this is just an excerpt):</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_vars.yml"></script>
+<h3>Debian packages</h3>
+<p>Installing debian packages requires:</p>
+<ol>
+<li>Adding the corresponding apt keys</li>
+<li>Adding the corresponding apt repositories</li>
+<li>Installing the packages</li>
+</ol>
+<p>The <code>apt_key</code>, <code>apt_repository</code> and <code>apt</code> modules, respectively, let you do that:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_packages.yml"></script>
+<p>On the other hand, manually installed debian packages require:</p>
+<ol>
+<li>Downloading the <code>.deb</code> files</li>
+<li>Installing them</li>
+</ol>
+<p>The <code>apt</code> module can install the package from a local <code>.deb</code> file, which is automatically downloaded if we specify it as an URL:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_files.yml"></script>
+<h3>tar.gz distributed applications</h3>
+<p>The applications packaged as <code>tar.gz</code> files usually contain a root folder related to the application version (i.e. <code>myApp.2.3.1_build33</code>). That folder might be referenced somewhere else, like a shortcut or a command, and that's likely to break if we upgrade the application. In this case I added an indirection layer using a <em>symlink</em>.</p>
+<p>An example of this is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>:</p>
+<ul>
+<li>The <code>tar.gz</code> file you can download is named <code>ideaIC-2016.3.2.tar.gz</code></li>
+<li>The extracted folder is named <code>idea-IC-163.10154.41</code></li>
+<li>The <em>symlink</em> to the folder, to have the same reference to the binary executable, is <code>ideaIC</code> -&gt; <code>idea-IC-163.10154.41</code></li>
+</ul>
+<p>Thus, the process must:</p>
+<ol>
+<li>Download the <code>tar.gz</code> files</li>
+<li>Extract them</li>
+<li>Generate a <em>symlink</em> for each one of them</li>
+</ol>
+<p>The <code>get_url</code> module allows you to download a remote file and the <code>unarchive</code> module lets you extract a compressed file. Finally, with the <code>file</code> module you can create a <em>symlink</em> specifying the <code>state=link</code> property:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_targz_files.yml"></script>
+<h3>Binaries</h3>
+<p>Installing the binaries requires:</p>
+<ol>
+<li>Downloading the binary files</li>
+<li>Placing them in <code>/usr/local/bin</code> folder</li>
+<li>Making them executable files</li>
+</ol>
+<p>With the <code>get_url</code> module you can download a remote file to the desired local folder and make it executable specifying the <code>mode=0755</code> property, all at once:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_binaries.yml"></script>
+<h3>Other package managers</h3>
+<p>I use <a href="http://sdkman.io/">SDKMAN!</a>, a tool for managing parallel versions of multiple SDKs, to install <a href="https://java.com">Java</a>, <a href="http://www.scala-sbt.org/">Sbt</a> and <a href="https://maven.apache.org/">Maven</a>. To be able to do so you have to:</p>
+<ol>
+<li>Download <a href="http://sdkman.io/">SDKMAN!</a></li>
+<li>Install it</li>
+<li>Then use it to install the desired SDKs</li>
+</ol>
+<p>In this case, the installation and configuration is done entirely with bash scripts.</p>
+<h3>Configuration</h3>
+<p>This is the most specific part, because it depends on the degree of customization to apply. I do the following:</p>
+<ul>
+<li>Set <code>zsh</code> as the default shell</li>
+<li>Create the completions folder for <code>zsh</code> and place the completion files there (for <code>docker-compose</code>, <code>hub</code> and <code>sdk</code>)</li>
+<li>Install <code>oh-my-zsh</code> by cloning its repo and <em>symlink</em> my custom theme</li>
+<li><em>Symlink</em> the <em>dot files</em> <code>.zshrc</code>, <code>.gitconfig</code>, <code>.aliases</code></li>
+<li>Create <code>.config</code> folder and <em>symlink</em> configuration files for <code>terminator</code></li>
+<li>Create applications folder and <em>symlink</em> <code>idea</code>'s desktop file so the application appears in the HUD</li>
+<li>Create autostart folder and <em>symlink</em> <code>guake</code>'s autostart file</li>
+<li>Install Atom plugins</li>
+</ul>
+<h3>Bootstrapping</h3>
+<p>Starting with a freshly installed OS we need to bootstrap the automated setup process. Since the Ansible scripts are stored in a <a href="https://github.com/pbassiner/dev-env">GitHub repository</a> we need to begin with:</p>
+<ol>
+<li>Updating OS packages</li>
+<li>Installing <code>git</code> and <code>ansible</code></li>
+<li>Cloning the repository</li>
+<li>Run the Ansible <em>playbook</em></li>
+</ol>
+<p>Those are the steps that the <code>bootstrap.sh</code> file performs:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=bootstrap.sh"></script>
+<h3>The last mile</h3>
+<p>While I was developing these scripts I had to execute them a gazillion times, and each and every time I had to:</p>
+<ol>
+<li>Open a browser</li>
+<li>Go to the GitHub repository</li>
+<li>Get the raw content of the <code>bootstrap.sh</code> file</li>
+<li>Open a terminal</li>
+<li>Create a file</li>
+<li>Copy the <code>bootstrap.sh</code> file content to the new file</li>
+<li>Save it</li>
+<li>Make it executable</li>
+<li>Run it</li>
+</ol>
+<p>That was clearly improvable, so I <em>googled</em> how to execute a remote bash script and ended up with this:</p>
+<pre><code>wget -qO- https://raw.github.com/pbassiner/dev-env/master/bootstrap.sh | bash
+</code></pre>
+<p>After that, running the scripts was just:</p>
+<ol>
+<li>Opening a browser</li>
+<li>Copying this command (I placed it in the repository <code>README</code> file)</li>
+<li>Opening a terminal</li>
+<li>Running it</li>
+</ol>
+<h3>Maintenance</h3>
+<p>In order to test any changes in the scripts, while keeping the <code>master</code> branch as the working version, the <code>bootstrap.sh</code> file allows to define the branch to use with <code>-b|--branch &lt;BRANCH&gt;</code> (default is <code>master</code>).</p>
+<p>The Ansible <em>playbooks</em> I wrote also take care of updating the dependencies. After the initial setup, running again the <code>bootstrap.sh</code> file will handle the upgrades of the applications and tools (you can check the complete <code>bootstrap.sh</code> file <a href="https://github.com/pbassiner/dev-env/blob/master/bootstrap.sh">here</a>).</p>
+<p>Anyway, from time to time I still have to check for updates of the manually installed packages.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://github.com/pbassiner/dev-env">Development Environment Configuration with Ansible @ GitHub</a></li>
+<li><a href="http://docs.ansible.com/ansible/index.html">Ansible Documentation Reference</a></li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/15">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2017-01-10</p>
+<p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
+<p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
+</footer></body></html>
