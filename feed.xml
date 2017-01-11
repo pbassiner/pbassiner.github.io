@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en" xmlns="http://www.w3.org/2005/Atom">
+    <title>Pol Bassiner</title>
+      <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
+      <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
+      <updated>2017-01-11T00:00:00+0100</updated>
+      <id>https://pbassiner.github.io/</id>
+      <author>
+        <name>Pol Bassiner</name>
+        <uri>https://pbassiner.github.io/</uri>
+      </author>
+      <entry>
+    <title type="html">
+      <![CDATA[Automating My Dev Setup]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/automating_my_dev_setup.html"/>
+    <id>https://pbassiner.github.io/blog/automating_my_dev_setup.html</id>
+    <published>2017-01-10T00:00:00+0100</published>
+    <updated>2017-01-10T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Switching to a new workstation can be a painful process until you manage to have the exact same setup you did in the previous one.</p>
+<p>The last time I was about to upgrade my workstation I began by analyzing which stuff I had installed, which I'd need in the new one and I came up with a list (<a href="https://pbassiner.github.io/blog/my_dev_setup.html">this recent post</a> goes over most of them).</p>
+<p>It wasn't that long but installing everything manually felt like a waste of time, especially because eventually I'd have to upgrade the OS through an installation from scratch or even switch to a newer workstation again.</p>
+<p>So I began to look for how did everyone else automate their development environment setup. Most examples were using bash scripts but I also found some that were using <a href="https://www.ansible.com/">Ansible</a>, a configuration management tool like <a href="https://puppet.com/">Puppet</a> or <a href="https://www.chef.io/chef/">Chef</a>. I started reading a bit about it and then focused on how to configure a local machine instead of a remote server, which is the common scenario.</p>
+<h2>About Ansible</h2>
+<p>I'm not gonna get into much details about Ansible itself, mainly because my only experience with it is building the <em>playbooks</em> (Ansible's configuration language) to automate the setup of my development environment. All I can say about it is that it makes installation and configuration much easier than, say, using bash scripts.</p>
+<p>For instance, the following <em>playbook</em> installs a debian package using <code>apt-get</code>, through the <code>apt</code> module:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_single_package.yml"></script>
+<p>The key here is that you can parametrize it using the <code>with_items</code> loop statement:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_packages_with_items.yml"></script>
+<p>Ansible also allows to combine <em>playbooks</em> so, for instance, the list of packages to install can be defined in a separate file and included in others.</p>
+<h2>Automating the process</h2>
+<p>The applications and tools to be installed may be distributed differently:</p>
+<ul>
+<li>Debian packages available through <code>apt-get</code></li>
+<li>Debian packages that need to be manually downloaded and installed</li>
+<li><code>tar.gz</code> files</li>
+<li>Binaries</li>
+<li>Other package managers</li>
+</ul>
+<p>That implies that each type of distribution method requires specific installation steps. After having the applications and tools installed, we can also apply a custom configuration like setting up our own <em>dot files</em>.</p>
+<h3>Parameters</h3>
+<p>I chose to separate the installation steps from the actual things to be installed. In the <code>vars.yml</code> file I defined the list of stuff to install (for convenience, this is just an excerpt):</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_vars.yml"></script>
+<h3>Debian packages</h3>
+<p>Installing debian packages requires:</p>
+<ol>
+<li>Adding the corresponding apt keys</li>
+<li>Adding the corresponding apt repositories</li>
+<li>Installing the packages</li>
+</ol>
+<p>The <code>apt_key</code>, <code>apt_repository</code> and <code>apt</code> modules, respectively, let you do that:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_packages.yml"></script>
+<p>On the other hand, manually installed debian packages require:</p>
+<ol>
+<li>Downloading the <code>.deb</code> files</li>
+<li>Installing them</li>
+</ol>
+<p>The <code>apt</code> module can install the package from a local <code>.deb</code> file, which is automatically downloaded if we specify it as an URL:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_files.yml"></script>
+<h3>tar.gz distributed applications</h3>
+<p>The applications packaged as <code>tar.gz</code> files usually contain a root folder related to the application version (i.e. <code>myApp.2.3.1_build33</code>). That folder might be referenced somewhere else, like a shortcut or a command, and that's likely to break if we upgrade the application. In this case I added an indirection layer using a <em>symlink</em>.</p>
+<p>An example of this is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>:</p>
+<ul>
+<li>The <code>tar.gz</code> file you can download is named <code>ideaIC-2016.3.2.tar.gz</code></li>
+<li>The extracted folder is named <code>idea-IC-163.10154.41</code></li>
+<li>The <em>symlink</em> to the folder, to have the same reference to the binary executable, is <code>ideaIC</code> -&gt; <code>idea-IC-163.10154.41</code></li>
+</ul>
+<p>Thus, the process must:</p>
+<ol>
+<li>Download the <code>tar.gz</code> files</li>
+<li>Extract them</li>
+<li>Generate a <em>symlink</em> for each one of them</li>
+</ol>
+<p>The <code>get_url</code> module allows you to download a remote file and the <code>unarchive</code> module lets you extract a compressed file. Finally, with the <code>file</code> module you can create a <em>symlink</em> specifying the <code>state=link</code> property:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_targz_files.yml"></script>
+<h3>Binaries</h3>
+<p>Installing the binaries requires:</p>
+<ol>
+<li>Downloading the binary files</li>
+<li>Placing them in <code>/usr/local/bin</code> folder</li>
+<li>Making them executable files</li>
+</ol>
+<p>With the <code>get_url</code> module you can download a remote file to the desired local folder and make it executable specifying the <code>mode=0755</code> property, all at once:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_binaries.yml"></script>
+<h3>Other package managers</h3>
+<p>I use <a href="http://sdkman.io/">SDKMAN!</a>, a tool for managing parallel versions of multiple SDKs, to install <a href="https://java.com">Java</a>, <a href="http://www.scala-sbt.org/">Sbt</a> and <a href="https://maven.apache.org/">Maven</a>. To be able to do so you have to:</p>
+<ol>
+<li>Download <a href="http://sdkman.io/">SDKMAN!</a></li>
+<li>Install it</li>
+<li>Then use it to install the desired SDKs</li>
+</ol>
+<p>In this case, the installation and configuration is done entirely with bash scripts.</p>
+<h3>Configuration</h3>
+<p>This is the most specific part, because it depends on the degree of customization to apply. I do the following:</p>
+<ul>
+<li>Set <code>zsh</code> as the default shell</li>
+<li>Create the completions folder for <code>zsh</code> and place the completion files there (for <code>docker-compose</code>, <code>hub</code> and <code>sdk</code>)</li>
+<li>Install <code>oh-my-zsh</code> by cloning its repo and <em>symlink</em> my custom theme</li>
+<li><em>Symlink</em> the <em>dot files</em> <code>.zshrc</code>, <code>.gitconfig</code>, <code>.aliases</code></li>
+<li>Create <code>.config</code> folder and <em>symlink</em> configuration files for <code>terminator</code></li>
+<li>Create applications folder and <em>symlink</em> <code>idea</code>'s desktop file so the application appears in the HUD</li>
+<li>Create autostart folder and <em>symlink</em> <code>guake</code>'s autostart file</li>
+<li>Install Atom plugins</li>
+</ul>
+<h3>Bootstrapping</h3>
+<p>Starting with a freshly installed OS we need to bootstrap the automated setup process. Since the Ansible scripts are stored in a <a href="https://github.com/pbassiner/dev-env">GitHub repository</a> we need to begin with:</p>
+<ol>
+<li>Updating OS packages</li>
+<li>Installing <code>git</code> and <code>ansible</code></li>
+<li>Cloning the repository</li>
+<li>Run the Ansible <em>playbook</em></li>
+</ol>
+<p>Those are the steps that the <code>bootstrap.sh</code> file performs:</p>
+<script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=bootstrap.sh"></script>
+<h3>The last mile</h3>
+<p>While I was developing these scripts I had to execute them a gazillion times, and each and every time I had to:</p>
+<ol>
+<li>Open a browser</li>
+<li>Go to the GitHub repository</li>
+<li>Get the raw content of the <code>bootstrap.sh</code> file</li>
+<li>Open a terminal</li>
+<li>Create a file</li>
+<li>Copy the <code>bootstrap.sh</code> file content to the new file</li>
+<li>Save it</li>
+<li>Make it executable</li>
+<li>Run it</li>
+</ol>
+<p>That was clearly improvable, so I <em>googled</em> how to execute a remote bash script and ended up with this:</p>
+<pre><code>wget -qO- https://raw.github.com/pbassiner/dev-env/master/bootstrap.sh | bash
+</code></pre>
+<p>After that, running the scripts was just:</p>
+<ol>
+<li>Opening a browser</li>
+<li>Copying this command (I placed it in the repository <code>README</code> file)</li>
+<li>Opening a terminal</li>
+<li>Running it</li>
+</ol>
+<h3>Maintenance</h3>
+<p>In order to test any changes in the scripts, while keeping the <code>master</code> branch as the working version, the <code>bootstrap.sh</code> file allows to define the branch to use with <code>-b|--branch &lt;BRANCH&gt;</code> (default is <code>master</code>).</p>
+<p>The Ansible <em>playbooks</em> I wrote also take care of updating the dependencies. After the initial setup, running again the <code>bootstrap.sh</code> file will handle the upgrades of the applications and tools (you can check the complete <code>bootstrap.sh</code> file <a href="https://github.com/pbassiner/dev-env/blob/master/bootstrap.sh">here</a>).</p>
+<p>Anyway, from time to time I still have to check for updates of the manually installed packages.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://github.com/pbassiner/dev-env">Development Environment Configuration with Ansible @ GitHub</a></li>
+<li><a href="http://docs.ansible.com/ansible/index.html">Ansible Documentation Reference</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
+    <title type="html">
+      <![CDATA[Contributing to Open Source Projects - atom-scalariform]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/contributing_to_open_source_projects_-_atom-scalariform.html"/>
+    <id>https://pbassiner.github.io/blog/contributing_to_open_source_projects_-_atom-scalariform.html</id>
+    <published>2016-12-14T00:00:00+0100</published>
+    <updated>2016-12-14T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>So far all my experiences in contributing to open source projects share a common trait among them, other than being really simple and minor improvements: I needed something that wasn't yet supported or implemented in a library I had as a dependency, or in a tool I was using.</p>
+<p>For instance, I added support for <a href="http://slick.lightbend.com/">Slick</a> 3.x to <a href="https://github.com/muuki88/sbt-slick">sbt-slick</a>, an <a href="http://www.scala-sbt.org/">Sbt</a> plugin to generate Slick table schemas from the database schema definition in its own DDL, because version 3.x wasn't supported yet.</p>
+<p>Likewise, I added support for <a href="http://www.scala-lang.org/">Scala</a> 2.11 to <a href="https://github.com/swagger-api/swagger-async-httpclient">swagger-async-httpclient</a>, which automates the code generation of a Scala HTTP asynchronous client from a <a href="http://swagger.io/">Swagger</a> API definition.</p>
+<p>My last contribution was shortly after I began to write this blog, so I thought it was something worth to blog about.</p>
+<h2>Context</h2>
+<p>While writing a <a href="https://pbassiner.github.io/blog/my_dev_setup.html">previous post</a> on this blog I was making some changes to the script I use to generate it. It's written in <a href="http://www.scala-lang.org/">Scala</a> but it uses <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a>, which allows to compile and execute Scala code without setting up a whole project nor requiring a build tool.</p>
+<p>This means I <em>can't</em> use an IDE to edit it. Although I technically could, it would require to setup a Scala project (including dependency management and such) and that would go against the whole point of using Ammonite.</p>
+<p>I use <a href="https://atom.io/">Atom</a> instead but, nevertheless, I didn't want to give up all the features you get for free from an IDE. So I looked for some Atom packages that could help providing, at least, Scala source code highlighting and formatting. I found <a href="https://github.com/atom-community/language-scala">language-scala</a> for highlighting and <a href="https://github.com/jackhopner/atom-scalariform">atom-scalariform</a> for formatting.</p>
+<h2>The issue</h2>
+<p>The highlighting worked as expected but when I tried to format the blog-generator script I got an error saying:</p>
+<blockquote>
+<p>You do not have a valid scala file open!</p>
+</blockquote>
+<p>Well, that was somehow reasonable. Ammonite scripts are not <em>standard</em>; moreover, files have <strong>.sc</strong> extension instead of <strong>.scala</strong>.</p>
+<h2>Research</h2>
+<p>Out of curiosity I took a look at the <a href="https://github.com/jackhopner/atom-scalariform">atom-scalariform</a> repository to check out the Atom plugin code. I assumed that it would be easy to spot the file extension validation section and it was indeed. The code responsible for the validation was, at that time, the following:</p>
+<script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=atom-scalariform_pre_ammonite_support.js"></script>
+<p>Then I looked for the Atom plugins local folder (<code>~/.atom/packages/</code>) and saw there was a sub-folder for each Atom plugin I had installed. And within the <code>atom-scalariform</code> folder, the same file structure I just saw in the repository. So I opened the <code>atom-scalariform.js</code> file and added <strong>.sc</strong> as a valid file extension:</p>
+<script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=atom-scalariform_post_ammonite_support.js"></script>
+<p>Finally I rebooted Atom and <em>voilà!</em> Formatting the Ammonite script was successful:</p>
+<blockquote>
+<p>Formatted scala file!</p>
+</blockquote>
+<h2>Digging deeper</h2>
+<p>Formatting was working but I wanted to customize it. Since the script deals with HTML entities using <a href="https://github.com/lihaoyi/scalatags">scalatags</a> I wanted the code to be formatted accordingly:</p>
+<script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=scalatags_example_html_indentation.scala"></script>
+<p>Digging into the scalariform documentation I found that it should be supported through the <code>danglingCloseParenthesis</code> <a href="https://github.com/scala-ide/scalariform#danglingcloseparenthesis">property</a>. So following atom-scalariform <a href="https://github.com/jackhopner/atom-scalariform/blob/master/README.md">README</a> I created a <code>scalariform.properties</code> file and set it up as follows:</p>
+<pre><code>preserveDanglingCloseParenthesis=true
+</code></pre>
+<p>I formatted the script again and it kept the HTML-<em>like</em> indentation intact, but I wasn't satisfied quite yet.</p>
+<p>I had to define the path to my <code>scalariform.properties</code> file in the plugin configuration as an absolute path, which then would be applied to any file.</p>
+<p>Even though is common to have a formatting standard per language, I think it's convenient to have a per-project basis configuration so you can make minor adaptations in specific projects.</p>
+<h2>Improving</h2>
+<p>I thought that it'd be nice to be able to configure the properties file path to be relative to the current project folder. So again, back to the plugin code, I realized there was no hint of how could I do that and, after <em>googling</em> a bit, I came up with this:</p>
+<script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=atom-scalariform_getProjectPath.js"></script>
+<p>Then I added a new property <code>relativeToProject</code> to the plugin configuration and used it in the formatting process accordingly. I tested both configurations, relative and absolute, and it worked fine.</p>
+<h2>Contributing</h2>
+<p>During the process I was already considering contributing to the project so I jumped back to the plugin repository and reviewed the <code>README</code> file looking for any indications on how to contribute, and I also checked out if there were any tests that I should update or even add some new ones. I found none, so I was practically done.</p>
+<p>I forked the repository, made two branches (one for the Ammonite scripts support and another for the properties file path) since these were independent improvements, updated the <code>README</code> file in each of them and created the PRs:</p>
+<ol>
+<li><a href="https://github.com/jackhopner/atom-scalariform/pull/2">add support for ammonite scripts *.sc</a></li>
+<li><a href="https://github.com/jackhopner/atom-scalariform/pull/3">scalariform props file absolute/relative path flag</a></li>
+</ol>
+<h2>Follow up</h2>
+<p>Several days later, the project maintainer <a href="https://github.com/jackhopner">Jack Hopner</a> kindly merged the first PR right away and asked for some improvements on the second one. I proposed to simplify the configuration by removing the <code>relativeToProject</code> property and then considering the path to the <code>scalariform.properties</code> file to be an absolute path if it starts with a <code>/</code> or a relative path otherwise.</p>
+<p>After applying those changes, the second PR was also merged and both contributions were included in the <code>1.0.0</code> <a href="https://github.com/jackhopner/atom-scalariform/releases/tag/v1.0.0">release</a> of the Atom plugin, which was published shortly after.</p>
+<h2>Enjoy</h2>
+<p>That's it, now I'm running Atom with a plugin that contains some code I wrote myself.</p>
+]]>
+    </content>
+  </entry><entry>
+    <title type="html">
+      <![CDATA[My Dev Setup]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/my_dev_setup.html"/>
+    <id>https://pbassiner.github.io/blog/my_dev_setup.html</id>
+    <published>2016-12-01T00:00:00+0100</published>
+    <updated>2016-12-01T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Over time I've been adapting my development environment to increase productivity. This means trying out alternatives beyond the out-of-the-box tools you get in a specific OS. I run <a href="https://www.ubuntu.com/">Ubuntu</a>, 16.04 at the moment, and this is a recap of the tools I currently use to work.</p>
+<h2>TL;DR</h2>
+<p>As a takeaway, the most remarkable productivity boosts I've experienced so far have been due to:</p>
+<ul>
+<li>Using <a href="https://launchpad.net/terminator/">Terminator</a> instead of the default terminal</li>
+<li>Replacing the default shell with <a href="https://github.com/zsh-users/zsh">zsh</a></li>
+<li>Switching to <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>, for Java/Scala development</li>
+</ul>
+<h2>Basic tooling</h2>
+<h3>Terminals</h3>
+<p><a href="https://launchpad.net/terminator/">Terminator</a> is my default terminal. You can have multiple terminals in the same view (split panes) and multicast commands to all of them.</p>
+<p><a href="http://www.tecmint.com/wp-content/uploads/2014/01/31.jpeg"><img src="http://www.tecmint.com/wp-content/uploads/2014/01/31.jpeg" alt="terminator" /></a></p>
+<p>I also use <a href="https://github.com/Guake/guake/">Guake</a> which is a drop-down terminal, meaning you can hide it and it's not managed by the OS GUI as a running application. I mainly use it to run stuff in the background like setting up a VPN, tunnels or starting up local services I occasionally need.</p>
+<p><a href="http://guake-project.org/img/screenshot2.jpg"><img src="http://guake-project.org/img/screenshot2.jpg" alt="guake" /></a></p>
+<h3>shell</h3>
+<p>Let's face it, if you use the command line there's not much room to improve efficiency while using <a href="https://www.gnu.org/software/bash/bash.html">Bash</a>.</p>
+<p>I use <a href="https://github.com/zsh-users/zsh">zsh</a> instead, along with <a href="https://github.com/robbyrussell/oh-my-zsh">oh-my-zsh</a> to manage its configuration. It provides improved autocompletion for commands and its arguments, shared command history between all open shells and it lets you expand environment variables, among other features.</p>
+<p><a href="https://cloud.githubusercontent.com/assets/2618447/6316862/70f58fb6-ba03-11e4-82c9-c083bf9a6574.png"><img src="https://cloud.githubusercontent.com/assets/2618447/6316862/70f58fb6-ba03-11e4-82c9-c083bf9a6574.png" alt="zsh" /></a></p>
+<p>It's also <em>git-friendly</em> by allowing to customize the prompt to display the current git branch, commit and the number of staged and unstaged files, and enhances <code>git</code> autocompletion with description of the commands and arguments, including your own <code>git</code> aliases.</p>
+<p><code>oh-my-zsh</code>, on the other hand, adds the capability of installing themes and plugins. One of them is <a href="https://github.com/psprint/zsh-navigation-tools">zsh-navigation-tools</a> which provides visual navigation for many commands such as <code>history</code> or <code>kill</code>, so you can interactively browse and pick the history command to replay or the process to kill, respectively.</p>
+<p><a href="https://camo.githubusercontent.com/c7b779f8c3c9b831f9847ffbf961365e73303f50/687474703a2f2f696d616765736861636b2e636f6d2f612f696d673932312f353034362f627172306d6b2e706e67"><img src="https://camo.githubusercontent.com/c7b779f8c3c9b831f9847ffbf961365e73303f50/687474703a2f2f696d616765736861636b2e636f6d2f612f696d673932312f353034362f627172306d6b2e706e67" alt="zsh-navigation-tools" /></a></p>
+<h3>git</h3>
+<p>I use <a href="https://git-scm.com/">git</a> from the command line, along with a bunch of <a href="https://pbassiner.github.io/blog/git_aliases_to_the_rescue.html"><code>git</code> aliases</a>. Since I use <a href="https://github.com">GitHub</a> as the remote repository there are some things that need to be done through their UI, usually reviewing and merging PRs. While developing though, the only thing you need from GitHub is to open the PR, and I use <a href="https://github.com/github/hub">hub</a> for that. You can setup <code>git</code> as an alias to <code>hub</code> and then you can open a PR in GitHub just by running:</p>
+<pre><code class="language-bash">git pull-request -b BASE_BRANCH
+</code></pre>
+<h3>http</h3>
+<p>If you need to make requests to a REST API, the <code>curl</code> command is the usual choice. It was mine indeed, until I discovered <a href="https://github.com/jkbrzt/httpie">httpie</a>, a human-friendly command-line HTTP client. It lets you easily make HTTP requests with authentication, headers, body, etc. For instance, <a href="https://developer.github.com/v3/issues/comments/#create-a-comment">posting a comment on a GitHub issue</a> is as easy as:</p>
+<pre><code class="language-bash">http -a USERNAME POST https://api.github.com/repos/jkbrzt/httpie/issues/83/comments body='HTTPie is awesome! :heart:'
+</code></pre>
+<p>JSON is the implicit content type <code>httpie</code> uses by default. It makes it really simple to define the serialized JSON object in the request body:</p>
+<pre><code class="language-bash">http PUT example.org name=John email=john@example.org
+</code></pre>
+<p>And the response body is pretty printed for readability:</p>
+<pre><code class="language-bash">PUT / HTTP/1.1
+Accept: application/json, */*
+Accept-Encoding: gzip, deflate
+Content-Type: application/json
+Host: example.org
+
+{
+    &quot;name&quot;: &quot;John&quot;,
+    &quot;email&quot;: &quot;john@example.org&quot;
+}
+</code></pre>
+<h2>SDKs &amp; Runtimes</h2>
+<p>I mainly develop in <a href="https://www.java.com">Java</a> &amp; <a href="http://www.scala-lang.org/">Scala</a>, with <a href="https://maven.apache.org/">Maven</a> and <a href="http://www.scala-sbt.org/">Sbt</a> as build tools respectively. To avoid having to manually manage installation and upgrades I use <a href="http://sdkman.io/">sdkman</a>, a tool for managing parallel versions of multiple SDKs. Installing the latest version of <a href="http://www.scala-sbt.org/">Sbt</a> is simply:</p>
+<pre><code class="language-bash">sdk install sbt
+</code></pre>
+<p>It has a beta channel which offers early access to new features. For instance, it currently allows to install a Java SDK with a simple</p>
+<pre><code class="language-bash">sbt install java 8u111
+</code></pre>
+<p>Once this goes stable it will allow to setup most JVM related development environments with a single manager.</p>
+<h2>Editors &amp; IDEs</h2>
+<p>My IDE of choice is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>. It's slick and fast. I've used <a href="https://eclipse.org">Eclipse</a> and <a href="https://netbeans.org/">NetBeans</a> in the past and they can't even compete, at least regarding my needs.</p>
+<p>For other purposes like developing in Javascript or writing this blog I use <a href="https://github.com/atom/atom">Atom</a>, the text editor by <a href="https://github.com">GitHub</a>. Although I have to admit I still use <a href="https://www.sublimetext.com/">Sublime Text 3</a> for editing large files. So far Atom doesn't seem to be able to handle large files, I guess because it's <a href="http://blog.atom.io/2014/02/26/the-nucleus-of-atom.html">web-native</a>.</p>
+<h2>Automating the setup</h2>
+<p>I automated the setup process a while ago using <a href="https://www.ansible.com/">Ansible</a> to avoid installing all these tools and some more manually. The source code is available at <a href="https://github.com/pbassiner/dev-env">GitHub</a> and I plan to write a post about it in the near future.</p>
+]]>
+    </content>
+  </entry><entry>
+    <title type="html">
+      <![CDATA[Git Aliases to the Rescue]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/git_aliases_to_the_rescue.html"/>
+    <id>https://pbassiner.github.io/blog/git_aliases_to_the_rescue.html</id>
+    <published>2016-11-15T00:00:00+0100</published>
+    <updated>2016-11-15T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/branch-and-history.png" alt="git" />
+ </p>
+<p>The more I use <a href="https://git-scm.com/">Git</a>, the less I believe how I could work without it. Although its usage is widely spread (is there anyone out there using SVN voluntarily?), it's common to start with the basics (<code>fetch</code>, <code>pull</code>, <code>add</code>, <code>commit</code>, <code>push</code>, ...), memorize them as you've been told, and move on.</p>
+<p>As with most things in software engineering, you can't use something properly until you have a good grasp of how it works. There's a difference between using Git and <em>using</em> Git.</p>
+<p>The best way to start is to dig deeper into the commands you already know by using the <code>--help</code> option:</p>
+<pre><code class="language-bash">git &lt;command&gt; --help
+</code></pre>
+<p>You'll soon realize how complex and powerful Git can be, and once you go down that road, there's no coming back.</p>
+<p>I'm constantly learning new commands or options, and I try to focus on them one at a time until I start using it automatically. It's also possible that I don't get to that spot, and I end up either dismissing it or, creating an alias to it, hence the subject of this post.</p>
+<p>You can define global Git aliases by using the <code>git-config</code> command or writing them directly in the <code>~/.gitconfig</code> file.</p>
+<p>I use Git aliases for two scenarios:</p>
+<ul>
+<li>shorten the most used commands (for instance, the command I think I use the most is <code>checkout</code>, which I've aliased into <code>co</code>)</li>
+<li>simplify commands with multiple options</li>
+</ul>
+<p>Let's see some examples.</p>
+<h2>git commit</h2>
+<h3>amend</h3>
+<p>It's common to amend commits, especially the <em>WIP</em> ones, and I usually don't need to edit the commit message. You can skip the message edition with the <code>--no-edit</code> option, and I use the following alias for that (credit goes to <a href="https://twitter.com/kannonboy">Tim Pettersen</a>):</p>
+<pre><code class="language-bash">commend = commit --amend --no-edit
+</code></pre>
+<h3>fixup</h3>
+<p>It's also common while developing to make near-to-atomic commits that you'll eventually <em>fixup</em>. When you do so by rebasing interactively, you have to manually replace all <code>pick</code> commands with <code>fixup</code>s. But there's a way to leave a hint on <code>fixup</code>s that will eventually happen:</p>
+<pre><code class="language-bash">git commit --fixup &lt;commit&gt;
+</code></pre>
+<p>where <code>&lt;commit&gt;</code> is the first commit you'd include in a <em>rebase</em>. You'll end up with a history similar to this:</p>
+<pre><code class="language-bash">608601e - fixup! first commit
+032d432 - fixup! first commit
+c4d1469 - first commit
+6ce0a04 - base commit
+</code></pre>
+<p>Then when you run <code>git rebase -i 6ce0a04</code> the prompt will show:</p>
+<pre><code class="language-bash">pick c4d1469 first commit
+fixup 032d432 fixup! first commit
+fixup 608601e fixup! first commit
+</code></pre>
+<p>I've aliased this into <code>git cf</code>:</p>
+<pre><code class="language-bash">cf = commit --fixup
+</code></pre>
+<h2>git push</h2>
+<p>When pushing changes you might need to use the <code>--force</code> option which, by the way, should never be used against shared branches. Instead, the <code>--force-with-lease</code> option will check that your local tree is up-to-day before you can overwrite it (check out this <a href="https://developer.atlassian.com/blog/2015/04/force-with-lease/">post on Atlassian Developers blog</a> about force-pushing). To simplify its usage I have the following alias (credit goes to <a href="https://twitter.com/kannonboy">Tim Pettersen</a>):</p>
+<pre><code class="language-bash">please = push --force-with-lease
+</code></pre>
+<h2>git diff</h2>
+<p><code>git diff</code> shows the <em>unstaged</em> changes by default, but sometimes you also want to check out the <em>staged</em> changes (<code>git diff --staged</code>), or even all of them at once (<code>git diff HEAD</code>). These are my <code>diff</code> related aliases:</p>
+<pre><code class="language-bash">diffs = diff --staged
+diffh = diff HEAD
+</code></pre>
+<h2>git ls-remote</h2>
+<p>Sometimes it's useful to list the branches and tags of the remote repository without the need of a UI (i.e. GitHub):</p>
+<pre><code class="language-bash">lsrh = ls-remote --heads
+lsrt = ls-remote --tags
+</code></pre>
+<h2>git stash</h2>
+<p>This is one of my favorite Git commands. I mainly use it to store work in progress that I'd rather not push yet to the remote repository, when I have to temporarily switch to another branch to fulfill a quick task. I also use it to store local environment-dependent changes in configuration files, which I could easily rewrite if I switched workstations.</p>
+<p>The <em>stash</em> is like a stack where you can push your current state to save it for later. You can then apply those changes and either keep them in the <em>stash</em> or choose to discard them.</p>
+<p>While saving the state you can attach a description message to identify the changes each <em>stash</em> entry includes, by using <code>git stash save -u &quot;my description message&quot;</code>. You can then list the stash content with <code>git stash list</code>. To retrieve changes from the <em>stash</em>, you can apply them using <code>git stash apply stash@{&lt;index&gt;}</code> or apply and remove them from the <em>stash</em> using <code>git stash pop stash@{&lt;index&gt;}</code>, where <code>&lt;index&gt;</code> refers to the position of the set of changes in the <em>stash</em>. This is a really useful command but it can become annoying. Git aliases to the rescue!</p>
+<pre><code class="language-bash">sa = &quot;!sh -c \&quot;git stash apply 'stash@{$1}'\&quot; -&quot;
+sp = &quot;!sh -c \&quot;git stash pop 'stash@{$1}'\&quot; -&quot;
+ss = &quot;!sh -c \&quot;git stash save -u $1\&quot; -&quot;
+sl = stash list
+</code></pre>
+<h2>More</h2>
+<p>I use more aliases, especially for <code>git log</code> commands but these are almost mandatory if you want to take advantage of the many customization options it provides. My <code>.gitconfig</code> file is available at <a href="https://github.com/pbassiner/dev-env/blob/master/dotfiles/gitconfig">GitHub</a>. The template I used to start my own is <a href="https://github.com/aserrallerios/dotfiles/blob/master/gitconfig">this one</a> by Albert Serrallé.</p>
+<h2>References:</h2>
+<ul>
+<li><a href="https://github.com/aserrallerios/dotfiles/blob/master/gitconfig">Albert Serrallé's gitconfig</a></li>
+<li><a href="https://hackernoon.com/lesser-known-git-commands-151a1918a60">Lesser known Git commands</a> by <a href="https://twitter.com/kannonboy">Tim Pettersen</a></li>
+<li><a href="https://developer.atlassian.com/blog/2015/04/force-with-lease/">--force considered harmful; understanding git's --force-with-lease</a> post on <a href="https://developer.atlassian.com">Atlassian Developers blog</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
+    <title type="html">
+      <![CDATA[Hello World]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/hello_world.html"/>
+    <id>https://pbassiner.github.io/blog/hello_world.html</id>
+    <published>2016-11-03T00:00:00+0100</published>
+    <updated>2016-11-03T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Well, it's been a while since I considered writing a blog but I always ended up putting it aside because I wasn't able to find its value or purpose. When considering ideas for the actual content I quickly focused on its weaknesses, mainly driven by a latent imposter syndrome.</p>
+<p>Then I realized that I'd never be confident enough to share my thoughts without having some doubts about its correctness. There's always gonna be people who disagree with my opinions or even prove them wrong, but that's fine.</p>
+<p>So here I am. I'm gonna try to write about technical stuff mostly, but also about software engineering in a wider sense.</p>
+<p>Wish me luck.</p>
+]]>
+    </content>
+  </entry>
+  </feed>

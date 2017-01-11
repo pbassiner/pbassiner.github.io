@@ -15,6 +15,7 @@ The strategy on building this blog was heavily inspired by [Li Haoyi](https://tw
 * Comments stored in GitHub issues, one issue per post
 * Live fetching of comments from GitHub issues through Javascript
 * Twitter sharing through [Tweet Web Intent](https://dev.twitter.com/web/tweet-button/web-intent)
+* RSS/Atom feed
 
 ## Strategy
 * Generation scripts written in Scala

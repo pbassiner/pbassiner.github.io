@@ -10,10 +10,12 @@ import scalatags.Text.all._
 import $file.MdToHtml, MdToHtml._
 import $file.^.Config, Config._
 import $file.^.github.GitHubClient, GitHubClient._
+import $file.^.rss.Rss
 import $file.^.twitter.Twitter, Twitter._
 
 val indexFilename = "index.html"
 val generatedBlogPostsFolder = "blog"
+val rssFeedFilename = "feed.xml"
 
 private[this] object DateUtils {
   val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
@@ -78,6 +80,7 @@ object Builder {
   private[this] def cleanup = {
     rm ! pwd / indexFilename
     rm ! pwd / generatedBlogPostsFolder
+    rm ! pwd / rssFeedFilename
   }
 
   private[this] def sortedPosts = {
@@ -231,10 +234,29 @@ object Builder {
       )
     )
 
+  private[this] def writeRssFeed(posts: Iterable[Post]) = {
+    val rssEntries = posts map { post =>
+      Rss.Entry(
+        mdFilenameToTitle(post.filename),
+        dateFormatter.parse(post.date),
+        generatedBlogPostsFolder + "/" + mdFilenameToHtmlFilename(post.filename),
+        mdFileToHtml(post.path)
+      )
+    }
+
+    val feed = Rss.buildFeed(dateFormatter.parse(currentDate), rssEntries)
+
+    write(
+      pwd / rssFeedFilename,
+      s"""<?xml version="1.0" encoding="utf-8"?>${feed}"""
+    )
+  }
+
   def apply(config: Configuration): Unit = {
     cleanup
     writePosts(config)
     write(pwd / indexFilename, index.render)
+    writeRssFeed(sortedPosts)
   }
 
 }
