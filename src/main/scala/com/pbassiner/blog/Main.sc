@@ -34,9 +34,9 @@ def publish(env: Env): Unit = {
 def clean(env: Env): Unit = {
   env match {
     case Prod | Dev => {
-      Git checkout BlogBuilder.indexFilename
-      Git checkout (BlogBuilder.generatedBlogPostsFolder + "/")
-      Git checkout BlogBuilder.rssFeedFilename
+      Git checkout Files.indexFilename
+      Git checkout (Files.generatedBlogPostsFolder + "/")
+      Git checkout Files.rssFeedFilename
       Git.untrackedFiles.filter(_.endsWith(".html")).foreach(rm ! pwd / RelPath(_))
     }
     case Drafts => {
