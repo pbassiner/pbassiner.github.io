@@ -1,5 +1,9 @@
 import scalaj.http._
 
+import $file.^.Config, Config._
+
+private[this] val issuesApiUrl = s"https://api.github.com/repos/${Metadata.githubUser}/${Metadata.githubRepo}/issues"
+
 final case class GitHubIssue(htmlUrl: String, fetchCommentsAndAppendJs: String)
 object GitHubIssue {
   def empty() = GitHubIssue("", "")
@@ -39,7 +43,7 @@ def commentsByPost(post: String) = {
 
 private[this] def getIssuesByLabel(label: String) = {
   upickle.json.read(
-    Http(s"https://api.github.com/repos/pbassiner/pbassiner.github.io/issues").param("labels", label)
+    Http(issuesApiUrl).param("labels", label)
       .asString
       .body
   )

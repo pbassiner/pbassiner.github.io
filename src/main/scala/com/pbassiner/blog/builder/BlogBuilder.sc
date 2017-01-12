@@ -50,7 +50,7 @@ private[this] object Common {
         ul(`class` := "list-unstyled about-social",
           li(a(i(`class` := "fa fa-twitter-square"), " Twitter", href := "https://twitter.com/polbassiner", target := "_blank")),
           li(a(i(`class` := "fa fa-linkedin-square"), " LinkedIn", href := "https://es.linkedin.com/in/polbassiner", target := "_blank")),
-          li(a(i(`class` := "fa fa-github-square"), " GitHub", href := "https://github.com/pbassiner", target := "_blank")),
+          li(a(i(`class` := "fa fa-github-square"), " GitHub", href := s"https://github.com/${Metadata.githubUser}", target := "_blank")),
           li(a(i(`class` := "fa fa-rss-square"), " RSS", href := s"${Metadata.feedUrl}", target := "_blank"))
         )
       )

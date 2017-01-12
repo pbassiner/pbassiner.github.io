@@ -1,6 +1,12 @@
 import $ivy.`com.atlassian.commonmark:commonmark:0.8.0`
 
 import ammonite.ops._
+import org.commonmark.node._
+import org.commonmark.parser.Parser
+import org.commonmark.renderer.html._
+import org.commonmark.renderer.NodeRenderer
+
+import $file.^.github.Gists
 
 def mdFilenameToHtmlFilename(name: String): String = name.replace(" ", "-").toLowerCase + ".html"
 
@@ -17,12 +23,9 @@ def mdFileFirst25WordsToHtml(path: Path): String = {
 }
 
 private[this] def mdToHtml(content: String): String = {
-  import org.commonmark.renderer.html.HtmlRenderer
-  import org.commonmark.parser.Parser
-
   val parser = Parser.builder().build()
   val document = parser.parse(content)
-  val renderer = HtmlRenderer.builder().build()
+  val renderer = HtmlRenderer.builder().nodeRendererFactory({ context => new GistScriptNodeRenderer(context) }).build()
   renderer.render(document)
 }
 
@@ -31,3 +34,26 @@ private[this] def isReadable: String => Boolean =
 
 private[this] def getFirst25Words(line: String): String =
   line.split("\\s").take(25) mkString " "
+
+private[this] class GistScriptNodeRenderer(val context: HtmlNodeRendererContext) extends NodeRenderer {
+
+  override def getNodeTypes(): java.util.Set[java.lang.Class[_ <: Node]] =
+    java.util.Collections.singleton(classOf[HtmlBlock])
+
+  override def render(node: Node): Unit = {
+    val html = context.getWriter();
+    val inlineHtml = node.asInstanceOf[HtmlBlock].getLiteral
+
+    html.line()
+    html.raw(inlineHtml)
+
+    Gists.getGist(inlineHtml) foreach { gist =>
+      html.line()
+      html.tag("figcaption")
+      html.raw(s"""<a href="${gist.url}">${gist.url}</a>""")
+      html.tag("/figcaption")
+    }
+
+    html.line()
+  }
+}

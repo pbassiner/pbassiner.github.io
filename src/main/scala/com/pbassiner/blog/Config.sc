@@ -7,9 +7,11 @@ case class Configuration(
 )
 
 object Metadata {
-  val url = "https://pbassiner.github.io/"
-  val feedUrl = "https://pbassiner.github.io/feed.xml"
   val author = "Pol Bassiner"
+  val githubUser = "pbassiner"
+  val githubRepo = s"$githubUser.github.io"
+  val url = s"https://$githubRepo/"
+  val feedUrl = s"$url/feed.xml"
 }
 
 object Files {
