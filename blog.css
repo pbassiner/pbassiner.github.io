@@ -184,6 +184,7 @@ img {
 }
 figcaption {
   text-align: center;
+  word-wrap: break-word;
   margin-top: -0.5em;
   margin-bottom: 1em;
 }

@@ -35,8 +35,10 @@
 <p>I'm not gonna get into much details about Ansible itself, mainly because my only experience with it is building the <em>playbooks</em> (Ansible's configuration language) to automate the setup of my development environment. All I can say about it is that it makes installation and configuration much easier than, say, using bash scripts.</p>
 <p>For instance, the following <em>playbook</em> installs a debian package using <code>apt-get</code>, through the <code>apt</code> module:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_single_package.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_single_package-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_single_package-yml</a></figcaption>
 <p>The key here is that you can parametrize it using the <code>with_items</code> loop statement:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_packages_with_items.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_packages_with_items-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_packages_with_items-yml</a></figcaption>
 <p>Ansible also allows to combine <em>playbooks</em> so, for instance, the list of packages to install can be defined in a separate file and included in others.</p>
 <h2>Automating the process</h2>
 <p>The applications and tools to be installed may be distributed differently:</p>
@@ -51,6 +53,7 @@
 <h3>Parameters</h3>
 <p>I chose to separate the installation steps from the actual things to be installed. In the <code>vars.yml</code> file I defined the list of stuff to install (for convenience, this is just an excerpt):</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_vars.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_vars-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_vars-yml</a></figcaption>
 <h3>Debian packages</h3>
 <p>Installing debian packages requires:</p>
 <ol>
@@ -60,6 +63,7 @@
 </ol>
 <p>The <code>apt_key</code>, <code>apt_repository</code> and <code>apt</code> modules, respectively, let you do that:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_packages.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_packages-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_packages-yml</a></figcaption>
 <p>On the other hand, manually installed debian packages require:</p>
 <ol>
 <li>Downloading the <code>.deb</code> files</li>
@@ -67,6 +71,7 @@
 </ol>
 <p>The <code>apt</code> module can install the package from a local <code>.deb</code> file, which is automatically downloaded if we specify it as an URL:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_files.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_files-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_files-yml</a></figcaption>
 <h3>tar.gz distributed applications</h3>
 <p>The applications packaged as <code>tar.gz</code> files usually contain a root folder related to the application version (i.e. <code>myApp.2.3.1_build33</code>). That folder might be referenced somewhere else, like a shortcut or a command, and that's likely to break if we upgrade the application. In this case I added an indirection layer using a <em>symlink</em>.</p>
 <p>An example of this is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>:</p>
@@ -83,6 +88,7 @@
 </ol>
 <p>The <code>get_url</code> module allows you to download a remote file and the <code>unarchive</code> module lets you extract a compressed file. Finally, with the <code>file</code> module you can create a <em>symlink</em> specifying the <code>state=link</code> property:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_targz_files.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_targz_files-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_targz_files-yml</a></figcaption>
 <h3>Binaries</h3>
 <p>Installing the binaries requires:</p>
 <ol>
@@ -92,6 +98,7 @@
 </ol>
 <p>With the <code>get_url</code> module you can download a remote file to the desired local folder and make it executable specifying the <code>mode=0755</code> property, all at once:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_binaries.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_binaries-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_binaries-yml</a></figcaption>
 <h3>Other package managers</h3>
 <p>I use <a href="http://sdkman.io/">SDKMAN!</a>, a tool for managing parallel versions of multiple SDKs, to install <a href="https://java.com">Java</a>, <a href="http://www.scala-sbt.org/">Sbt</a> and <a href="https://maven.apache.org/">Maven</a>. To be able to do so you have to:</p>
 <ol>
@@ -122,6 +129,7 @@
 </ol>
 <p>Those are the steps that the <code>bootstrap.sh</code> file performs:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=bootstrap.sh"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-bootstrap-sh">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-bootstrap-sh</a></figcaption>
 <h3>The last mile</h3>
 <p>While I was developing these scripts I had to execute them a gazillion times, and each and every time I had to:</p>
 <ol>
@@ -158,7 +166,7 @@
 <h2>Comments</h2>
 <p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
 <p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/15">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
-<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><i class="fa fa-rss-square"></i> RSS</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2017-01-11</p>
+<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li><li><a href="https://pbassiner.github.io//feed.xml" target="_blank"><i class="fa fa-rss-square"></i> RSS</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2017-01-13</p>
 <p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
 <p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
 </footer></body></html>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?><feed xml:lang="en" xmlns="http://www.w3.org/2005/Atom">
       <title>Pol Bassiner</title>
-        <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
+        <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io//feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-01-11T00:00:00+0100</updated>
+        <updated>2017-01-13T00:00:00+0100</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
@@ -29,8 +29,10 @@
 <p>I'm not gonna get into much details about Ansible itself, mainly because my only experience with it is building the <em>playbooks</em> (Ansible's configuration language) to automate the setup of my development environment. All I can say about it is that it makes installation and configuration much easier than, say, using bash scripts.</p>
 <p>For instance, the following <em>playbook</em> installs a debian package using <code>apt-get</code>, through the <code>apt</code> module:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_single_package.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_single_package-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_single_package-yml</a></figcaption>
 <p>The key here is that you can parametrize it using the <code>with_items</code> loop statement:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_packages_with_items.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_packages_with_items-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_packages_with_items-yml</a></figcaption>
 <p>Ansible also allows to combine <em>playbooks</em> so, for instance, the list of packages to install can be defined in a separate file and included in others.</p>
 <h2>Automating the process</h2>
 <p>The applications and tools to be installed may be distributed differently:</p>
@@ -45,6 +47,7 @@
 <h3>Parameters</h3>
 <p>I chose to separate the installation steps from the actual things to be installed. In the <code>vars.yml</code> file I defined the list of stuff to install (for convenience, this is just an excerpt):</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_vars.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_vars-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_vars-yml</a></figcaption>
 <h3>Debian packages</h3>
 <p>Installing debian packages requires:</p>
 <ol>
@@ -54,6 +57,7 @@
 </ol>
 <p>The <code>apt_key</code>, <code>apt_repository</code> and <code>apt</code> modules, respectively, let you do that:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_packages.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_packages-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_packages-yml</a></figcaption>
 <p>On the other hand, manually installed debian packages require:</p>
 <ol>
 <li>Downloading the <code>.deb</code> files</li>
@@ -61,6 +65,7 @@
 </ol>
 <p>The <code>apt</code> module can install the package from a local <code>.deb</code> file, which is automatically downloaded if we specify it as an URL:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_debian_files.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_files-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_debian_files-yml</a></figcaption>
 <h3>tar.gz distributed applications</h3>
 <p>The applications packaged as <code>tar.gz</code> files usually contain a root folder related to the application version (i.e. <code>myApp.2.3.1_build33</code>). That folder might be referenced somewhere else, like a shortcut or a command, and that's likely to break if we upgrade the application. In this case I added an indirection layer using a <em>symlink</em>.</p>
 <p>An example of this is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>:</p>
@@ -77,6 +82,7 @@
 </ol>
 <p>The <code>get_url</code> module allows you to download a remote file and the <code>unarchive</code> module lets you extract a compressed file. Finally, with the <code>file</code> module you can create a <em>symlink</em> specifying the <code>state=link</code> property:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_targz_files.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_targz_files-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_targz_files-yml</a></figcaption>
 <h3>Binaries</h3>
 <p>Installing the binaries requires:</p>
 <ol>
@@ -86,6 +92,7 @@
 </ol>
 <p>With the <code>get_url</code> module you can download a remote file to the desired local folder and make it executable specifying the <code>mode=0755</code> property, all at once:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=ansible_install_binaries.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_binaries-yml">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-ansible_install_binaries-yml</a></figcaption>
 <h3>Other package managers</h3>
 <p>I use <a href="http://sdkman.io/">SDKMAN!</a>, a tool for managing parallel versions of multiple SDKs, to install <a href="https://java.com">Java</a>, <a href="http://www.scala-sbt.org/">Sbt</a> and <a href="https://maven.apache.org/">Maven</a>. To be able to do so you have to:</p>
 <ol>
@@ -116,6 +123,7 @@
 </ol>
 <p>Those are the steps that the <code>bootstrap.sh</code> file performs:</p>
 <script src="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda.js?file=bootstrap.sh"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-bootstrap-sh">https://gist.github.com/pbassiner/073a681726ce742db1b4e87de5f75cda#file-bootstrap-sh</a></figcaption>
 <h3>The last mile</h3>
 <p>While I was developing these scripts I had to execute them a gazillion times, and each and every time I had to:</p>
 <ol>
@@ -180,8 +188,10 @@
 <h2>Research</h2>
 <p>Out of curiosity I took a look at the <a href="https://github.com/jackhopner/atom-scalariform">atom-scalariform</a> repository to check out the Atom plugin code. I assumed that it would be easy to spot the file extension validation section and it was indeed. The code responsible for the validation was, at that time, the following:</p>
 <script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=atom-scalariform_pre_ammonite_support.js"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-atom-scalariform_pre_ammonite_support-js">https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-atom-scalariform_pre_ammonite_support-js</a></figcaption>
 <p>Then I looked for the Atom plugins local folder (<code>~/.atom/packages/</code>) and saw there was a sub-folder for each Atom plugin I had installed. And within the <code>atom-scalariform</code> folder, the same file structure I just saw in the repository. So I opened the <code>atom-scalariform.js</code> file and added <strong>.sc</strong> as a valid file extension:</p>
 <script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=atom-scalariform_post_ammonite_support.js"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-atom-scalariform_post_ammonite_support-js">https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-atom-scalariform_post_ammonite_support-js</a></figcaption>
 <p>Finally I rebooted Atom and <em>voilà!</em> Formatting the Ammonite script was successful:</p>
 <blockquote>
 <p>Formatted scala file!</p>
@@ -189,6 +199,7 @@
 <h2>Digging deeper</h2>
 <p>Formatting was working but I wanted to customize it. Since the script deals with HTML entities using <a href="https://github.com/lihaoyi/scalatags">scalatags</a> I wanted the code to be formatted accordingly:</p>
 <script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=scalatags_example_html_indentation.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-scalatags_example_html_indentation-scala">https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-scalatags_example_html_indentation-scala</a></figcaption>
 <p>Digging into the scalariform documentation I found that it should be supported through the <code>danglingCloseParenthesis</code> <a href="https://github.com/scala-ide/scalariform#danglingcloseparenthesis">property</a>. So following atom-scalariform <a href="https://github.com/jackhopner/atom-scalariform/blob/master/README.md">README</a> I created a <code>scalariform.properties</code> file and set it up as follows:</p>
 <pre><code>preserveDanglingCloseParenthesis=true
 </code></pre>
@@ -198,6 +209,7 @@
 <h2>Improving</h2>
 <p>I thought that it'd be nice to be able to configure the properties file path to be relative to the current project folder. So again, back to the plugin code, I realized there was no hint of how could I do that and, after <em>googling</em> a bit, I came up with this:</p>
 <script src="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad.js?file=atom-scalariform_getProjectPath.js"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-atom-scalariform_getprojectpath-js">https://gist.github.com/pbassiner/c8afc3af6f591702bf173354fa7859ad#file-atom-scalariform_getprojectpath-js</a></figcaption>
 <p>Then I added a new property <code>relativeToProject</code> to the plugin configuration and used it in the formatting process accordingly. I tested both configurations, relative and absolute, and it worked fine.</p>
 <h2>Contributing</h2>
 <p>During the process I was already considering contributing to the project so I jumped back to the plugin repository and reviewed the <code>README</code> file looking for any indications on how to contribute, and I also checked out if there were any tests that I should update or even add some new ones. I found none, so I was practically done.</p>
