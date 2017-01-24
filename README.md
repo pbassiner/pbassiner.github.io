@@ -26,7 +26,7 @@ The strategy on building this blog was heavily inspired by [Li Haoyi](https://tw
 
 ## Dependencies used
 * [Scala](http://www.scala-lang.org/) `2.12.1`
-* [Ammonite](https://github.com/lihaoyi/Ammonite) `0.8.1`
+* [Ammonite](https://github.com/lihaoyi/Ammonite) `0.8.2`
 * [scalatags](https://github.com/lihaoyi/scalatags) `0.6.2`
 * [commonmark](https://github.com/atlassian/commonmark-java) `0.8.0`
 
