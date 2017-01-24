@@ -2,13 +2,124 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io//feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-01-13T00:00:00+0100</updated>
+        <updated>2017-01-24T00:00:00+0100</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[SDKMAN! The Software Development Kit Manager]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/sdkman!_the_software_development_kit_manager.html"/>
+    <id>https://pbassiner.github.io/blog/sdkman!_the_software_development_kit_manager.html</id>
+    <published>2017-01-24T00:00:00+0100</published>
+    <updated>2017-01-24T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>In this post I'd like to make a quick overview of <a href="http://sdkman.io/">SDKMAN!</a>, the tool I use to manage SDKs. Most of the content, if not all, is already present in its <a href="http://sdkman.io/">website</a>. I just aim to make a straightforward introduction to it but all credit goes to its maintainer, <a href="https://github.com/marc0der">Marco Vermeulen</a>.</p>
+<h2>Highlights</h2>
+<ul>
+<li>It makes life easier. There's no need to mess with environment variables such as <code>PATH</code></li>
+<li>It's multi-platform</li>
+<li>There are many SDKs available: Java, Scala, Groovy, Spring Boot and more</li>
+<li>And also build tools such as Maven, Sbt or Gradle</li>
+<li>It allows to manage multiple versions of each one</li>
+<li>Lightweight: it's written in <code>bash</code> and only requires <code>curl</code> and <code>unzip</code> to run</li>
+</ul>
+<h2>Installation</h2>
+<p>Installing SDKMAN! just requires opening a terminal and entering:</p>
+<pre><code class="language-bash">curl -s &quot;https://get.sdkman.io&quot; | bash
+</code></pre>
+<p>This will download and install SDKMAN! in <code>$HOME/.sdkman</code> by default. The associated CLI command is <code>sdk</code>.</p>
+<h2>Usage</h2>
+<p>There are mainly two kinds of commands available in <code>sdk</code>:</p>
+<ul>
+<li>Commands to manage candidates (SDKs and other tools):
+<ul>
+<li><code>install</code> or <code>i</code>: install a candidate version</li>
+<li><code>uninstall</code> or <code>rm</code>: uninstall a candidate version</li>
+<li><code>list</code> or <code>ls</code>: list available candidate versions</li>
+<li><code>use</code> or <code>u</code>: use a candidate version in current shell</li>
+<li><code>default</code> or <code>d</code>: set the default candidate version for every shell</li>
+<li><code>current</code> <code>c</code>: display current candidate version</li>
+<li><code>upgrade</code> or <code>ug</code>: upgrade outdated candidate version</li>
+</ul>
+</li>
+<li>Utility commands:
+<ul>
+<li><code>version</code> or <code>v</code>: display the current version of sdk</li>
+<li><code>broadcast</code> or <code>b</code>: display the last broadcast message</li>
+<li><code>help</code> or <code>h</code>: show the sdk help message</li>
+<li><code>offline</code>: enable or disable offline mode</li>
+<li><code>selfupdate</code>: update the sdk</li>
+<li><code>flush</code>: flush sdk local state</li>
+</ul>
+</li>
+</ul>
+<p>The most relevant and interesting are the ones to manage candidates.</p>
+<p>With <code>sdk list</code> we can list all the available candidates. These are the ones currently available:</p>
+<ul>
+<li>Activator</li>
+<li>Ant</li>
+<li>AsciidoctorJ</li>
+<li>Ceylon</li>
+<li>CRaSH</li>
+<li>Gaiden</li>
+<li>Glide</li>
+<li>Gradle</li>
+<li>Grails</li>
+<li>Griffon</li>
+<li>Groovy</li>
+<li>GroovyServ</li>
+<li>Java</li>
+<li>JBake</li>
+<li>JBoss Forge</li>
+<li>Kobalt</li>
+<li>Kotlin</li>
+<li>Lazybones</li>
+<li>Leiningen</li>
+<li>Maven</li>
+<li>sbt</li>
+<li>Scala</li>
+<li>Spring Boot</li>
+<li>Sshoogr</li>
+<li>Vert.x</li>
+</ul>
+<p>For example, let's say we want to install the <a href="https://www.scala-lang.org/">Scala</a> SDK. First we can list the available Scala versions by running <code>sdk list scala</code>:</p>
+<pre><code class="language-bash">==========================
+Available Scala Versions
+==========================
+     2.12.1
+     2.12.0
+     2.11.8
+     2.11.7
+     2.11.6
+     2.11.5
+     2.11.4
+     2.11.3
+     2.11.2
+     2.11.1
+     2.11.0
+
+==========================
++ - local version
+* - installed
+&gt; - currently in use
+==========================
+</code></pre>
+<p>If we just want the latest version, all we need to do is run <code>sdk install scala</code>, but if we want to install a specific version we can specify it as well by running <code>sdk install scala 2.12.0</code>.</p>
+<p>When having multiple versions installed, <code>sdk current scala</code> will show the current version in use. Then, running <code>sdk use scala 2.12.0</code> will switch the candidate version for the current terminal. On the other hand, running <code>sdk default scala 2.12.0</code> will make the switch global and permanent.</p>
+<h2>In conclusion</h2>
+<p>That's pretty much all you need to start using SDKMAN!. I have nothing against installing the SDKs through the <em>official</em> channels but if you use many of them at the same time, keeping them up to date and managing multiple versions of each one can become a pain.</p>
+<p>This tool surely makes it easier.</p>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Automating My Dev Setup]]>
     </title>

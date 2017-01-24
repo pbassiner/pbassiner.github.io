@@ -1,0 +1,133 @@
+<html><head><title>SDKMAN! The Software Development Kit Manager</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/17/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2><a class="share-title" href="https://twitter.com/intent/tweet?text=SDKMAN%21+The+Software+Development+Kit+Manager&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fsdkman%21_the_software_development_kit_manager.html&amp;via=polbassiner" title="Share" target="_blank"><span class="blog-post-title">SDKMAN! The Software Development Kit Manager</span><span class="fa fa-twitter"></span></a></h2><p class="blog-post-meta">2017-01-24</p><div class="blog-post-body"><p>In this post I'd like to make a quick overview of <a href="http://sdkman.io/">SDKMAN!</a>, the tool I use to manage SDKs. Most of the content, if not all, is already present in its <a href="http://sdkman.io/">website</a>. I just aim to make a straightforward introduction to it but all credit goes to its maintainer, <a href="https://github.com/marc0der">Marco Vermeulen</a>.</p>
+<h2>Highlights</h2>
+<ul>
+<li>It makes life easier. There's no need to mess with environment variables such as <code>PATH</code></li>
+<li>It's multi-platform</li>
+<li>There are many SDKs available: Java, Scala, Groovy, Spring Boot and more</li>
+<li>And also build tools such as Maven, Sbt or Gradle</li>
+<li>It allows to manage multiple versions of each one</li>
+<li>Lightweight: it's written in <code>bash</code> and only requires <code>curl</code> and <code>unzip</code> to run</li>
+</ul>
+<h2>Installation</h2>
+<p>Installing SDKMAN! just requires opening a terminal and entering:</p>
+<pre><code class="language-bash">curl -s &quot;https://get.sdkman.io&quot; | bash
+</code></pre>
+<p>This will download and install SDKMAN! in <code>$HOME/.sdkman</code> by default. The associated CLI command is <code>sdk</code>.</p>
+<h2>Usage</h2>
+<p>There are mainly two kinds of commands available in <code>sdk</code>:</p>
+<ul>
+<li>Commands to manage candidates (SDKs and other tools):
+<ul>
+<li><code>install</code> or <code>i</code>: install a candidate version</li>
+<li><code>uninstall</code> or <code>rm</code>: uninstall a candidate version</li>
+<li><code>list</code> or <code>ls</code>: list available candidate versions</li>
+<li><code>use</code> or <code>u</code>: use a candidate version in current shell</li>
+<li><code>default</code> or <code>d</code>: set the default candidate version for every shell</li>
+<li><code>current</code> <code>c</code>: display current candidate version</li>
+<li><code>upgrade</code> or <code>ug</code>: upgrade outdated candidate version</li>
+</ul>
+</li>
+<li>Utility commands:
+<ul>
+<li><code>version</code> or <code>v</code>: display the current version of sdk</li>
+<li><code>broadcast</code> or <code>b</code>: display the last broadcast message</li>
+<li><code>help</code> or <code>h</code>: show the sdk help message</li>
+<li><code>offline</code>: enable or disable offline mode</li>
+<li><code>selfupdate</code>: update the sdk</li>
+<li><code>flush</code>: flush sdk local state</li>
+</ul>
+</li>
+</ul>
+<p>The most relevant and interesting are the ones to manage candidates.</p>
+<p>With <code>sdk list</code> we can list all the available candidates. These are the ones currently available:</p>
+<ul>
+<li>Activator</li>
+<li>Ant</li>
+<li>AsciidoctorJ</li>
+<li>Ceylon</li>
+<li>CRaSH</li>
+<li>Gaiden</li>
+<li>Glide</li>
+<li>Gradle</li>
+<li>Grails</li>
+<li>Griffon</li>
+<li>Groovy</li>
+<li>GroovyServ</li>
+<li>Java</li>
+<li>JBake</li>
+<li>JBoss Forge</li>
+<li>Kobalt</li>
+<li>Kotlin</li>
+<li>Lazybones</li>
+<li>Leiningen</li>
+<li>Maven</li>
+<li>sbt</li>
+<li>Scala</li>
+<li>Spring Boot</li>
+<li>Sshoogr</li>
+<li>Vert.x</li>
+</ul>
+<p>For example, let's say we want to install the <a href="https://www.scala-lang.org/">Scala</a> SDK. First we can list the available Scala versions by running <code>sdk list scala</code>:</p>
+<pre><code class="language-bash">==========================
+Available Scala Versions
+==========================
+     2.12.1
+     2.12.0
+     2.11.8
+     2.11.7
+     2.11.6
+     2.11.5
+     2.11.4
+     2.11.3
+     2.11.2
+     2.11.1
+     2.11.0
+
+==========================
++ - local version
+* - installed
+&gt; - currently in use
+==========================
+</code></pre>
+<p>If we just want the latest version, all we need to do is run <code>sdk install scala</code>, but if we want to install a specific version we can specify it as well by running <code>sdk install scala 2.12.0</code>.</p>
+<p>When having multiple versions installed, <code>sdk current scala</code> will show the current version in use. Then, running <code>sdk use scala 2.12.0</code> will switch the candidate version for the current terminal. On the other hand, running <code>sdk default scala 2.12.0</code> will make the switch global and permanent.</p>
+<h2>In conclusion</h2>
+<p>That's pretty much all you need to start using SDKMAN!. I have nothing against installing the SDKs through the <em>official</em> channels but if you use many of them at the same time, keeping them up to date and managing multiple versions of each one can become a pain.</p>
+<p>This tool surely makes it easier.</p>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/17">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li><li><a href="https://pbassiner.github.io//feed.xml" target="_blank"><i class="fa fa-rss-square"></i> RSS</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2017-01-24</p>
+<p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
+<p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
+</footer></body></html>
