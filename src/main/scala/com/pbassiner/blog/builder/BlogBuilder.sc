@@ -170,7 +170,7 @@ object Builder {
   private[this] val indexSortedPostsList = {
     def logPosts(groupedPostsByMonth: Map[String, Iterable[Post]]): Unit = {
       println("POSTS")
-      groupedPostsByMonth.foreach {
+      TreeMap(groupedPostsByMonth.toArray: _*)(implicitly[Ordering[String]].reverse).foreach {
         case (yearMonth, postList) => {
           println(yearMonth)
           postList foreach {
