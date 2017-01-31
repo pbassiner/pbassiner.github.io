@@ -53,6 +53,9 @@ private[this] object Common {
           li(a(i(`class` := "fa fa-github-square"), " GitHub", href := s"https://github.com/${Metadata.githubUser}", target := "_blank")),
           li(a(i(`class` := "fa fa-rss-square"), " RSS", href := s"${Metadata.feedUrl}", target := "_blank"))
         )
+      ),
+      div(`class` := "sidebar-module sidebar-module-inset", style := "height:100%;")(
+        raw("""<a class="twitter-timeline" data-height="100%" data-theme="light" href="https://twitter.com/polbassiner">Tweets by polbassiner</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>""")
       )
     )
 
