@@ -1,0 +1,105 @@
+<html><head><title>Contributing to Open Source Projects II - SDKMAN!</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/20/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a href="../index.html">Blog</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2><a class="share-title" href="https://twitter.com/intent/tweet?text=Contributing+to+Open+Source+Projects+II+-+SDKMAN%21&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fcontributing_to_open_source_projects_ii_-_sdkman%21.html&amp;via=polbassiner" title="Share" target="_blank"><span class="blog-post-title">Contributing to Open Source Projects II - SDKMAN!</span><span class="fa fa-twitter"></span></a></h2><p class="blog-post-meta">2017-02-07</p><div class="blog-post-body"><h2>Context</h2>
+<p>This post is about a minor contribution I did to <a href="http://sdkman.io">SDKMAN!</a>. Refer to <a href="https://pbassiner.github.io/blog/sdkman!_the_software_development_kit_manager.html">this previous post</a> for a quick overview of the tool and its features.</p>
+<h2>The story</h2>
+<p>I've been using <a href="http://sdkman.io">SDKMAN!</a>, maintained by <a href="https://github.com/marc0der">Marco Vermeulen</a>, for a while now and closely following its evolution. Marco recently added the possibility of installing the <a href="https://www.java.com">Java</a> SDK and I started adapting my <a href="https://github.com/pbassiner/dev-env">Ansible scripts to configure my development environment</a> (check out a previous <a href="https://pbassiner.github.io/blog/automating_my_dev_setup.html">blog post about it</a>) to use SDKMAN! instead of installing Java through <code>apt-get</code>.</p>
+<h2>The issue</h2>
+<p>During the process, which took some spare hours among several days, it suddenly stopped working.</p>
+<p>I have an Ansible script which downloads and installs SDKMAN!, and runs a <code>bash</code> script:</p>
+<script src="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea.js?file=ansible_sdkman.yml"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-ansible_sdkman-yml">https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-ansible_sdkman-yml</a></figcaption>
+<p>The <code>sdkman.sh</code> script loads the <code>sdk</code> command, forces an update, flushes the candidates and finally installs the SDKs I need, including the Java one:</p>
+<script src="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea.js?file=sdkman.sh"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-sdkman-sh">https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-sdkman-sh</a></figcaption>
+<p>Out of the blue, the Ansible script hanged indefinitely while executing <code>sdk install java</code>.</p>
+<h2>Troubleshooting</h2>
+<p>I thought it was related to the <code>echo &quot;Y&quot; |</code> I used to automatically accept the license while installing Java. Since Ansible output is only displayed when the command is finished, I began by piping the <code>stdout</code> to a file so I could see what was going on while executing the <code>bash</code> script. Then I could confirm that it stuck while executing <code>sdk install java</code>.</p>
+<p>Then I tried to execute the <code>sdkman.sh</code> script directly without using Ansible, and it worked fine! I commented the <code>sdk install XXX</code> commands and tried again using Ansible, while installing the SKDs directly from bash afterwards. It worked as expected.</p>
+<p>I restored the original scripts and reviewed the Ansible documentation on how to run <code>bash</code> scripts. I tried a couple of alternatives with the same result: it hanged. Finally I resorted to <em>googling</em> &quot;bash stuck ansible&quot; and came across this <a href="https://github.com/ansible/ansible/issues/12459">Ansible issue</a>.</p>
+<p>I reviewed it throughly but I couldn't find anything remotely related to what I was doing in my Ansible or <code>bash</code> scripts.</p>
+<p>I called it a day.</p>
+<h2>Starting over</h2>
+<p>The day after I came to think: if I have changed nothing and it was working some days ago, what else could have changed? I opened the <a href="https://github.com/sdkman/sdkman-cli">sdkman-cli</a> repository, reviewed the latest commits and stumbled into something familiar in <a href="https://github.com/sdkman/sdkman-cli/commit/e37872123d6b48ed2784d1ab9219fa6c3cacc17f">this one</a>. I remembered recently seeing <code>/dev/urandom</code> somewhere else, so I rerun the previous Google search, found again the Ansible issue and there it was!</p>
+<p>According to <a href="http://stackoverflow.com/a/29494591">this StackOverflow thread</a>:</p>
+<blockquote>
+<p>You should never use <code>cat</code> with <code>/dev/urandom</code>. Nor should you use any utilities which are designed for text files.</p>
+</blockquote>
+<blockquote>
+<p><code>/dev/urandom</code> is a continuous stream of random data. It will never produce an end of file. Buffered reads will fill the read buffer, so even if you are piping the output of <code>cat</code> into some other program, the read won't be terminated until the pipe is closed.</p>
+</blockquote>
+<p>It turns out using <code>cat</code> along with <code>/dev/urandom</code> might cause bash scripts run from Ansible to get stuck.</p>
+<p>Needless to say, I quickly applied the given solution in the Ansible issue: replacing <code>cat /dev/urandom | ...</code> with <code>... &lt; /dev/urandom</code>, but surprisingly it didn't work out. I decided to leave <code>/dev/urandom</code> out of the equation in order to prove it was the cause, so I looked for another way to generate random strings.</p>
+<p>I finally used a simple <code>date +%s%N</code> including the nanoseconds to minimize the probability of a clash in concurrent executions. That allowed the Ansible script to execute properly without hanging, <em>yay</em>!</p>
+<h2>Proposing a solution</h2>
+<p>After a quick personal celebration (it took me around 4 hours to get there) I forked the <a href="https://github.com/sdkman/sdkman-cli">sdkman-cli</a> repository and made a <a href="https://github.com/sdkman/sdkman-cli/pull/496">pull request</a> replacing the random string generation to be Ansible-friendly:</p>
+<script src="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea.js?file=random_from_date.sh"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-random_from_date-sh">https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-random_from_date-sh</a></figcaption>
+<p>In the PR I specified that it might not be the best solution and that I had only been able to test it in Ubuntu, but since it also uses <code>sha256sum</code> and <code>base64</code> I wasn't sure if it'd work in other OSs.</p>
+<p>Marco answered shortly after, confirming that neither of these are available by default on all Linux distributions, and also not on OSX and Cygwin.</p>
+<h2>Improving the solution</h2>
+<p>The day after I came up with the intuition that maybe using just <code>head</code> instead of <code>cat</code> could be enough, since <code>head</code> might ensure a finite sequence in contrast to <code>cat</code>:</p>
+<script src="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea.js?file=urandom_with_head.sh"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-urandom_with_head-sh">https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-urandom_with_head-sh</a></figcaption>
+<p>The test was successful, so I updated my PR.</p>
+<p>In the meantime I updated the <code>sdkman.sh</code> script to make that change, while waiting for the PR to be merged:</p>
+<script src="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea.js?file=sdkman_urandom_hack.sh"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-sdkman_urandom_hack-sh">https://gist.github.com/pbassiner/d9df5e60477a4d1b0d8ef354e9a9f6ea#file-sdkman_urandom_hack-sh</a></figcaption>
+<h2>In conclusion</h2>
+<p>This has been the smallest contribution I've ever made, literally. I just replaced a <code>cat</code> with a <code>head</code>, nothing else. But it's also been the most gratifying because I don't have a solid grasp on shell scripting and I began without having any clue at all about what was going on.</p>
+<h2>Update</h2>
+<p>After Marco tested it on OSX and Cygwin, he merged the PR and the fix became available in version <code>5.3.0</code>.</p>
+<p>While sorting this issue out I became familiar with its source code, so I looked for any other improvement I could help with. These are the other contributions I've made to <a href="http://sdkman.io">SDKMAN!</a> so far:</p>
+<ul>
+<li>
+<p><a href="https://github.com/sdkman/sdkman-cli/pull/502">Outdated command can update all outdated candidates</a></p>
+<p>Besides listing the available candidate updates, the <code>outdated</code> command (later renamed to <code>upgrade</code>) allows to directly upgrade all candidates at once. This improvement was suggested by <a href="https://github.com/aserrallerios">Albert Serrallé</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/sdkman/sdkman-cli/pull/504">Make first installed candidate version automatically the default one</a></p>
+<p>When installing a candidate for the first time you'll surely want to make it the default version. Instead of asking the user for confirmation, the first candidate version will be set to default automatically.</p>
+</li>
+<li>
+<p><a href="https://github.com/sdkman/sdkman-cli/pull/507">Rename outdated to upgrade</a></p>
+<p>After improving the <code>outdated</code> command, Marco suggested to rename it to <code>upgrade</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/sdkman/sdkman-cli/pull/509">Add zsh completion</a></p>
+<p>I built a completion file for <code>zsh</code> so anyone can have command completion and description.</p>
+</li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/20">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li><li><a href="https://pbassiner.github.io//feed.xml" target="_blank"><i class="fa fa-rss-square"></i> RSS</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2017-02-14</p>
+<p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
+<p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
+</footer></body></html>
