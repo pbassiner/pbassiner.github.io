@@ -2,13 +2,45 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io//feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-02-16T00:00:00+0100</updated>
+        <updated>2017-02-28T00:00:00+0100</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - Feb 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_feb_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_feb_2017.html</id>
+    <published>2017-02-28T00:00:00+0100</published>
+    <updated>2017-02-28T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="http://event.scaladays.org/scaladays-cph-2017#schedule">Scala Days Copenhagen 2017</a> - Talks Schedule</li>
+<li><a href="http://making.duolingo.com/rewriting-duolingos-engine-in-scala">Rewriting Duolingo's engine in Scala</a> - Duolingo's experience on refactoring their engine from Python to Scala</li>
+<li><a href="https://www.slideshare.net/johanandren/streaming-all-the-things-with-akka-streams">Streaming all the things with akka streams </a> - Slides from <a href="https://github.com/johanandren">Johan Andrén</a>'s Akka Streams talk at Voxxeddays Zürich 2017</li>
+<li><a href="http://scala-lang.org/blog/2017/02/28/collections-rework.html">Scala 2.13 Collections Rework</a> - Changes in the Collections API in Scala 2.13</li>
+<li><a href="https://www.susanjfowler.com/blog/2017/2/19/reflecting-on-one-very-strange-year-at-uber">Reflecting on one very, very strange year at Uber</a> - Blog post by <a href="https://twitter.com/susanthesquark">Susan J. Fowler</a> about her experience as a SRE at Uber</li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="http://blog.colinbreck.com/akka-streams-a-motivating-example/">Akka Streams: A Motivating Example</a> - Excellent blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://medium.com/gumtree-dev-team/playing-with-typelevel-programming-bbdf56618b34">Playing with Typelevel Programming</a> - Especially useful for the learning resources about  TLP</li>
+<li><a href="https://blog.codecentric.de/en/2017/02/ad-hoc-polymorphism-scala-mere-mortals/">Ad hoc polymorphism in Scala for the mere mortals</a> - Blog post by <a href="https://github.com/proskor">Andrey Skorikov</a></li>
+<li><a href="http://scala-lang.org/blog/2017/02/20/introducing-scastie.html">Introducing Scastie - An interactive playground for Scala</a> - A collaborative debugging tool where you can share and reproduce bugs, an original project by <a href="https://github.com/OlegYch/">Aleh Aleshka</a> extended by the Scala Center</li>
+<li><a href="https://medium.com/iterators/extending-requestcontext-in-akka-http-for-fun-and-profit-ceb056964758">Extending RequestContext in akka-http for fun and profit</a> - Adding custom directives to Akka Http by <a href="https://github.com/marcin-rzeznicki">Marcin Rzeźnicki</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Contributing to Open Source Projects II - SDKMAN!]]>
     </title>
