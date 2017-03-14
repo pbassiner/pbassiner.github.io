@@ -2,13 +2,119 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io//feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-02-28T00:00:00+0100</updated>
+        <updated>2017-03-14T00:00:00+0100</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Bullshitless Versioning]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/bullshitless_versioning.html"/>
+    <id>https://pbassiner.github.io/blog/bullshitless_versioning.html</id>
+    <published>2017-03-14T00:00:00+0100</published>
+    <updated>2017-03-14T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>I have to admit the post title is deliberately provocative but I'll try to prove that it's not necessarily inaccurate, although I could certainly have titled it <strong>Versioning Internal Applications</strong> or <strong>Simplified Versioning</strong>.</p>
+<h2>Semantic Versioning</h2>
+<p>Semantic Versioning, a.k.a. <em>SemVer</em>, is a set of rules that define how version numbers should be assigned and incremented.</p>
+<p>The versioning scheme is X.Y.Z, where:</p>
+<ul>
+<li>X is the MAJOR version</li>
+<li>Y is the MINOR version</li>
+<li>Z is the PATCH version</li>
+</ul>
+<p>And according to <a href="http://semver.org/">SemVer</a>, given a version number MAJOR.MINOR.PATCH, increment the:</p>
+<ul>
+<li>MAJOR version when you make incompatible API changes,</li>
+<li>MINOR version when you add functionality in a backwards-compatible manner, and</li>
+<li>PATCH version when you make backwards-compatible bug fixes.</li>
+</ul>
+<h2>The case for SemVer</h2>
+<p>As one can conclude from the <em>SemVer</em> definition and its purpose, it's definitely <strong>relevant and useful for public APIs and libraries</strong> to ease the dependency management and reduce <a href="https://en.wikipedia.org/wiki/Dependency_hell">dependency hell</a>.</p>
+<h2>The case against SemVer</h2>
+<p>What about versioning <strong>internal applications</strong>? You'll probably have several of them and also some being dependencies of others. Does this necessarily mean that you have to version them using <em>SemVer</em>?</p>
+<h3>Deciding the next version in advance</h3>
+<p>If you operate selecting the new developments to include in the next release, you're forced to analyze them to decide whether those are major, minor or patch changes. This, of course, means that the version will be <em>held hostage</em> until everything is finished.</p>
+<p>Even if you defer that decision until the last minute, there's always a time window when that version is <em>held hostage</em> and any unexpected change of plans forces you to deal with it.</p>
+<h3>Managing concurrent versions</h3>
+<p>With the previous setup, having multiple teams working concurrently in the same codebase can be tricky, especially when things go wrong and you have to deal with rollbacks and patches.</p>
+<h3>Minimal releases</h3>
+<p>On the other hand, you might consider that grouping several features in the same release is not a good idea. You want the flexibility to be <em>picky</em>, be able to rollback just one feature and so on. Then you can decide to include a single feature in each release, so you develop each feature in its own branch and, when it's ready to deploy, assign the next version number and release it.</p>
+<p>This means you have to coordinate <strong>a lot</strong> to avoid race conditions while picking the next version number.</p>
+<h3>Contiuous deployment</h3>
+<p>If you want to do continuous deployment, you can build a <em>GitHub hook / CI job / whatever</em> to automate the assignation of the next version number when anything is merged to the <em>master</em> branch. Needless to say it always needs the input of a human to decide whether the new release is considered a major, a minor or a patch.</p>
+<h3>Is it really worth it?</h3>
+<p>Great, you're there but, are you really using the <em>SemVer</em> version number for anything? Not at all.</p>
+<p>The end users of our internal applications don't care if the changes are major or not, if you had to deploy many services at once, or if there's been a data migration to accommodate to a new data model.</p>
+<p>Within the development team there's also no need for that. Either way <strong>you should keep track of the deployments you make, which versions are currently in production and which changes they contain regarding the previous version</strong>. <em>SemVer</em> doesn't free you from doing so.</p>
+<h2>Simplified versioning</h2>
+<p>All you actually need is to have a reference to a specific artifact representing the state of the code repository at some point in time, nothing else. At the same time you want to easily distinguish between development and production-ready artifacts.</p>
+<p>Let's simplify versions to just BRANCH-COMMIT, where:</p>
+<ul>
+<li>BRANCH is the SCM branch</li>
+<li>COMMIT is the hash commit
+where the artifact has been built from.</li>
+</ul>
+<p>What do you get with that?</p>
+<ul>
+<li>No distinction between versions regarding deployment automation</li>
+<li>No release vs. feature versions, no <em>SNAPSHOTS</em>.</li>
+<li>Development, test and release life-cycles can be easily automated (CI + CD)</li>
+<li>Because you don't need to assign an artificial version label to an artifact, any commit from any branch is deployable</li>
+<li>Enables testing each commit independently</li>
+<li>No need to categorize the nature of changes to decide the next <em>SemVer</em></li>
+<li>No coordination among developers regarding versioning</li>
+</ul>
+<p>Of course, you still have to make some kind of <em>Release Notes</em> to describe the contents to the users, but that's pretty much it.</p>
+<h2>Branching model and development workflow</h2>
+<p>This <em>simplified versioning</em> eases Continuous Deployment. <em>SemVer</em> doesn't prevent that, but you can skip dealing with automating the <em>semantic</em> part of the versioning.</p>
+<p>With a simple branching model consisting of:</p>
+<ul>
+<li><code>master</code> representing production</li>
+<li>all other branches for development</li>
+</ul>
+<p>and a couple of CI jobs:</p>
+<ul>
+<li>one for the <code>master</code> branch which
+<ol>
+<li>runs unit tests and, if everything is green</li>
+<li>generate the artifact and deploy it to staging</li>
+<li>run integration and functional tests and, if everything is green</li>
+<li>deploy to production</li>
+</ol>
+</li>
+<li>a generic one which
+<ol>
+<li>receives notifications from new PRs</li>
+<li>runs unit tests and, if everything is green</li>
+<li>generate the artifact and deploy it to development</li>
+<li>run integration and functional tests and, if everything is green</li>
+<li>mark PR as valid</li>
+</ol>
+</li>
+</ul>
+<p>Developers can create a branch from <code>master</code>, make several commits and finally open a PR to <code>master</code>. This will run the unit, integration and functional tests in a dedicated environment and report back to the PR.</p>
+<p>Anyone can then perform further testing using the generated artifact. When it's considered stable, they can trigger the deployment in production just by merging the PR to <code>master</code>.</p>
+<h2>Bullshitless versioning</h2>
+<p>After defining this versioning scheme and coining the term together with <a href="https://github.com/aserrallerios">Albert Serrallé</a>, we assumed we couldn't actually be the first ones to come up with this.</p>
+<p>We came across <a href="http://davehall.com.au/blog/dave/2016/01/19/internal-applications-when-semantic-versioning-doesnt-make-sense">this post</a> on the Dave Hall Consulting's blog which advocates for date based version numbering for internal applications, but so far we haven't found anything similar to our proposal.</p>
+<p>Maybe it's nonsense and we haven't realized yet, maybe it's something that's not being publicly promoted because it's only used internally (of course, we're talking about versioning internal applications), or maybe we're just the ones having this problems because we were not doing it right in the first place. Either way, it's working pretty well for us so far.</p>
+<p>Do you have any thoughts on this? Feel free to leave a comment or contact me.</p>
+<h2>References</h2>
+<ul>
+<li><a href="http://semver.org/">Semantic Versioning</a></li>
+<li><a href="http://davehall.com.au/blog/dave/2016/01/19/internal-applications-when-semantic-versioning-doesnt-make-sense">Internal Applications: When Semantic Versioning Doesn't Make Sense</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Monthly Digest - Feb 2017]]>
     </title>
