@@ -1,6 +1,6 @@
 [![Website](https://img.shields.io/website-up-down-green-red/https/pbassiner.github.io.svg)](https://pbassiner.github.io/)
 [![Travis](https://img.shields.io/travis/pbassiner/pbassiner.github.io/master.svg)](https://travis-ci.org/pbassiner/pbassiner.github.io)
-[![License: MIT](https://img.shields.io/badge/license-MIT License-blue.svg)](https://raw.githubusercontent.com/pbassiner/pbassiner.github.io/master/LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT%20License-blue.svg)](https://raw.githubusercontent.com/pbassiner/pbassiner.github.io/master/LICENSE)
 
 # Disclaimer
 This is a personal blog. The opinions expressed here represent my own and not those of my employer.
