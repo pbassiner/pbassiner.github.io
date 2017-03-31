@@ -2,13 +2,45 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io//feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-03-14T00:00:00+0100</updated>
+        <updated>2017-03-31T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - Mar 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_mar_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_mar_2017.html</id>
+    <published>2017-03-31T00:00:00+0200</published>
+    <updated>2017-03-31T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="https://medium.com/spire-labs/mitigating-an-aws-instance-failure-with-the-magic-of-kubernetes-128a44d44c14">Mitigating an AWS Instance Failure with the Magic of Kubernetes</a> - How Kubernetes can help to build resilient systems, by <a href="https://github.com/robscott">Rob Scott</a></li>
+<li><a href="https://medium.com/google-cloud/clustering-akka-in-kubernetes-with-statefulset-and-deployment-459c0e05f2ea">Clustering Akka in Kubernetes with Statefulset and Deployment</a> - Tips to run Akka cluster in Kubernetes by <a href="https://github.com/saturnism">Ray Tsang</a></li>
+<li><a href="https://developers.redhat.com/blog/2017/03/14/java-inside-docker/">Java inside docker: What you must know to not FAIL</a> - Common pitfalls and caveats on running Java inside Docker by <a href="https://github.com/rafabene">Rafael Benevides</a></li>
+<li><a href="https://www.youtube.com/watch?v=LhGq4HlozV4">Getting Work Done with the Eff Monad in Scala (talk)</a> - <a href="https://github.com/benhutchison">Ben Hutchison</a>'s talk at <a href="http://www.composeconference.org/">Compose Conference</a></li>
+<li><a href="https://speakerdeck.com/alexandru/fp-design-a-tale-of-monix">FP Design: A Tale Of Monix (slides)</a> - Slides from the talk <a href="https://github.com/alexandru">Alexandru Nedelcu</a> gave at the <a href="http://www.nescala.org/">NEScala Unconference</a> about Monix</li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="https://blog.knoldus.com/2016/12/27/testing-rejection-handling-in-akka-http/">Testing Rejection Handling in Akka-Http</a> - Concise blog post on how to test rejections in Akka Http</li>
+<li><a href="http://blog.colinbreck.com/patterns-for-streaming-measurement-data-with-akka-streams/">Patterns for Streaming Measurement Data with Akka Streams</a> - Excellent blog post (again) by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://efekahraman.github.io/2017/02/a-simple-akka-cluster-application">A Simple Akka Cluster Application</a> - Blog post by <a href="https://github.com/efekahraman">Efe Kahraman</a></li>
+<li><a href="https://blog.codecentric.de/en/2017/03/akka-best-practices-defining-actor-props/">Akka Best Practices: Defining Actor Props</a> - Quick tips on defining Akka Actor Props by <a href="https://github.com/britter">Benedikt Ritter</a></li>
+<li><a href="http://blog.leifbattermann.de/2017/03/16/7-most-convenient-ways-to-create-a-future-either-stack/">7 Most Convenient Ways To Create A Future Either Stack</a> - Concise summary of ways for dealing with Future/Either stacks by <a href="https://github.com/battermann">Leif Battermann</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Bullshitless Versioning]]>
     </title>
