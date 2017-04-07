@@ -37,7 +37,10 @@ private[this] object Common {
     link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css")
   )
 
-  val metaViewport = meta(name := "viewport", content := "width=device-width, initial-scale=1.0")
+  val metaTags = List(
+    meta(name := "viewport", content := "width=device-width, initial-scale=1.0"),
+    meta(charset := "utf-8")
+  )
 
   val jQuery = script(`type` := "text/javascript", src := "https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
 
@@ -127,7 +130,7 @@ object Builder {
             scalatags.Text.tags2.title(post.title),
             bootstrapCss,
             link(rel := "stylesheet", href := "../blog.css"),
-            metaViewport,
+            metaTags,
             jQuery,
             raw(gitHubIssue.fetchCommentsAndAppendJs)
           ),
@@ -226,7 +229,7 @@ object Builder {
         scalatags.Text.tags2.title(blogTitle),
         bootstrapCss,
         link(rel := "stylesheet", href := "blog.css"),
-        metaViewport
+        metaTags
       ),
       body(
         div(`class` := "container")(
