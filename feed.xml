@@ -2,13 +2,170 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io//feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-03-31T00:00:00+0200</updated>
+        <updated>2017-04-11T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Why I Choose Scala]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/why_i_choose_scala.html"/>
+    <id>https://pbassiner.github.io/blog/why_i_choose_scala.html</id>
+    <published>2017-04-11T00:00:00+0200</published>
+    <updated>2017-04-11T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<h2>Disclaimer</h2>
+<p>As the title itself reflects, this is a highly opinionated post.</p>
+<h2>TL;DR</h2>
+<p>Why I choose Scala then?</p>
+<ul>
+<li>Type-safe (statically typed + type inference)</li>
+<li>High development productivity</li>
+<li>Supports both Object Oriented and Functional Programming paradigms</li>
+<li>JVM Language + Seamless Java interoperability</li>
+</ul>
+<h2>Background</h2>
+<p>The lead designer of Scala, <a href="https://twitter.com/odersky">Martin Odersky</a>, has been involved in Java since 1995 and contributed to the current Java Compiler and Generics introduced in version 1.5.</p>
+<p>Around 2001, at the École Polytechnique Fédérale de Lausanne (EPFL), he started to investigate the next challenges in software programming and he thought that unifying OO &amp; FP would address those challenges.</p>
+<p>The outcome was Scala (acronym for Scalable Language), in 2003. In 2011 he and other collaborators founded Typesafe Inc. (<a href="http://www.lightbend.com/">Lightbend</a> as of Feb. 2016), a company to support and promote Scala.</p>
+<h2>Type safety</h2>
+<p>Dynamically typed languages have their place as well, they are versatile and have plenty of use cases where they shine. And of course, that's not only the case for Javascript (see Ruby, Python or Groovy, just to name some of them).</p>
+<p>When talking about building an enterprise application though, type-safety is a must to me. That piece of software will be used to encode and manage business rules, and it'll be developed and maintained by many developers during its life which, in this context, should be rather a long time.</p>
+<h2>JVM</h2>
+<p>Coming from the Java ecosystem, transitioning to Scala is easier. It runs on the JVM so all you know about it prevails (memory management, configuration, fine tuning, etc). You can integrate Java libraries, frameworks and tools in a Scala application. Moreover, Java and Scala classes can be freely mixed.</p>
+<p>The Scala community is an important part of the Java ecosystem.</p>
+<h2>OOP + FP</h2>
+<p>Functional Programming is on the rise nowadays. Beyond the <em>hype</em>, FP principles make it easier to reduce the complexity of a system by setting a clear separation between functions (<em>pure functions</em>) and side effects.</p>
+<p>As Moseley and Marks described in <a href="http://shaffner.us/cs/papers/tarpit.pdf">Out of the Tar Pit</a>:</p>
+<blockquote>
+<p>Complexity is the root cause of the vast majority of problems with software today...</p>
+</blockquote>
+<blockquote>
+<p>... it is our belief that the single biggest remaining cause of complexity in most contemporary large systems is state, and the more we can do to limit and manage state, the better.</p>
+</blockquote>
+<p>The deterministic nature of pure functions along with the type system significantly reduce the cognitive load required to reason about them. The lack of <code>null</code>s, thrown exceptions and mutability (<em>accidental complexity</em>) lets you focus on the important logic of the application (<em>essential complexity</em>).</p>
+<p>Unlike many other FP languages, Scala allows a gradual, easy migration to a more FP style. You can start to use it as <em>Java without semicolons</em> and evolve it over time.</p>
+<h2>Development productivity</h2>
+<p>Besides the benefits of FP, Scala's features can boost development productivity even if used in a OOP fashion.</p>
+<h3>Immutability by default</h3>
+<p>Immutable objects and methods without side-effects make concurrent programming easier &amp; thread-safe.</p>
+<p>As Joshua Bloch stated in his book <em>Effective Java</em>:</p>
+<blockquote>
+<p>Classes should be immutable unless there's a very good reason to make them mutable</p>
+</blockquote>
+<p>In Scala, immutable is the <strong>default</strong>.</p>
+<h3>Every operation is a method, even <code>==</code></h3>
+<p>In contrast to Java, in Scala <code>==</code> is not a built-in operator but a method that can be overridden. For example, <code>String</code> class overrides it to compare the content of the strings.</p>
+<h3>Tuples</h3>
+<p>A tuple is an immutable sequence of values of multiple types.</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=Tuples.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-tuples-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-tuples-scala</a></figcaption>
+<h3>Option</h3>
+<p>A <code>null</code> value is often abused to represent an absent optional value. This means the <code>null</code> value is bubbling up the hierarchy call. Sometimes this just leads to an exception much higher in the hierarchy, where some piece of code isn't that <em>null-friendly</em>.</p>
+<p>In Scala there's the <code>Option</code> type, and it represents values that might or might not be present. Instances of <code>Option</code> are either an instance of <code>Some</code> or <code>None</code>.</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=Option.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-option-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-option-scala</a></figcaption>
+<h3>Case classes</h3>
+<p>In Java, defining an immutable (for fairness in the comparison) POJO requires explicit declaration of the type members, constructor, getters and overriding the <code>hashCode</code>, <code>equals</code> and <code>toString</code> methods.</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=Pojo.java"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-pojo-java">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-pojo-java</a></figcaption>
+<p>In Scala you get all that just by defining a class as a <code>case class</code>:</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=CaseClass.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-caseclass-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-caseclass-scala</a></figcaption>
+<p>A <code>case class</code> is a regular class with reduced boilerplate by the compiler:</p>
+<ul>
+<li>The constructor parameters become public fields</li>
+<li>Methods <code>toString</code>, <code>equals</code> and <code>hashCode</code> are defined based on the constructor fields</li>
+<li>A companion object (where you define the equivalent of <code>static</code> methods in Java) containing:
+<ul>
+<li>An <code>apply</code> constructor based on the class constructor</li>
+<li>An extractor based on constructor fields</li>
+</ul>
+</li>
+</ul>
+<p>The methods in the companion object allow to perform pattern matching on instances of the <code>case class</code> (see next section).</p>
+<h3>Pattern matching</h3>
+<p>Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy:</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=PatternMatching.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-patternmatching-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-patternmatching-scala</a></figcaption>
+<p>As you can see it can match values as well as data structures. This is of great use when in combination with <code>case classes</code>. With a small amount of code we can define an expression writer:</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=PatternMatchingCaseClasses.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-patternmatchingcaseclasses-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-patternmatchingcaseclasses-scala</a></figcaption>
+<p>Another useful scenario is pattern matching <code>Option</code>:</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=PatternMatchingOption.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-patternmatchingoption-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-patternmatchingoption-scala</a></figcaption>
+<h3>Collections API</h3>
+<p>The Scala collections API provides plenty of methods to simplify manipulating data:</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=Collections.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-collections-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-collections-scala</a></figcaption>
+<h3>First-class functions</h3>
+<p>A function in Scala is a first-class value. Like any other value, it may be passed as a parameter or returned as a result. Functions which take other functions as parameters or return them as results are called higher-order functions.</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=FirstClassFunctions.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-firstclassfunctions-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-firstclassfunctions-scala</a></figcaption>
+<h3>Traits and composition</h3>
+<p>Traits are like Java interfaces but they can be partially implemented. This enables multiple inheritance (a <em>mixin</em>):</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=Traits.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-traits-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-traits-scala</a></figcaption>
+<p>(Example taken from the <a href="http://docs.scala-lang.org/tutorials/tour/mixin-class-composition.html">official Scala Documentation</a>)</p>
+<h3>Futures</h3>
+<p>Scala's <code>Future[T]</code> provides asynchronous, non-blocking computations that will eventually result in a value of type <code>T</code>. The future will either succeed or fail:</p>
+<script src="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb.js?file=Futures.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-futures-scala">https://gist.github.com/pbassiner/41c94ce57a3fd5da3a921587062ca2cb#file-futures-scala</a></figcaption>
+<h2>More than just vanilla Scala</h2>
+<p>The Scala community is increasing and it's more active every day, with many well known companies using it (LinkedIn, Twitter, Foursquare, Netflix, Tumblr, Soundcloud, Coursera, ...).</p>
+<p><a href="http://www.lightbend.com/">Lightbend</a> (formerly Typesafe) is the most influential actor in the community. They are actively contributing to the Scala programming language and some frameworks on top of it. Their reactive platform is consists of the following components:</p>
+<ul>
+<li><a href="http://www.lagomframework.com/">Lagom</a>: a microservice framework</li>
+<li><a href="https://www.playframework.com">Play</a>: a high velocity web framework</li>
+<li><a href="http://akka.io">Akka</a>: a toolkit and runtime for building highly concurrent, distributed, and resilient message-driven applications on the JVM</li>
+<li>Spark: <a href="http://spark.apache.org/">Apache Spark</a> is a fast and general engine for large-scale data processing</li>
+</ul>
+<p><a href="http://typelevel.org/">Typelevel</a> is another company which provides pure functional programming libraries for Scala. The more relevant ones are:</p>
+<ul>
+<li><a href="https://github.com/typelevel/cats">Cats</a>: Lightweight, modular, and extensible library for functional programming</li>
+<li><a href="https://github.com/milessabin/shapeless">Shapeless</a>: Generic programming for Scala</li>
+<li><a href="https://github.com/julien-truffaut/Monocle">Monocle</a>: Optics library for Scala</li>
+<li><a href="https://github.com/circe/circe">Circe</a>: A JSON library for Scala powered by Cats</li>
+<li><a href="https://github.com/tpolecat/doobie">Doobie</a>: a pure functional JDBC layer for Scala</li>
+</ul>
+<h2>Special mention: Akka</h2>
+<p><a href="http://akka.io">Akka</a> deserves a dedicated section on its own merits. I am by no means an expert in Akka but I'd like to outline the most relevant features about it:</p>
+<ul>
+<li>Meant for distributed systems, out-of-the-box clustering and location transparency</li>
+<li>Based on the Actor Model, with supervision hierarchies, to provide fault-tolerance</li>
+<li><a href="http://doc.akka.io/docs/akka-http/current/scala.html">Http</a> - fully async and reactive HTTP server</li>
+<li><a href="http://doc.akka.io/docs/akka/current/scala/stream/index.html">Streams</a> - back-pressured stream processing</li>
+</ul>
+<p>I plan to write a post about it at some point but, in the meantime, refer to the <a href="http://doc.akka.io/docs/akka/current/scala.html">Akka documentation</a> for more information about it.</p>
+<h2>Conclusion</h2>
+<p>I find Scala a great choice, especially as a step forward for Java developers eager to embrace functional programming. It's not only about purity, category theory, functors, monads or higher-kinded types, these will be the logical consequences of shifting to the FP paradigm. In this context, Scala is flexible enough to accommodate developers in all stages of FP adoption.</p>
+<p>On the other hand, for a Java company, moving to Scala it's an acceptable risk due to their compatibility and shared runtime. For this to succeed, it's important that at least one or two developers can take responsibility for its adoption, motivating, training and assisting the rest of the team, while periodically assessing the potential risks of generating knowledge silos.</p>
+<p>Therefore, it's a win-win scenario: reasonable risk and happier developers.</p>
+<h2>Learning resources</h2>
+<p>If you want to learn more about Scala, these are some useful resources:</p>
+<ul>
+<li><a href="https://www.scala-lang.org/documentation/">Scala Documentation</a></li>
+<li><a href="http://danielwestheide.com/scala/neophytes.html">The Neophyte's Guide to Scala</a> - Blog series by Daniel Westheide</li>
+<li><a href="https://www.coursera.org/specializations/scala">Functional Programming in Scala Specialization</a> - Coursera specialization lead by Martin Odersky</li>
+<li><a href="https://www.scala-lang.org/documentation/books.html">Scala Books</a></li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://www.scala-lang.org">Scala Official Website</a></li>
+<li><a href="http://shaffner.us/cs/papers/tarpit.pdf">Out of the Tar Pit</a> - Moseley &amp; Marks, 2006</li>
+<li><a href="http://www.lightbend.com/">Lightbend, Inc.</a></li>
+<li><a href="http://typelevel.org/">Typelevel</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Monthly Digest - Mar 2017]]>
     </title>
