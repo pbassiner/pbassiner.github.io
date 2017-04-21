@@ -31,6 +31,7 @@ private[this] object Common {
   import DateUtils._
 
   val blogTitle = "Blog"
+  val breadcrumbs = "Back"
 
   val bootstrapCss = List(
     link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"),
@@ -83,8 +84,7 @@ object Builder {
     htmlFilename: String,
     relUrl: String,
     url: String,
-    filename: String
-  )
+    filename: String)
 
   private[this] def cleanup = {
     rm ! pwd / Files.indexFilename
@@ -137,7 +137,13 @@ object Builder {
           body(
             div(`class` := "container")(
               div(`class` := "blog-header")(
-                h1(`class` := "blog-title")(a(blogTitle, href := "../" + Files.indexFilename))
+                h1(`class` := "blog-title")(
+                  a(
+                    raw("&nbsp;"), breadcrumbs,
+                    `class` := "breadcrumbs fa fa-angle-left",
+                    href := "../" + Files.indexFilename
+                  )
+                )
               ),
               div(`class` := "row")(
                 div(`class` := "col-sm-8 blog-main")(
@@ -184,7 +190,7 @@ object Builder {
     }
 
     val groupedPostsByMonth = sortedPosts.groupBy {
-      case post:Post => yearMonthDayToYearMonth(post.date)
+      case post: Post => yearMonthDayToYearMonth(post.date)
     }
 
     logPosts(groupedPostsByMonth)

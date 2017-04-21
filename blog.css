@@ -218,6 +218,9 @@ a.share {
 }
 
 /* Posts */
+a.breadcrumbs {
+  font-size: 40px;
+}
 .blog-post-body h1,
 .blog-post-body h3,
 .blog-post-body h2,

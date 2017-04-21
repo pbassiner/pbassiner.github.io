@@ -11,7 +11,7 @@ object Metadata {
   val githubUser = "pbassiner"
   val githubRepo = s"$githubUser.github.io"
   val url = s"https://$githubRepo/"
-  val feedUrl = s"$url/feed.xml"
+  val feedUrl = s"${url}feed.xml"
 }
 
 object Files {
