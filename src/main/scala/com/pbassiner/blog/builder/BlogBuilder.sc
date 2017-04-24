@@ -1,4 +1,4 @@
-import $ivy.`com.lihaoyi::scalatags:0.6.2`
+import $ivy.`com.lihaoyi::scalatags:0.6.3`
 
 import ammonite.ops._
 import ammonite.ops.Internals.Writable
