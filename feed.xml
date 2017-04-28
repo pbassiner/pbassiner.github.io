@@ -2,13 +2,53 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-04-21T00:00:00+0200</updated>
+        <updated>2017-04-28T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - Apr 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_apr_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_apr_2017.html</id>
+    <published>2017-04-28T00:00:00+0200</published>
+    <updated>2017-04-28T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="http://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-i/">Integrating Akka Streams and Akka Actors: Part I</a> - Blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="http://www.cakesolutions.net/teamblogs/existential-types-in-scala">Existential types in Scala</a> - Blog post by <a href="https://github.com/pjrt">Pedro Rodríguez</a></li>
+<li><a href="https://gitlab.com/snippets/1655955">Some thoughts about typed functional programming in Scala</a> - Post by <a href="https://gitlab.com/types.snively">Paul Snively</a></li>
+<li><a href="https://softwaremill.com/comparing-scala-relational-database-access-libraries/">Comparing Scala relational database access libraries</a> - Detailed comparison of RDBMS access libraries in Scala by <a href="https://github.com/adamw">Adam Warski</a></li>
+<li><a href="http://blog.scalac.io/2017/04/18/akka-streams-introduction.html">Introduction to Streams in Akka</a> - Blog post by <a href="https://github.com/margorczynski">Marcin Gorczyński</a></li>
+<li><a href="http://blog.scalac.io/2017/04/19/typeclasses-in-scala.html">Type classes in Scala</a> - Blog post by <a href="https://github.com/lukeindykiewicz">Łukasz Indykiewicz</a></li>
+<li><a href="http://blog.scalac.io/2017/04/25/akka-streams-graph-stage.html">Custom GraphStage in Akka Streams</a> - Blog post by <a href="https://github.com/note">Michał Sitko</a></li>
+<li><a href="http://blog.christianposta.com/microservices/the-hardest-part-of-microservices-calling-your-services">The Hardest Part of Microservices: Calling Your Services</a> - Blog post by <a href="https://github.com/christian-posta">Christian Posta</a></li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li><a href="https://youtu.be/C5oogxdX_Bo">Category Theory II 7.1: Comonads</a> - New video in the series Category Theory for Programmers: Comonads, by <a href="https://github.com/BartoszMilewski">Bartosz Milewski</a></li>
+<li><a href="https://youtu.be/Zt6LjUnOcFQ">The Type Astronaut's Guide to Shapeless</a> - <a href="https://github.com/davegurnell">Dave Gurnell</a>'s workshop on <a href="https://github.com/milessabin/shapeless">Shapeless</a> at Scala World 2016</li>
+<li><a href="https://youtu.be/aKUQUIHRGec">Free as in Monads</a> - <a href="https://github.com/djspiewak">Daniel Spiewak</a> about free monads at Northeast Scala Symposium 2017</li>
+<li><a href="https://www.youtube.com/watch?v=Oij5V7LQJsA">What to Leave Implicit</a> - <a href="https://github.com/odersky">Martin Odersky</a>'s keynote at ScalaDays Chicago 2017</li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="http://akka.io/news/2017/04/13/akka-2.5.0-released.html">Akka 2.5.0 Released!</a> - Details on the important release, the first since 18 months.</li>
+<li><a href="http://developer.lightbend.com/blog/2017-04-10-sbt-01315-JDK9-support-and-offline-installation/index.html">New in sbt 0.13.15</a> - Latest sbt release, full release notes available <a href="http://www.scala-sbt.org/0.13/docs/sbt-0.13-Tech-Previews.html#sbt+0.13.15">here</a></li>
+<li><a href="http://www.scala-lang.org/news/releases-1Q17.html">Scala 2.12.2 is out!</a> - New minor releases for Scala 2.11.x, 2.12.x and the first milestone release for 2.13.0</li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Why I Choose Scala]]>
     </title>
