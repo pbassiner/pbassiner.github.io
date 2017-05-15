@@ -4,6 +4,7 @@ import ammonite.ops._
 import ammonite.ops.Internals.Writable
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import scala.collection.immutable.TreeMap
 import scalatags.Text.all._
 
@@ -14,66 +15,176 @@ import $file.^.rss.Rss
 import $file.^.twitter.Twitter, Twitter._
 
 private[this] object DateUtils {
-  val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
-  val monthYearDateFormatter = new SimpleDateFormat("MMMM yyyy")
-  val yearMonthDateFormatter = new SimpleDateFormat("yyyy-MM")
-  val commentDateFormatter = new SimpleDateFormat("MMM dd, yyyy")
+  private[this] val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
+  private[this] val yearDateFormatter = new SimpleDateFormat("yyyy")
+  private[this] val postIndexDateFormatter = new SimpleDateFormat("MMMM dd, yyyy")
 
   val currentDate = dateFormatter.format(Calendar.getInstance().getTime())
 
-  def yearMonthDayToYearMonth(date: String): String =
-    yearMonthDateFormatter.format(dateFormatter.parse(date))
-  def yearMonthToMonthYear(date: String): String =
-    monthYearDateFormatter.format(yearMonthDateFormatter.parse(date))
+  def toTimestamp(date: String): Date =
+    dateFormatter.parse(date)
+  def toYear(date: String): String =
+    yearDateFormatter.format(dateFormatter.parse(date))
+  def toPostedDate(date: String): String =
+    postIndexDateFormatter.format(dateFormatter.parse(date))
 }
 
 private[this] object Common {
-  import DateUtils._
 
   val blogTitle = "Blog"
-  val breadcrumbs = "Back"
+  val blogSubtitle1 = "This is a personal blog."
+  val blogSubtitle2 = "The opinions expressed here represent my own and not those of my employer."
+  val homeTitle = "Home"
+  val aboutTitle = "About"
+  val archiveTitle = "Posts"
 
-  val bootstrapCss = List(
-    link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"),
-    link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css")
-  )
-
-  val metaTags = List(
+  private[this] val metaTags = List(
     meta(name := "viewport", content := "width=device-width, initial-scale=1.0"),
     meta(charset := "utf-8")
   )
 
-  val jQuery = script(`type` := "text/javascript", src := "https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+  private[this] val cssLinks = List(
+    link(`type` := "text/css", rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+  )
 
-  val sidebar =
-    div(`class` := "col-sm-3 col-sm-offset-1 blog-sidebar")(
-      div(`class` := "sidebar-module sidebar-module-inset")(
-        h4("About"),
-        p("This is a personal blog. The opinions expressed here represent my own and not those of my employer."),
-        p(strong("Pol Bassiner"), br, "Software Engineer", br, "Java & Scala developer", br, "CTO @ Netquest"),
-        ul(`class` := "list-unstyled about-social",
-          li(a(i(`class` := "fa fa-twitter-square"), " Twitter", href := "https://twitter.com/polbassiner", target := "_blank")),
-          li(a(i(`class` := "fa fa-linkedin-square"), " LinkedIn", href := "https://es.linkedin.com/in/polbassiner", target := "_blank")),
-          li(a(i(`class` := "fa fa-github-square"), " GitHub", href := s"https://github.com/${Metadata.githubUser}", target := "_blank")),
-          li(a(i(`class` := "fa fa-rss-square"), " RSS", href := s"${Metadata.feedUrl}", target := "_blank"))
+  private[this] val scripts = List(
+    script(`type` := "text/javascript", src := "https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"),
+    script(`type` := "text/javascript", src := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
+  )
+
+  private[this] val fonts = List(
+    link(`type` := "text/css", rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"),
+    link(`type` := "text/css", rel := "stylesheet", href := "https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"),
+    link(`type` := "text/css", rel := "stylesheet", href := "https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800")
+  )
+
+  def headContent(title: String, path: Option[String] = None, rawHead: Option[String] = None) =
+    head(
+      scalatags.Text.tags2.title(title),
+      metaTags,
+      cssLinks,
+      link(rel := "stylesheet", href := s"${path.getOrElse("")}blog.css"),
+      scripts,
+      script(`type` := "text/javascript", src := s"${path.getOrElse("")}blog.js"),
+      fonts,
+      raw(rawHead.getOrElse(""))
+    )
+
+  def navbarContent(path: Option[String] = None) =
+    scalatags.Text.tags2.nav(`class` := "navbar navbar-default navbar-custom navbar-fixed-top")(
+      div(`class` := "container")(
+        div(`class` := "navbar-header page-scroll")(
+          button(`type` := "button", `class` := "navbar-toggle", attr("data-toggle") := "collapse", attr("data-target") := "#bs-example-navbar-collapse-1")(
+            span(`class` := "sr-only", "Toggle navigation"),
+            "Menu",
+            i(`class` := "fa fa-bars")
+          ),
+          a(`class` := "navbar-brand", href := s"${path.getOrElse("")}${Files.indexFilename}", Metadata.author)
+        ),
+        div(`class` := "collapse navbar-collapse", id := "bs-example-navbar-collapse-1")(
+          ul(`class` := "nav navbar-nav navbar-right")(
+            li(a(`href` := s"${path.getOrElse("")}${Files.indexFilename}", homeTitle)),
+            li(a(`href` := s"${path.getOrElse("")}${Files.archiveFilename}", archiveTitle)),
+            li(a(`href` := s"${path.getOrElse("")}${Files.aboutFilename}", aboutTitle))
+          )
         )
       )
     )
 
-  val footerContent = {
-    val footerPath = pwd / 'common / "footer.md"
-    val footerHtml = mdFileToHtml(footerPath)
-
-    footer(`class` := "blog-footer")(
-      raw(footerHtml.replace("CURRENT_DATE", currentDate))
+  def defaultHeaderContent(headerTitle: String, headerSubtitle1: String, headerSubtitle2: String) =
+    header(`class` := "intro-header")(
+      div(`class` := "container")(
+        div(`class` := "row")(
+          div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1")(
+            div(`class` := "site-heading")(
+              h1(headerTitle),
+              hr(`class` := "small"),
+              span(`class` := "subheading")(headerSubtitle1),
+              span(`class` := "subheading")(headerSubtitle2)
+            )
+          )
+        )
+      )
     )
-  }
 
+  def postHeaderContent(headerTitle: String, headerMeta: String, headerShare: String) =
+    header(`class` := "intro-header")(
+      div(`class` := "container")(
+        div(`class` := "row")(
+          div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1")(
+            div(`class` := "post-heading")(
+              h1(headerTitle),
+              span(`class` := "meta")(headerMeta),
+              span(`class` := "meta share")(twitterShare(headerShare))
+            )
+          )
+        )
+      )
+    )
+
+  val footerContent =
+    List(
+      hr,
+      footer(
+        div(`class` := "container")(
+          div(`class` := "row")(
+            div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1")(
+              ul(`class` := "list-inline text-center")(
+                li(
+                  a(href := "https://twitter.com/polbassiner", target := "_blank")(
+                    span(`class` := "fa-stack fa-lg")(
+                      i(`class` := "fa fa-circle fa-stack-2x"),
+                      i(`class` := "fa fa-twitter fa-stack-1x fa-inverse")
+                    )
+                  )
+                ),
+                li(
+                  a(href := "https://es.linkedin.com/in/polbassiner", target := "_blank")(
+                    span(`class` := "fa-stack fa-lg")(
+                      i(`class` := "fa fa-circle fa-stack-2x"),
+                      i(`class` := "fa fa-linkedin fa-stack-1x fa-inverse")
+                    )
+                  )
+                ),
+                li(
+                  a(href := s"https://github.com/${Metadata.githubUser}", target := "_blank")(
+                    span(`class` := "fa-stack fa-lg")(
+                      i(`class` := "fa fa-circle fa-stack-2x"),
+                      i(`class` := "fa fa-github fa-stack-1x fa-inverse")
+                    )
+                  )
+                ),
+                li(
+                  a(href := s"${Metadata.feedUrl}", target := "_blank")(
+                    span(`class` := "fa-stack fa-lg")(
+                      i(`class` := "fa fa-circle fa-stack-2x"),
+                      i(`class` := "fa fa-rss fa-stack-1x fa-inverse")
+                    )
+                  )
+                )
+              ),
+              p(`class` := "copyright text-muted", "Last published on ", DateUtils.currentDate, br, s"Copyright © ${Metadata.author} 2017")
+            )
+          )
+        )
+      )
+    )
+
+  def twitterShare(url: String) =
+    a(
+      span(`class` := "fa fa-twitter"),
+      `class` := "share",
+      href := url,
+      title := "Share",
+      target := "_blank"
+    )
+
+  def readingTime(content: String) = Math.round(content.split("\\s").size / 180.0)
 }
 
 object Builder {
 
-  import DateUtils._, Common._
+  import Common._
   import scalatags.Text.all._
 
   private[this] final case class Post(
@@ -88,6 +199,8 @@ object Builder {
 
   private[this] def cleanup = {
     rm ! pwd / Files.indexFilename
+    rm ! pwd / Files.aboutFilename
+    rm ! pwd / Files.archiveFilename
     rm ! pwd / Files.rssFeedFilename
     rm ! pwd / Files.generatedBlogPostsFolder
   }
@@ -100,7 +213,7 @@ object Builder {
       val Array(date, filename, _) = path.last.split("\\.")
 
       val title = mdFilenameToTitle(filename)
-      val excerpt = mdFileFirst25WordsToHtml(path)
+      val excerpt = mdFileFirst25WordsToHtmlWithoutAnchors(path)
       val content = mdFileToHtml(path)
       val htmlFilename = mdFilenameToHtmlFilename(filename)
       val relUrl = Files.generatedBlogPostsFolder + "/" + htmlFilename
@@ -126,47 +239,25 @@ object Builder {
       write(
         pwd / RelPath(post.relUrl),
         html(
-          head(
-            scalatags.Text.tags2.title(post.title),
-            bootstrapCss,
-            link(rel := "stylesheet", href := "../blog.css"),
-            metaTags,
-            jQuery,
-            raw(gitHubIssue.fetchCommentsAndAppendJs)
+          headContent(
+            post.title,
+            Some("../"),
+            Some(gitHubIssue.fetchCommentsAndAppendJs)
           ),
           body(
-            div(`class` := "container")(
-              div(`class` := "blog-header")(
-                h1(`class` := "blog-title")(
-                  a(
-                    raw("&nbsp;"), breadcrumbs,
-                    `class` := "breadcrumbs fa fa-angle-left",
-                    href := "../" + Files.indexFilename
-                  )
-                )
-              ),
+            navbarContent(Some("../")),
+            postHeaderContent(
+              post.title,
+              s"Posted on ${DateUtils.toPostedDate(post.date)} · ${readingTime(post.content)} min read",
+              tweetPostUrl(post.title, post.url)
+            ),
+            div(`class` := "container post-container")(
               div(`class` := "row")(
-                div(`class` := "col-sm-8 blog-main")(
-                  div(`class` := "blog-post")(
-                    h2(
-                      a(
-                        span(`class` := "blog-post-title")(post.title),
-                        span(`class` := "fa fa-twitter"),
-                        `class` := "share-title",
-                        href := tweetPostUrl(post.title, post.url),
-                        title := "Share",
-                        target := "_blank"
-                      )
-                    ),
-                    p(`class` := "blog-post-meta")(post.date),
-                    div(`class` := "blog-post-body")(
-                      raw(post.content),
-                      raw(postCommentsFooter(gitHubIssue.htmlUrl)),
-                      div(id := "comments")
-                    )
-                  )
-                ),
-                sidebar
+                div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1")(
+                  raw(post.content),
+                  raw(postCommentsFooter(gitHubIssue.htmlUrl)),
+                  div(id := "comments")
+                )
               )
             ),
             footerContent
@@ -176,12 +267,12 @@ object Builder {
     }
   }
 
-  private[this] val indexSortedPostsList = {
-    def logPosts(groupedPostsByMonth: Map[String, Iterable[Post]]): Unit = {
+  private[this] val sortedPostsHtml = {
+    def logPosts(groupedPostsByYear: Map[String, Iterable[Post]]): Unit = {
       println("POSTS")
-      TreeMap(groupedPostsByMonth.toArray: _*)(implicitly[Ordering[String]].reverse).foreach {
-        case (yearMonth, postList) => {
-          println(yearMonth)
+      TreeMap(groupedPostsByYear.toArray: _*)(implicitly[Ordering[String]].reverse).foreach {
+        case (year, postList) => {
+          println(year)
           postList foreach {
             case post: Post => println(s"\t${post.date}\t${post.title}")
           }
@@ -189,81 +280,117 @@ object Builder {
       }
     }
 
-    val groupedPostsByMonth = sortedPosts.groupBy {
-      case post: Post => yearMonthDayToYearMonth(post.date)
+    val groupedPostsByYear = sortedPosts.groupBy {
+      case post: Post => DateUtils.toYear(post.date)
     }
 
-    logPosts(groupedPostsByMonth)
+    logPosts(groupedPostsByYear)
 
-    val groupedPostsHtmlByMonth = groupedPostsByMonth.map {
-      case (yearMonth, postList) => (yearMonth, postList map {
+    val groupedPostsHtmlByYear = groupedPostsByYear.map {
+      case (year, postList) => (year, postList map {
         case post: Post => {
-          div(`class` := "row")(
-            div(`class` := "col-sm-6 col-md-12")(
-              div(`class` := "thumbnail")(
-                div(`class` := "caption")(
-                  h3(a(post.title, href := post.relUrl)),
-                  raw(post.excerpt),
-                  a(`class` := "btn btn-primary btn-sm", "Read more", href := post.relUrl),
-                  a(
-                    span(`class` := "fa fa-twitter"),
-                    `class` := "share",
-                    style := "float: right;",
-                    href := tweetPostUrl(post.title, post.url),
-                    title := "Share",
-                    target := "_blank"
-                  )
-                )
-              )
-            )
+          div(`class` := "post-preview")(
+            a(href := post.relUrl)(
+              h2(`class` := "post-title", post.title),
+              h3(`class` := "post-subtitle", raw(post.excerpt))
+            ),
+            p(`class` := "post-meta", s"Posted on ${DateUtils.toPostedDate(post.date)} · ${readingTime(post.content)} min read"),
+            twitterShare(tweetPostUrl(post.title, post.url)),
+            hr
           )
         }
       })
     }
 
-    TreeMap(groupedPostsHtmlByMonth.toArray: _*)(implicitly[Ordering[String]].reverse).map {
-      case (yearMonth, postList) => div(
-        span(`class` := "blog-post-meta")(yearMonthToMonthYear(yearMonth)),
+    val reversedGroupedPostsHtmlByYear = TreeMap(groupedPostsHtmlByYear.toArray: _*)(implicitly[Ordering[String]].reverse)
+
+    val indexPostsHtml = reversedGroupedPostsHtmlByYear.values.flatten.take(4).toList
+
+    val allPostsHtml = reversedGroupedPostsHtmlByYear.map {
+      case (year, postList) => div(
+        span(`class` := "post-year-meta", year),
         postList
       )
     }.toList
+
+    (indexPostsHtml, allPostsHtml)
   }
 
   private[this] val index =
     html(
-      head(
-        scalatags.Text.tags2.title(blogTitle),
-        bootstrapCss,
-        link(rel := "stylesheet", href := "blog.css"),
-        metaTags
-      ),
+      headContent(blogTitle),
       body(
+        navbarContent(),
+        defaultHeaderContent(blogTitle, blogSubtitle1, blogSubtitle2),
         div(`class` := "container")(
-          div(`class` := "blog-header")(
-            h1(`class` := "blog-title")(blogTitle)
-          ),
           div(`class` := "row")(
-            div(`class` := "col-sm-8 blog-main")(
-              indexSortedPostsList
-            ),
-            sidebar
+            div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 index-post-list")(
+              sortedPostsHtml._1,
+              ul(`class` := "pager")(
+                li(`class` := "next", a(href := s"${Files.archiveFilename}", "All Posts →"))
+              )
+            )
           )
         ),
         footerContent
       )
     )
 
+  private[this] val archive =
+    html(
+      headContent(archiveTitle),
+      body(
+        navbarContent(),
+        defaultHeaderContent(archiveTitle, blogSubtitle1, blogSubtitle2),
+        div(`class` := "container")(
+          div(`class` := "row")(
+            div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 archive-post-list")(
+              sortedPostsHtml._2
+            )
+          )
+        ),
+        footerContent
+      )
+    )
+
+  private[this] val about = {
+    val aboutHtml = mdFileToHtml(pwd / 'common / "about.md")
+
+    html(
+      headContent(aboutTitle),
+      body(
+        navbarContent(),
+        defaultHeaderContent(aboutTitle, blogSubtitle1, blogSubtitle2),
+        div(`class` := "container")(
+          div(`class` := "row")(
+            div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 about")(
+              p(
+                strong(Metadata.author), br,
+                "Software Engineer", br,
+                "Java & Scala developer", br,
+                "CTO @ ", a(href := "https://www.netquest.com", target := "_blank", "Netquest")
+              ),
+              br,
+              div(`class` := "about-blog")(raw(aboutHtml))
+            )
+          )
+        ),
+        footerContent
+      )
+    )
+  }
+
   private[this] def writeRssFeed(posts: Iterable[Post]) = {
     val rssEntries = posts map { post =>
       Rss.Entry(
         post.title,
-        dateFormatter.parse(post.date),
+        DateUtils.toTimestamp(post.date),
         post.url,
         post.content
       )
     }
 
-    val feed = Rss.buildFeed(dateFormatter.parse(currentDate), rssEntries)
+    val feed = Rss.buildFeed(DateUtils.toTimestamp(DateUtils.currentDate), rssEntries)
     write(pwd / Files.rssFeedFilename, feed)
   }
 
@@ -271,6 +398,8 @@ object Builder {
     cleanup
     writePosts(config)
     write(pwd / Files.indexFilename, index.render)
+    write(pwd / Files.aboutFilename, about.render)
+    write(pwd / Files.archiveFilename, archive.render)
     writeRssFeed(sortedPosts)
   }
 

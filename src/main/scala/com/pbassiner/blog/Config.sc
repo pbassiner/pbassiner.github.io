@@ -16,6 +16,8 @@ object Metadata {
 
 object Files {
   val indexFilename = "index.html"
+  val aboutFilename = "about.html"
+  val archiveFilename = "archive.html"
   val rssFeedFilename = "feed.xml"
   val generatedBlogPostsFolder = "blog"
 }
