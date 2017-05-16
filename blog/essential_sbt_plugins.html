@@ -1,0 +1,108 @@
+<html><head><title>Essential sbt Plugins</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link rel="stylesheet" href="../blog.css" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/33/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><div class="container"><div class="blog-header"><h1 class="blog-title"><a class="breadcrumbs fa fa-angle-left" href="../index.html">&nbsp;Back</a></h1></div><div class="row"><div class="col-sm-8 blog-main"><div class="blog-post"><h2><a class="share-title" href="https://twitter.com/intent/tweet?text=Essential+sbt+Plugins&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fessential_sbt_plugins.html&amp;via=polbassiner" title="Share" target="_blank"><span class="blog-post-title">Essential sbt Plugins</span><span class="fa fa-twitter"></span></a></h2><p class="blog-post-meta">2017-05-16</p><div class="blog-post-body"><p>After working in several Scala projects you are likely to end up with a minimal <em>seed</em> (kind of a project template) that you'll use whenever you start a new project.</p>
+<p>Part of this <em>seed</em> would include some general-purpose sbt plugins, and these are the ones I'd pick.</p>
+<h2>Keeping all your dependencies under control</h2>
+<h3>sbt-updates</h3>
+<p>It's always ideal to have your dependencies updated to the latest release. To automate that, <a href="https://github.com/rtimush/sbt-updates">sbt-updates</a> can check maven repositories for dependency updates on your project dependencies (there is also a limited support for Ivy repositories hosted on BinTray).</p>
+<p>Running the <code>dependencyUpdates</code> command displays the currently available updates:</p>
+<pre><code>&gt; dependencyUpdates
+Found 14 dependency updates for project
+  com.typesafe:config                             : 1.3.0     -&gt; 1.3.1
+  ch.qos.logback:logback-classic                  : 1.1.10    -&gt; 1.2.1
+  org.slf4j:jcl-over-slf4j                        : 1.7.22    -&gt; 1.7.23
+  com.typesafe.akka:akka-slf4j                    : 2.4.16    -&gt; 2.4.17
+  com.typesafe.akka:akka-actor                    : 2.4.11.1  -&gt; 2.4.17
+  com.typesafe.akka:akka-http-core                : 2.4.11.1  -&gt; 10.0.3
+  com.typesafe.akka:akka-stream                   : 2.4.11.1  -&gt; 2.4.17
+  com.lightbend.akka:akka-stream-alpakka-sqs      : 0.5       -&gt; 0.6
+  de.heikoseeberger:akka-http-circe               : 1.11.0    -&gt; 1.12.0
+  org.scala-lang.modules:scala-parser-combinators : 1.0.4     -&gt; 1.0.5
+  com.h2database:h2                               : 1.4.192   -&gt; 1.4.193
+  com.zaxxer:HikariCP                             : 2.5.1     -&gt; 2.6.0
+  org.scalatest:scalatest                         : 3.0.1     -&gt; 3.2.0-SNAP4
+  com.typesafe.akka:akka-stream-testkit           : 2.4.16    -&gt; 2.4.17
+</code></pre>
+<h3>sbt-dependency-graph</h3>
+<p>Every now and then you might need to inspect the transitive dependencies in your project, especially when there are clashes and evictions. <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph</a> creates a dependency graph including that information.</p>
+<p>Running the <code>dependencyGraph</code> command will output all the dependencies in an ASCII tree graph:</p>
+<pre><code>&gt; dependencyGraph
+...
++-com.typesafe.akka:akka-stream_2.12:2.4.16 [S]
+  +-com.typesafe.akka:akka-actor_2.12:2.4.16 [S]
+  | +-com.typesafe:config:1.3.0 (evicted by: 1.3.1)
+  | +-com.typesafe:config:1.3.1
+  | +-org.scala-lang.modules:scala-java8-compat_2.12:0.8.0 [S]
+  |
+  +-com.typesafe:ssl-config-core_2.12:0.2.1 [S]
+  | +-com.typesafe:config:1.2.0 (evicted by: 1.3.1)
+  | +-com.typesafe:config:1.3.1
+  | +-org.scala-lang.modules:scala-parser-combinators_2.12:1.0.4 [S]
+  |
+  +-org.reactivestreams:reactive-streams:1.0.0
+...
+</code></pre>
+<h2>Keeping the code clean</h2>
+<h3>sbt-scalariform</h3>
+<p>No matter what your formatting conventions are, avoid relying on manual enforcement is paramount. The main feature of <a href="https://github.com/sbt/sbt-scalariform">sbt-scalariform</a> is that it automatically formats the source code on the specified build stages, using <a href="https://github.com/scala-ide/scalariform">Scalariform</a>.</p>
+<h3>scalastyle-sbt-plugin</h3>
+<p>Even if the source code is automatically formatted, having a static style checker like <a href="https://github.com/scalastyle/scalastyle-sbt-plugin">scalastyle-sbt-plugin</a> allows to generate a report to visually inspect the analysis.</p>
+<h3>sbt-wartremover</h3>
+<p>In addition to the standard library warnings, <a href="https://github.com/wartremover/wartremover">sbt-wartremover</a> adds more validations during the compile stage to enforce better coding conventions such as usage of <code>null</code> and <code>asInstanceOf</code> or non-final case classes, for instance. Here's the list of all <a href="http://www.wartremover.org/doc/warts.html">supported validations</a>.</p>
+<h3>sbt-scoverage</h3>
+<p>In order to have a summary of the amount of code covered by unit tests, <a href="https://github.com/scoverage/sbt-scoverage">sbt-scoverage</a> provides code coverage reports in HTML and XML:
+<img src="https://raw.githubusercontent.com/scoverage/scalac-scoverage-plugin/master/misc/screenshot2.png" alt="sbt-coverage" /></p>
+<h2>Preparing to release</h2>
+<h3>sbt-native-packager</h3>
+<p><a href="https://github.com/sbt/sbt-native-packager">sbt-native-packager</a> lets you generate application packages in native formats. It supports universal <code>zip</code>, <code>tar.gz</code> and <code>xz</code> archives, <code>deb</code> and <code>rpm</code> for Debian/RHEL, <code>dmg</code> for OSX, <code>msi</code> for Windows and, <em>drumroll</em>, <code>docker</code> images.</p>
+<h2>Usage</h2>
+<p>In your CI jobs you can take advantage of most of these sbt plugins to generate everything you need in one go:</p>
+<pre><code>sbt clean compile coverage test scalastyle coverageReport coverageOff docker:publish
+</code></pre>
+<p>This sequence of sbt commands will:</p>
+<ul>
+<li>Clean the generated target</li>
+<li>Compile</li>
+<li>Enable scoverage to instrument the code</li>
+<li>Run the tests</li>
+<li>Generate the scalastyle report</li>
+<li>Generate the code coverage report</li>
+<li>Disable scoverage to remove instrumentation (<strong>this step is mandatory if there are further build steps, since it would use instrumented code otherwise</strong>)</li>
+<li>Build and publish the corresponding docker image</li>
+</ul>
+<p>Do you regularly use any other sbt plugins? Please share!</p>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/33">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><div class="col-sm-3 col-sm-offset-1 blog-sidebar"><div class="sidebar-module sidebar-module-inset"><h4>About</h4><p>This is a personal blog. The opinions expressed here represent my own and not those of my employer.</p><p><strong>Pol Bassiner</strong><br />Software Engineer<br />Java &amp; Scala developer<br />CTO @ Netquest</p><ul class="list-unstyled about-social"><li><a href="https://twitter.com/polbassiner" target="_blank"><i class="fa fa-twitter-square"></i> Twitter</a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li><li><a href="https://github.com/pbassiner" target="_blank"><i class="fa fa-github-square"></i> GitHub</a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><i class="fa fa-rss-square"></i> RSS</a></li></ul></div></div></div></div><footer class="blog-footer"><p>Last published on 2017-05-16</p>
+<p>This blog is hosted on <a href="https://github.com/">GitHub</a> and it's built using <a href="http://www.scala-lang.org/">Scala</a>, <a href="https://github.com/lihaoyi/Ammonite">Ammonite</a> and <a href="http://getbootstrap.com">Bootstrap</a> (with a customized theme based on the <a href="http://getbootstrap.com/examples/blog/">Blog Theme</a> by <a href="https://twitter.com/mdo">@mdo</a>).</p>
+<p>The strategy on building this blog was heavily inspired by <a href="https://twitter.com/li_haoyi">Li Haoyi</a>'s blog post <a href="http://www.lihaoyi.com/post/ScalaScriptingandthe15MinuteBlogEngine.html">Scala Scripting and the 15 Minute Blog Engine</a>.</p>
+</footer></body></html>
