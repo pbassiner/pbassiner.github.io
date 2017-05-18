@@ -35,6 +35,8 @@ def clean(env: Env): Unit = {
   env match {
     case Prod | Dev => {
       Git checkout Files.indexFilename
+      Git checkout Files.archiveFilename
+      Git checkout Files.aboutFilename
       Git checkout (Files.generatedBlogPostsFolder + "/")
       Git checkout Files.rssFeedFilename
       Git.untrackedFiles.filter(_.endsWith(".html")).foreach(rm ! pwd / RelPath(_))

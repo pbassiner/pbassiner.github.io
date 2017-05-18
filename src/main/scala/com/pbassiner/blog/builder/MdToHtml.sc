@@ -14,13 +14,8 @@ def mdFilenameToTitle(name: String): String = name.replace("_", " ")
 
 def mdFileToHtml(path: Path): String = mdToHtml(read ! path)
 
-def mdFileFirst25WordsToHtml(path: Path): String = {
-  val line = (read.lines ! path).filter(isReadable)(0)
-
-  val lineFirst25Words = getFirst25Words(line)
-
-  mdToHtml(s"$lineFirst25Words...")
-}
+def mdFileFirst25WordsToHtmlWithoutAnchors(path: Path): String =
+  mdFileFirst25WordsToHtml(path).replaceAll("<a[^>]*>(.*?)</a>", "$1")
 
 private[this] def mdToHtml(content: String): String = {
   val parser = Parser.builder().build()
@@ -34,6 +29,14 @@ private[this] def isReadable: String => Boolean =
 
 private[this] def getFirst25Words(line: String): String =
   line.split("\\s").take(25) mkString " "
+
+private[this] def mdFileFirst25WordsToHtml(path: Path): String = {
+  val line = (read.lines ! path).filter(isReadable)(0)
+
+  val lineFirst25Words = getFirst25Words(line)
+
+  mdToHtml(s"$lineFirst25Words...")
+}
 
 private[this] class GistScriptNodeRenderer(val context: HtmlNodeRendererContext) extends NodeRenderer {
 
