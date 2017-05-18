@@ -1,9 +1,8 @@
 import ammonite.ops._
-import scala.util.{ Success, Failure }
+import scala.util.{ Failure, Success, Try }
 
 import $file.Config, Config._
-import $file.builder.DraftsBuilder
-import $file.builder.BlogBuilder
+import $file.Generator
 import $file.git.Git
 
 sealed trait Env
@@ -13,18 +12,18 @@ final case object Drafts extends Env
 
 def publish(env: Env): Unit = {
   env match {
-    case Prod => build(
+    case Prod => generate(
       Configuration(
         gitHubIntegration = Enabled
       )
     )
-    case Dev => build(
+    case Dev => generate(
       Configuration(
         gitHubIntegration = Disabled
       )
     )
     case Drafts =>
-      DraftsBuilder.publish match {
+      DraftsPublisher.publish match {
         case Success(_) => publish(Dev)
         case Failure(e) => println(e.getMessage)
       }
@@ -34,16 +33,16 @@ def publish(env: Env): Unit = {
 def clean(env: Env): Unit = {
   env match {
     case Prod | Dev => {
-      Git checkout Files.indexFilename
-      Git checkout Files.archiveFilename
-      Git checkout Files.aboutFilename
-      Git checkout (Files.generatedBlogPostsFolder + "/")
+      Git checkout Files.Html.indexFilename
+      Git checkout Files.Html.archiveFilename
+      Git checkout Files.Html.aboutFilename
+      Git checkout (Files.Html.generatedBlogPostsFolder + "/")
       Git checkout Files.rssFeedFilename
       Git.untrackedFiles.filter(_.endsWith(".html")).foreach(rm ! pwd / RelPath(_))
     }
     case Drafts => {
       clean(Dev)
-      DraftsBuilder.clean match {
+      DraftsPublisher.clean match {
         case Success(_) => ()
         case Failure(e) => println(e.getMessage)
       }
@@ -51,9 +50,29 @@ def clean(env: Env): Unit = {
   }
 }
 
-private[this] def build(configuration: Configuration) = {
+private[this] def generate(configuration: Configuration) = {
   println(configuration)
+  Generator.generate(configuration)
+}
 
-  implicit val config: Configuration = configuration
-  BlogBuilder.Builder(config)
+private[this] object DraftsPublisher {
+  private[this] val master = "master"
+  private[this] val test = "test"
+  private[this] val excludedBranches = Set(master, test, "bootstrap4")
+
+  def publish(): Try[Unit] =
+    Git runIfClean { () =>
+      Git checkout master
+      Git checkoutNewBranchAndRun (test, () => {
+        Git.branches(excludedBranches).foreach(Git mergeNoEdit _)
+        Success(())
+      })
+    }
+
+  def clean(): Try[Unit] =
+    Git runIfClean { () =>
+      Git checkout master
+      Git deleteBranch test
+      Success(())
+    }
 }
