@@ -474,6 +474,9 @@ body {
 .about-blog {
   font-size: 14px;
 }
+.about-me p {
+  margin: 0px;
+}
 .post-container a {
   text-decoration: underline;
 }

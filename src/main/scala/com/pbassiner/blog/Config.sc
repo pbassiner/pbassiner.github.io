@@ -8,6 +8,8 @@ case class Configuration(
 
 object Metadata {
   val author = "Pol Bassiner"
+  val twitterUser = "polbassiner"
+  val linkedinUser = "polbassiner"
   val githubUser = "pbassiner"
   val githubRepo = s"$githubUser.github.io"
   val url = s"https://$githubRepo/"
@@ -15,9 +17,30 @@ object Metadata {
 }
 
 object Files {
-  val indexFilename = "index.html"
-  val aboutFilename = "about.html"
-  val archiveFilename = "archive.html"
   val rssFeedFilename = "feed.xml"
-  val generatedBlogPostsFolder = "blog"
+
+  object Html {
+    val indexFilename = "index.html"
+    val archiveFilename = "archive.html"
+    val aboutFilename = "about.html"
+    val generatedBlogPostsFolder = "blog"
+    val cssFilename = "blog.css"
+    val jsFilename = "blog.js"
+  }
+
+  object Md {
+    val postCommentsFooterFilename = "postCommentsFooter.md"
+    val aboutMeFilename = "aboutMe.md"
+    val aboutBlogFilename = "aboutBlog.md"
+  }
+}
+
+object Copys {
+  val blogTitle = "Blog"
+  val blogSubtitle1 = "This is a personal blog."
+  val blogSubtitle2 = "The opinions expressed here represent my own and not those of my employer."
+  val homeTitle = "Home"
+  val aboutTitle = "About"
+  val archiveTitle = "Posts"
+  val allPosts = "All Posts →"
 }
