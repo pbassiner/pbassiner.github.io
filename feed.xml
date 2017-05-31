@@ -2,13 +2,62 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-05-18T00:00:00+0200</updated>
+        <updated>2017-05-31T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - May 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_may_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_may_2017.html</id>
+    <published>2017-05-31T00:00:00+0200</published>
+    <updated>2017-05-31T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="http://typelevel.org/blog/2017/05/02/io-monad-for-cats.html">An IO monad for cats</a> - Detailed introduction and explanation of the motivation behind <a href="https://github.com/typelevel/cats-effect">cats-effect</a>, by <a href="https://github.com/djspiewak">Daniel Spiewak</a></li>
+<li><a href="http://blog.colinbreck.com/reflections-on-being-a-team-lead/">Reflections on Being a Team Lead</a> - Blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://www.quora.com/How-is-this-statement-%E2%80%9CMonad-is-a-monoid-in-the-category-of-endofunctors-%E2%80%9D-useful-in-programming/answer/Bartosz-Milewski?share=1de25e0b">How is this statement, &quot;Monad is a monoid in the category of endofunctors&quot;, useful in programming?</a> - Answer to Quora question by <a href="https://github.com/BartoszMilewski">Bartosz Milewski</a></li>
+<li>Akka Typed blog posts series by <a href="https://github.com/patriknw">Patrik Nordwal</a>
+<ul>
+<li><a href="http://blog.akka.io/typed/2017/05/05/typed-intro">Akka Typed: Hello World in the new API</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/06/typed-coexistence">Akka Typed: Coexistence</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/08/typed-mutable-vs-immutable">Akka Typed: Mutable vs. Immutable</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/12/typed-protocols">Akka Typed: Protocols</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/16/supervision">Akka Typed: Supervision</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/19/signals">Akka Typed: Lifecycle and Watch</a></li>
+<li><a href="http://akka.io/blog/2017/05/26/timers">Akka Typed: Timers</a></li>
+</ul>
+</li>
+<li><a href="https://softwaremill.com/free-tagless-compared-how-not-to-commit-to-monad-too-early/">Free and tagless compared - how not to commit to a monad too early</a> - Detailed comparison between Free Monads and Final Tagless by <a href="https://github.com/adamw">Adam Warski</a></li>
+<li><a href="https://dev.to/jlhcoder/how-to-set-the-technical-direction-for-your-team">How to Set the Technical Direction for Your Team</a> - Blog post on technical leadership by <a href="https://github.com/jlhood">James Hood</a></li>
+<li><a href="http://scala-lang.org/blog/2017/05/30/tribulations-canbuildfrom.html">Tribulations of CanBuildFrom</a> - Blog post on the design and features built on top of <code>CanBuildFrom</code>, along with the alternative solutions implemented in the new collections</li>
+<li><a href="https://softwaremill.com/interval-based-rate-limiter/">An interval-based rate limiter for Akka Stream</a> - Blog post by <a href="https://github.com/mkubala">Marcin Kubala</a></li>
+<li><a href="https://cloudplatform.googleblog.com/2017/05/istio-modern-approach-to-developing-and.html">Istio: a modern approach to developing and managing microservices</a> - Announcement of the alpha release of <a href="https://istio.io/">Istio</a>: a new open-source project that provides a uniform way to help connect, secure, manage and monitor microservices</li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li><a href="https://www.slideshare.net/ManuelBernhardt/8-akka-antipatterns-youd-better-be-aware-of">8 Akka anti-patterns you'd better be aware of (slides)</a> - Talk slides by <a href="https://github.com/manuelbernhardt">Manuel Bernhardt</a></li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="http://tpolecat.github.io/2017/04/25/scalac-flags.html">Recommended Scalac Flags for 2.12</a> - by <a href="https://github.com/tpolecat">Rob Norris</a></li>
+<li><a href="https://github.com/tpolecat/cats-infographic">Cats Infographic</a> - Visual representation of the <a href="https://github.com/typelevel/cats">cats</a> typeclass hierarchy, by <a href="https://github.com/tpolecat">Rob Norris</a></li>
+<li><a href="http://scala-lang.org/blog/2017/05/19/scastie.html">Scastie is out of beta and available to everybody</a> - Public release of Scastie: Scala + sbt in your browser</li>
+<li><a href="https://github.com/circe/circe-derivation">circe-derivation: Fast type class instance derivation for circe</a> - Macro-supported derivation of circe's type class instances. This library is for people who don't care about the full generic derivation experience but just want fast builds and instances that stay in sync with their definitions, and who don't mind a bit of boilerplate (a couple of lines per case class).</li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Essential sbt Plugins]]>
     </title>

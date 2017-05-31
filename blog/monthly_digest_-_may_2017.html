@@ -1,0 +1,68 @@
+<html><head><title>Monthly Digest - May 2017</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="../blog.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script><script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="../blog.js"></script><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/37/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><nav class="navbar navbar-default navbar-custom navbar-fixed-top"><div class="container"><div class="navbar-header page-scroll"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span>Menu<i class="fa fa-bars"></i></button><a class="navbar-brand" href="../index.html">Pol Bassiner</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav navbar-right"><li><a href="../index.html">Home</a></li><li><a href="../archive.html">Posts</a></li><li><a href="../about.html">About</a></li></ul></div></div></nav><header class="intro-header"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>Monthly Digest - May 2017</h1><span class="meta">Posted on May 31, 2017 · 2 min read</span><span class="meta share"><a class="share" href="https://twitter.com/intent/tweet?text=Monthly+Digest+-+May+2017&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fmonthly_digest_-_may_2017.html&amp;via=polbassiner" title="Share" target="_blank"><span class="fa fa-twitter"></span></a></span></div></div></div></div></header><div class="container post-container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="http://typelevel.org/blog/2017/05/02/io-monad-for-cats.html">An IO monad for cats</a> - Detailed introduction and explanation of the motivation behind <a href="https://github.com/typelevel/cats-effect">cats-effect</a>, by <a href="https://github.com/djspiewak">Daniel Spiewak</a></li>
+<li><a href="http://blog.colinbreck.com/reflections-on-being-a-team-lead/">Reflections on Being a Team Lead</a> - Blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://www.quora.com/How-is-this-statement-%E2%80%9CMonad-is-a-monoid-in-the-category-of-endofunctors-%E2%80%9D-useful-in-programming/answer/Bartosz-Milewski?share=1de25e0b">How is this statement, &quot;Monad is a monoid in the category of endofunctors&quot;, useful in programming?</a> - Answer to Quora question by <a href="https://github.com/BartoszMilewski">Bartosz Milewski</a></li>
+<li>Akka Typed blog posts series by <a href="https://github.com/patriknw">Patrik Nordwal</a>
+<ul>
+<li><a href="http://blog.akka.io/typed/2017/05/05/typed-intro">Akka Typed: Hello World in the new API</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/06/typed-coexistence">Akka Typed: Coexistence</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/08/typed-mutable-vs-immutable">Akka Typed: Mutable vs. Immutable</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/12/typed-protocols">Akka Typed: Protocols</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/16/supervision">Akka Typed: Supervision</a></li>
+<li><a href="http://blog.akka.io/typed/2017/05/19/signals">Akka Typed: Lifecycle and Watch</a></li>
+<li><a href="http://akka.io/blog/2017/05/26/timers">Akka Typed: Timers</a></li>
+</ul>
+</li>
+<li><a href="https://softwaremill.com/free-tagless-compared-how-not-to-commit-to-monad-too-early/">Free and tagless compared - how not to commit to a monad too early</a> - Detailed comparison between Free Monads and Final Tagless by <a href="https://github.com/adamw">Adam Warski</a></li>
+<li><a href="https://dev.to/jlhcoder/how-to-set-the-technical-direction-for-your-team">How to Set the Technical Direction for Your Team</a> - Blog post on technical leadership by <a href="https://github.com/jlhood">James Hood</a></li>
+<li><a href="http://scala-lang.org/blog/2017/05/30/tribulations-canbuildfrom.html">Tribulations of CanBuildFrom</a> - Blog post on the design and features built on top of <code>CanBuildFrom</code>, along with the alternative solutions implemented in the new collections</li>
+<li><a href="https://softwaremill.com/interval-based-rate-limiter/">An interval-based rate limiter for Akka Stream</a> - Blog post by <a href="https://github.com/mkubala">Marcin Kubala</a></li>
+<li><a href="https://cloudplatform.googleblog.com/2017/05/istio-modern-approach-to-developing-and.html">Istio: a modern approach to developing and managing microservices</a> - Announcement of the alpha release of <a href="https://istio.io/">Istio</a>: a new open-source project that provides a uniform way to help connect, secure, manage and monitor microservices</li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li><a href="https://www.slideshare.net/ManuelBernhardt/8-akka-antipatterns-youd-better-be-aware-of">8 Akka anti-patterns you'd better be aware of (slides)</a> - Talk slides by <a href="https://github.com/manuelbernhardt">Manuel Bernhardt</a></li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="http://tpolecat.github.io/2017/04/25/scalac-flags.html">Recommended Scalac Flags for 2.12</a> - by <a href="https://github.com/tpolecat">Rob Norris</a></li>
+<li><a href="https://github.com/tpolecat/cats-infographic">Cats Infographic</a> - Visual representation of the <a href="https://github.com/typelevel/cats">cats</a> typeclass hierarchy, by <a href="https://github.com/tpolecat">Rob Norris</a></li>
+<li><a href="http://scala-lang.org/blog/2017/05/19/scastie.html">Scastie is out of beta and available to everybody</a> - Public release of Scastie: Scala + sbt in your browser</li>
+<li><a href="https://github.com/circe/circe-derivation">circe-derivation: Fast type class instance derivation for circe</a> - Macro-supported derivation of circe's type class instances. This library is for people who don't care about the full generic derivation experience but just want fast builds and instances that stay in sync with their definitions, and who don't mind a bit of boilerplate (a couple of lines per case class).</li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/37">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><hr /><footer><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center"><li><a href="https://twitter.com/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://github.com/pbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Last published on 2017-05-31<br />Copyright © Pol Bassiner 2017</p></div></div></div></footer></body></html>
