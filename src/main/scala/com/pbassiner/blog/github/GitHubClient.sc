@@ -41,13 +41,15 @@ def commentsByPost(post: String) = {
   comments.sortBy(_.date).reverse
 }
 
-private[this] def getIssuesByLabel(label: String) = {
+private[this] def getIssuesByLabel(label: String) =
   upickle.json.read(
-    Http(issuesApiUrl).param("labels", label)
+    Http(issuesApiUrl).param("labels", sanitizeLabel(label))
       .asString
       .body
   )
-}
+
+private[this] def sanitizeLabel(label: String) =
+  label.replace(",", ".")
 
 private[this] def fetchCommentsAndAppendJs(commentsUrl: String) = s"""
   <script type="text/javascript">
