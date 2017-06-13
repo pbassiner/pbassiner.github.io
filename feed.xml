@@ -2,13 +2,92 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-05-31T00:00:00+0200</updated>
+        <updated>2017-06-13T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Composing Future, List and Either]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/composing_future,_list_and_either.html"/>
+    <id>https://pbassiner.github.io/blog/composing_future,_list_and_either.html</id>
+    <published>2017-06-13T00:00:00+0200</published>
+    <updated>2017-06-13T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Very often we deal with <code>Future[A]</code>, <code>List[A]</code> and <code>Either[A, B]</code> types but, when it comes to composing them, things can get messy.</p>
+<p>I find it easier to understand with a real-world-<em>ish</em> example.</p>
+<h2>The context</h2>
+<p>Consider the following model for a <code>Commit</code>, an <code>Author</code> and their product <code>CommitAndAuthor</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=Model.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-model-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-model-scala</a></figcaption>
+<p>And let's assume we have the following methods already in place:</p>
+<ul>
+<li><code>getCommits</code>: get all commits from a repository</li>
+<li><code>getAuthor</code>: get the Author of a specific commit</li>
+</ul>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=GithubApi.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-githubapi-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-githubapi-scala</a></figcaption>
+<h2>The task</h2>
+<p>Now that we can retrieve all the commits and the author of a specific commit, let's try to provide all the commits <strong>with</strong> their authors:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=Compose.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-compose-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-compose-scala</a></figcaption>
+<h2>Approach #1 - Using vanilla Scala</h2>
+<p>So we <em>just</em> need to retrieve all the commits and, for each one, retrieve its author and then combine both commit and author.</p>
+<p>We can start with the easiest part, the innermost author retrieval from the list of commits:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachInner.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachinner-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachinner-scala</a></figcaption>
+<p>So now we have a <code>List[Future[Either[A, B]]]</code> but we need it to be a <code>Future[Either[A, List[B]]]</code> after we combine it with the result of <code>search()</code>.</p>
+<p>First of all we'll use <code>Future</code>'s <code>sequence</code> traversal to reduce many <code>Future</code>s to a single <code>Future</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachSequence.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachsequence-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachsequence-scala</a></figcaption>
+<p>From the current <code>Future[List[Either[A, B]]]</code> we need to convert it to a <code>Future[Either[A, List[B]]</code> and we'll do so by mapping over the <code>Future</code> and then folding the <code>List</code> into a single <code>Either</code> containing a <code>List[CommitAndAuthor]</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachFold.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachfold-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachfold-scala</a></figcaption>
+<p>And finally, we have to compose the result of calling <code>search()</code> with this previous code:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproach.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproach-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproach-scala</a></figcaption>
+<p>which, if we expand the <code>listCommitsAndAuthor</code> function, would look like:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachExpanded.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachexpanded-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachexpanded-scala</a></figcaption>
+<p>Ok then, we got it but, even though it works as expected, it's kind of verbose and there's more boilerplate code than actual <em>logic</em>.</p>
+<h2>Approach #2 - Using monad transformers</h2>
+<p>Most code from the previous approach focuses on mapping over <code>Future</code> and <code>Either</code> to manipulate the underlaying data structures, and here's where monad transformers come into play.</p>
+<p>We'll use the datatypes from <a href="https://github.com/typelevel/cats">Cats</a>, a <a href="http://typelevel.org/">Typelevel</a> project providing a lightweight, modular and extensible library for functional programming.</p>
+<p>We can take advantage of <code>EitherT</code>, a monad transformer for <code>Either</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=EitherT.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-eithert-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-eithert-scala</a></figcaption>
+<p><code>EitherT</code>'s <code>flatMap</code> will apply both <code>Future</code> and <code>Either</code>'s <code>flatMap</code> functions so we don't have to, and it will preserve their short-circuiting nature either (pun intended) if <code>Future</code> fails or <code>Either</code> is <code>Left</code>.</p>
+<p>To extract the value from an <code>EitherT</code> instance we just need to call the <code>value</code> function, which will transform it back to a <code>Future[Either[A, B]]</code> instance.</p>
+<h3>Refactoring</h3>
+<p>Now we can rewrite <code>listCommitsAndAuthor</code>, the innermost function, as:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=SecondApproachInner.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachinner-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachinner-scala</a></figcaption>
+<p>Since we're composing <code>Future</code> and <code>Either</code> we need a couple of imports from <code>Cats</code> and an <code>ExecutionContext</code>.</p>
+<p>We are left with a <code>List[Either[A, B]]</code>. Then, using the <code>sequenceU</code> method we can traverse the <code>List</code> and transform it into an <code>Either[List[A, B]]</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=SecondApproachTraverse.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachtraverse-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachtraverse-scala</a></figcaption>
+<p>Notice that since we are now also composing <code>List</code>s, we need a couple more imports from <code>Cats</code>.</p>
+<p>Finally we can compose the call to <code>search()</code>, wrapped in an <code>EitherT</code> as well, with the previous code:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=SecondApproach.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproach-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproach-scala</a></figcaption>
+<h2>In conclusion</h2>
+<p>Now we have a much cleaner implementation which let's you focus on the relevant logic and gently hides all the boilerplate code related to the composition of the monads.</p>
+<p>The full code, including all required imports, is available in <a href="https://gist.github.com/pbassiner/bb820da4a662103e3a9e3b595d0e4ea5">this gist</a>.</p>
+<h2>References</h2>
+<ul>
+<li><a href="http://eed3si9n.com/herding-cats/stacking-future-and-either.html">Stacking Future and Either</a> - Part of the Cats tutorial by <a href="https://github.com/eed3si9n">Eugene Yokota</a></li>
+<li><a href="http://blog.leifbattermann.de/2017/03/16/7-most-convenient-ways-to-create-a-future-either-stack/">7 Most Convenient Ways To Create A Future Either Stack</a> - Concise summary of ways for dealing with Future/Either stacks by <a href="https://github.com/battermann">Leif Battermann</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Monthly Digest - May 2017]]>
     </title>

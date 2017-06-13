@@ -1,0 +1,98 @@
+<html><head><title>Composing Future, List and Either</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="../blog.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script><script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="../blog.js"></script><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/38/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><nav class="navbar navbar-default navbar-custom navbar-fixed-top"><div class="container"><div class="navbar-header page-scroll"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span>Menu<i class="fa fa-bars"></i></button><a class="navbar-brand" href="../index.html">Pol Bassiner</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav navbar-right"><li><a href="../index.html">Home</a></li><li><a href="../archive.html">Posts</a></li><li><a href="../about.html">About</a></li></ul></div></div></nav><header class="intro-header"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>Composing Future, List and Either</h1><span class="meta">Posted on June 13, 2017 · 3 min read</span><span class="meta share"><a class="share" href="https://twitter.com/intent/tweet?text=Composing+Future%2C+List+and+Either&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fcomposing_future%2C_list_and_either.html&amp;via=polbassiner" title="Share" target="_blank"><span class="fa fa-twitter"></span></a></span></div></div></div></div></header><div class="container post-container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><p>Very often we deal with <code>Future[A]</code>, <code>List[A]</code> and <code>Either[A, B]</code> types but, when it comes to composing them, things can get messy.</p>
+<p>I find it easier to understand with a real-world-<em>ish</em> example.</p>
+<h2>The context</h2>
+<p>Consider the following model for a <code>Commit</code>, an <code>Author</code> and their product <code>CommitAndAuthor</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=Model.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-model-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-model-scala</a></figcaption>
+<p>And let's assume we have the following methods already in place:</p>
+<ul>
+<li><code>getCommits</code>: get all commits from a repository</li>
+<li><code>getAuthor</code>: get the Author of a specific commit</li>
+</ul>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=GithubApi.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-githubapi-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-githubapi-scala</a></figcaption>
+<h2>The task</h2>
+<p>Now that we can retrieve all the commits and the author of a specific commit, let's try to provide all the commits <strong>with</strong> their authors:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=Compose.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-compose-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-compose-scala</a></figcaption>
+<h2>Approach #1 - Using vanilla Scala</h2>
+<p>So we <em>just</em> need to retrieve all the commits and, for each one, retrieve its author and then combine both commit and author.</p>
+<p>We can start with the easiest part, the innermost author retrieval from the list of commits:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachInner.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachinner-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachinner-scala</a></figcaption>
+<p>So now we have a <code>List[Future[Either[A, B]]]</code> but we need it to be a <code>Future[Either[A, List[B]]]</code> after we combine it with the result of <code>search()</code>.</p>
+<p>First of all we'll use <code>Future</code>'s <code>sequence</code> traversal to reduce many <code>Future</code>s to a single <code>Future</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachSequence.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachsequence-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachsequence-scala</a></figcaption>
+<p>From the current <code>Future[List[Either[A, B]]]</code> we need to convert it to a <code>Future[Either[A, List[B]]</code> and we'll do so by mapping over the <code>Future</code> and then folding the <code>List</code> into a single <code>Either</code> containing a <code>List[CommitAndAuthor]</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachFold.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachfold-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachfold-scala</a></figcaption>
+<p>And finally, we have to compose the result of calling <code>search()</code> with this previous code:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproach.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproach-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproach-scala</a></figcaption>
+<p>which, if we expand the <code>listCommitsAndAuthor</code> function, would look like:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=FirstApproachExpanded.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachexpanded-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-firstapproachexpanded-scala</a></figcaption>
+<p>Ok then, we got it but, even though it works as expected, it's kind of verbose and there's more boilerplate code than actual <em>logic</em>.</p>
+<h2>Approach #2 - Using monad transformers</h2>
+<p>Most code from the previous approach focuses on mapping over <code>Future</code> and <code>Either</code> to manipulate the underlaying data structures, and here's where monad transformers come into play.</p>
+<p>We'll use the datatypes from <a href="https://github.com/typelevel/cats">Cats</a>, a <a href="http://typelevel.org/">Typelevel</a> project providing a lightweight, modular and extensible library for functional programming.</p>
+<p>We can take advantage of <code>EitherT</code>, a monad transformer for <code>Either</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=EitherT.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-eithert-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-eithert-scala</a></figcaption>
+<p><code>EitherT</code>'s <code>flatMap</code> will apply both <code>Future</code> and <code>Either</code>'s <code>flatMap</code> functions so we don't have to, and it will preserve their short-circuiting nature either (pun intended) if <code>Future</code> fails or <code>Either</code> is <code>Left</code>.</p>
+<p>To extract the value from an <code>EitherT</code> instance we just need to call the <code>value</code> function, which will transform it back to a <code>Future[Either[A, B]]</code> instance.</p>
+<h3>Refactoring</h3>
+<p>Now we can rewrite <code>listCommitsAndAuthor</code>, the innermost function, as:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=SecondApproachInner.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachinner-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachinner-scala</a></figcaption>
+<p>Since we're composing <code>Future</code> and <code>Either</code> we need a couple of imports from <code>Cats</code> and an <code>ExecutionContext</code>.</p>
+<p>We are left with a <code>List[Either[A, B]]</code>. Then, using the <code>sequenceU</code> method we can traverse the <code>List</code> and transform it into an <code>Either[List[A, B]]</code>:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=SecondApproachTraverse.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachtraverse-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproachtraverse-scala</a></figcaption>
+<p>Notice that since we are now also composing <code>List</code>s, we need a couple more imports from <code>Cats</code>.</p>
+<p>Finally we can compose the call to <code>search()</code>, wrapped in an <code>EitherT</code> as well, with the previous code:</p>
+<script src="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9.js?file=SecondApproach.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproach-scala">https://gist.github.com/pbassiner/6bb41c132da822cce2020827d6163cc9#file-secondapproach-scala</a></figcaption>
+<h2>In conclusion</h2>
+<p>Now we have a much cleaner implementation which let's you focus on the relevant logic and gently hides all the boilerplate code related to the composition of the monads.</p>
+<p>The full code, including all required imports, is available in <a href="https://gist.github.com/pbassiner/bb820da4a662103e3a9e3b595d0e4ea5">this gist</a>.</p>
+<h2>References</h2>
+<ul>
+<li><a href="http://eed3si9n.com/herding-cats/stacking-future-and-either.html">Stacking Future and Either</a> - Part of the Cats tutorial by <a href="https://github.com/eed3si9n">Eugene Yokota</a></li>
+<li><a href="http://blog.leifbattermann.de/2017/03/16/7-most-convenient-ways-to-create-a-future-either-stack/">7 Most Convenient Ways To Create A Future Either Stack</a> - Concise summary of ways for dealing with Future/Either stacks by <a href="https://github.com/battermann">Leif Battermann</a></li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/38">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><hr /><footer><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center"><li><a href="https://twitter.com/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://github.com/pbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Last published on 2017-06-13<br />Copyright © Pol Bassiner 2017</p></div></div></div></footer></body></html>
