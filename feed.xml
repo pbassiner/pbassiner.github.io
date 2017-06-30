@@ -2,13 +2,58 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-06-13T00:00:00+0200</updated>
+        <updated>2017-06-30T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - Jun 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_jun_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_jun_2017.html</id>
+    <published>2017-06-30T00:00:00+0200</published>
+    <updated>2017-06-30T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="https://blog.scalac.io/2017/06/01/why-should-you-care-about-monix.html">Why you should know Monix</a> - Introduction to <a href="https://monix.io/">Monix</a>, a library for asynchronous programming, by <a href="https://github.com/LGLO">Lech Głowiak</a></li>
+<li>Akka monitoring with Kamon series by <a href="https://github.com/aludwiko">Andrzej Ludwikowski</a>
+<ul>
+<li><a href="https://softwaremill.com/akka-monitoring-with-kamon-part-1/">Part 1</a></li>
+<li><a href="https://softwaremill.com/akka-monitoring-with-kamon-part-2/">Part 2</a></li>
+<li><a href="https://softwaremill.com/akka-monitoring-with-kamon-part-3/">Part 3</a></li>
+</ul>
+</li>
+<li><a href="http://www.cakesolutions.net/teamblogs/error-handling-pitfalls-in-scala">Error handling pitfalls in Scala</a> - Common caveats handling errors by <a href="https://github.com/jkpl">Jaakko Pallari</a></li>
+<li><a href="http://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-ii/">Integrating Akka Streams and Akka Actors: Part II</a> - Blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="http://japgolly.blogspot.com.es/2017/06/dependently-typed-functions.html">Dependently-Typed Functions</a> - Review of the current Scala's support of dependently-typed functions by <a href="https://github.com/japgolly">David Barri</a></li>
+<li><a href="http://underscore.io/blog/posts/2017/06/02/uniting-church-and-state.html">Uniting Church and State: FP and OO Together</a> - Blog post by <a href="https://github.com/noelwelsh/">Noel Welsh</a></li>
+<li><a href="http://www.lihaoyi.com/post/ScalaScriptingGettingto10.html">Scala Scripting: Getting to 1.0</a> - <a href="https://github.com/lihaoyi">Li Haoyi</a> blog post about the motivation behind <a href="https://github.com/lihaoyi/ammonite">Ammonite</a> and the goals of the upcoming 1.0 release</li>
+<li><a href="https://blog.scalac.io/optics-beyond-lenses-with-monocle.html">Optics beyond Lenses with Monocle</a> - Great blog post on Optics by <a href="https://github.com/note">Michał Sitko</a></li>
+<li><a href="https://www.oreilly.com/ideas/the-evolution-of-scalable-microservices">The evolution of scalable microservices</a> - Excellent blog post by <a href="https://github.com/jboner">Jonas Bonér</a></li>
+<li>Reactive Streams in Scala: Akka Streams vs Monix series focused on comparing <a href="http://doc.akka.io/docs/akka/current/scala/stream/index.html">Akka Streams</a> and <a href="https://monix.io/">Monix</a> implementations of Reactive Streams, by <a href="https://github.com/rucek">Jacek Kunicki</a>
+<ul>
+<li><a href="https://softwaremill.com/reactive-streams-in-scala-comparing-akka-streams-and-monix-part-1/">Part 1</a></li>
+<li><a href="https://softwaremill.com/reactive-streams-in-scala-comparing-akka-streams-and-monix-part-2/">Part 2</a></li>
+</ul>
+</li>
+<li><a href="http://cloudmark.github.io/FSM/">Akka Finite State Machine (FSM) and At Most Once Semantics</a> - Blog post by <a href="https://github.com/cloudmark">Mark Galea</a></li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li>The Future of Programming (<a href="https://youtu.be/sXdDqOxjKcc">Part 1</a> &amp; <a href="https://youtu.be/XZl5DglVTCs">Part2</a>) by <a href="https://github.com/BartoszMilewski">Bartosz Milewski</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Composing Future, List and Either]]>
     </title>
