@@ -1,0 +1,81 @@
+<html><head><title>Lessons Learned After Adopting Innovation Days</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="../blog.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script><script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="../blog.js"></script><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/42/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><nav class="navbar navbar-default navbar-custom navbar-fixed-top"><div class="container"><div class="navbar-header page-scroll"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span>Menu<i class="fa fa-bars"></i></button><a class="navbar-brand" href="../index.html">Pol Bassiner</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav navbar-right"><li><a href="../index.html">Home</a></li><li><a href="../archive.html">Posts</a></li><li><a href="../about.html">About</a></li></ul></div></div></nav><header class="intro-header"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>Lessons Learned After Adopting Innovation Days</h1><span class="meta">Posted on July 18, 2017 · 6 min read</span><span class="meta share"><a class="share" href="https://twitter.com/intent/tweet?text=Lessons+Learned+After+Adopting+Innovation+Days&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Flessons_learned_after_adopting_innovation_days.html&amp;via=polbassiner" title="Share" target="_blank"><span class="fa fa-twitter"></span></a></span></div></div></div></div></header><div class="container post-container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><h1>The initial motivation</h1>
+<p>By the end of last year I began working on a proposal for the implementation of Innovation Days within the <a href="https://www.netquest.com">Netquest</a> technology department. My main goal was to provide allocated time periods everyone could spend on whatever they considered most beneficial, in the widest sense, since I believe this empowers each one of us to be more creative and innovative.</p>
+<p>I didn't want to be too ambitious so I aimed for a simple set up for starters, scheduling the events in a monthly basis, gathering feedback from everyone afterwards and applying some slight changes on each iteration. I figure this approach sounds about right to software developers, am I right?</p>
+<h1>The first edition</h1>
+<p>The goal of the first edition was to deliver something with a <strong>tangible output</strong> in its broadest sense, <strong>including unfinished and negative outputs</strong>. For example:</p>
+<ul>
+<li>an analysis of a new technology</li>
+<li>a new application or service</li>
+<li>a new feature in an existing service</li>
+<li>a major bug fix</li>
+<li>a workshop on any technology</li>
+</ul>
+<p>And it could be in the form of a scope or specification document, an MVP, a PoC or even something production ready; and considering all areas: applications, infrastructure, development tools, monitoring, etc. The only restriction was that it had <strong>a real application within the organization</strong>.</p>
+<p>Since this was the first time we were running this kind of event, everyone could decide if they'd rather make it an individual or a team activity.</p>
+<p>The day started having breakfast all together and running a quick showcase of what everyone was up to during the day. By the end of the day everyone presented to the rest of the team what they had achieved, focusing on the problem to solve, who would benefit from it and the proposed solution.</p>
+<h2>Feedback</h2>
+<p>After the event I sent a satisfaction survey to every participant in order to obtain their feedback. The first edition scored an average of 7.45 over 10.</p>
+<p>The most valued traits of the initiative were the opportunity of having a time frame to try new things, learn, research or acquire some kind of knowledge; along with the possibility of changing the day-to-day routine and context.</p>
+<p>On the other hand, some people considered that maybe just a single day felt short and that teamwork should be encouraged.</p>
+<h1>The second edition</h1>
+<p>I didn't want to make too many changes at once on the second edition so, out of some people's feedback, I introduced a small portion of <em>competition</em> to the event by holding a vote to choose the most innovative idea or accomplishment, where the winner/s would get a prize.</p>
+<h2>Feedback</h2>
+<p>The <em>competition</em> was greatly welcome, although some people thought otherwise. Again, the most appreciated trait was the opportunity to learn. As a counterpart, some people claimed that the concept of <em>innovation</em> might have a negative impact because of its ambitious connotation.</p>
+<p>Despite putting emphasis on the recommendation of forming teams, most people were still working on their own and this was also something that came up in the satisfaction survey.</p>
+<h1>The following editions</h1>
+<p>We carried out another two editions without applying any changes to the rules. Unsurprisingly, the received feedback didn't change as well.</p>
+<h1>Conclusions</h1>
+<p>After running four Innovation Day editions and mostly due to the feedback I received, I formed myself an opinion on what Innovation Days provide to a team.</p>
+<p>I think Innovation Days should be a team activity that takes place twice a year or so. Gather together, form teams and generate ideas, bottom-up, providing value to the organization and to the team itself.</p>
+<p>It should be a directed activity, seriously prepared: allocating a couple of days, hold in a nice venue, providing meals and all the necessary material to let people focus on new ideas and making them a reality.</p>
+<p>The bottom line is, <strong>it should be a team building activity</strong>. One of the nice ones.</p>
+<h1>Serendipity</h1>
+<p>I accidentally realized though, that there's another angle on the activities carried out during an Innovation Day that wasn't the goal of the initiative but turns out to be, in my opinion, much more relevant to the team members: <strong>proactive development</strong>.</p>
+<p>During the Innovation Days I observed that many (I could even say <em>most</em>) people focused on tasks almost completely related to their day-to-day / backlog / roadmap work. The main difference between those tasks and the ones carried out on a regular day is that <strong>they were the ones choosing them</strong>. Many of those tasks were mainly technical, related to perform some improvements, refactors, analyzing alternative technologies; but there were also functional tasks, which were simply not yet prioritized, deep down in the backlog or even brand new ideas.</p>
+<p>This got me into thinking of the <em>famous</em> Google's &quot;20-time&quot; (20%) or Spotify's &quot;hack time&quot; (10%) but from a realistic point of view, since I was able to see it happen out of nothing. If you let people have some slack, eventually (and I think it would be a really short period), they will end up spending it in tasks closely related to their usual work, with a bunch of major benefits:</p>
+<ol>
+<li>they will focus on improving the things they work with each and every day</li>
+<li>it will let them keep up with the technology evolution</li>
+<li>it will reduce their stress because they know that there are regular <em>time-bubbles</em> where they can <em>decompress</em></li>
+<li>it will increase personal and company profile, employee happiness and retention</li>
+<li>it allows to form casual teams with members of different day-to-day teams</li>
+</ol>
+<p>All of which will have a significant impact on the work they carry on the rest of the <em>regular</em> days, which are most of them.</p>
+<p>I'm not saying that this should be the time when we're allowed to address technical debt issues, evaluate new technologies or implement PoCs. This things <em>should</em> happen without these specific time frames. The company or department's culture should foster this empowerment of the developers. What I'm stating is that <strong>we should be allowed some time that's dedicated to our professional growth</strong> and within that time, we'll likely spend most of it in tasks that will <strong>directly benefit the business as well</strong>.</p>
+<p>And in order to do so I think it comes down to a single word: <strong>trust</strong>.</p>
+<h1>My takeaway</h1>
+<p>Summing up, I think Innovation Days are a really nice initiative with many benefits for the team, but what I really think can make a difference is <strong>letting the team have some slack to enable work to be triggered from the bottom up</strong>.</p>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/42">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><hr /><footer><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center"><li><a href="https://twitter.com/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://github.com/pbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Last published on 2017-07-18<br />Copyright © Pol Bassiner 2017</p></div></div></div></footer></body></html>
