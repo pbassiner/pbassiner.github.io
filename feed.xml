@@ -2,13 +2,59 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-07-18T00:00:00+0200</updated>
+        <updated>2017-07-31T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - Jul 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_jul_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_jul_2017.html</id>
+    <published>2017-07-31T00:00:00+0200</published>
+    <updated>2017-07-31T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li>Exactly-once Support in Apache Kafka - Detailed reviews of how <a href="https://kafka.apache.org">Kafka</a> supports exactly-once semantics.
+<ul>
+<li><a href="https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/">Exactly-once Semantics are Possible: Here’s How Kafka Does it</a> - Writeup by <a href="https://github.com/nehanarkhede">Neha Narkhede</a></li>
+<li><a href="https://medium.com/@jaykreps/exactly-once-support-in-apache-kafka-55e1fdd0a35f">Exactly-once Support in Apache Kafka</a> - Post by <a href="https://github.com/jkreps">Jay Kreps</a></li>
+</ul>
+</li>
+<li><a href="http://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iii/">Integrating Akka Streams and Akka Actors: Part III</a> - Yet another excellent blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="http://www.cakesolutions.net/teamblogs/dotty">What is coming with Dotty?</a> - Complete summary of <a href="http://dotty.epfl.ch/">Dotty</a> features by <a href="https://github.com/ferhtaydn">Ferhat Aydin</a></li>
+<li><a href="https://medium.com/@SeanWalshEsq/the-state-of-in-application-state-what-no-one-is-talking-about-c30392033b08">The State Of In-Application State: What No One Is Talking About</a> - Blog post by <a href="https://twitter.com/SeanWalshEsq">Sean Walsh</a></li>
+<li><a href="http://www.beyondthelines.net/computing/scala-future-and-execution-context/">Understanding Scala Futures and Execution Contexts</a> - A thorough overview of the Scala Future and ExecutionContext implementation</li>
+<li><a href="https://forcomprehension.com/2017/07/11/why-software-hasnt-worked-for-you/">Why Software Hasn’t Worked for You</a> - Blog post by <a href="https://github.com/VaughnVernon">Vaughn Vernon</a></li>
+<li><a href="http://www.lihaoyi.com/post/PrinciplesofAutomatedTesting.html">Principles of Automated Testing</a> - Great blog post on the mindset regarding automated testing by <a href="https://github.com/lihaoyi">Li Haoyi</a></li>
+<li><a href="https://softwaremill.com/reactive-streams-in-scala-comparing-akka-streams-and-monix-part-3/">Reactive Streams in Scala: Akka Streams vs Monix - part 3</a> - Final part of the Reactive Streams in Scala: Akka Streams vs Monix series by <a href="https://github.com/rucek">Jacek Kunicki</a></li>
+<li><a href="http://www.beyondthelines.net/computing/akka-streams-patterns/">Akka Streams patterns</a> - Great post on patterns for Akka Streams</li>
+<li><a href="https://blog.scalac.io/improving-akka-dispatcher.html">Improving Akka dispatchers</a> - Blog post by <a href="https://github.com/zaharidichev">Zahari Dichev</a></li>
+<li><a href="http://www.beyondthelines.net/programming/futures-vs-tasks/">Scala Futures vs Monix Tasks</a> - A straightforward introduction to Monix tasks</li>
+<li><a href="https://dzone.com/articles/linkerd-and-istio-like-peanut-butter-and-jelly">Linkerd and Istio</a> - The latest release of <a href="https://linkerd.io">Linkerd</a> includes integration with <a href="https://istio.io/">Istio</a></li>
+<li><a href="https://softwaremill.com/introducing-sttp-the-scala-http-client/">Introducing sttp</a> - Say hello to <a href="https://github.com/softwaremill/sttp">sttp</a>, a new http client library, by <a href="https://github.com/adamw">Adam Warski</a></li>
+<li><a href="http://www.beyondthelines.net/programming/introduction-to-tagless-final/">Introduction to Tagless final</a> - Practical introduction to the tagless-final encoding</li>
+<li><a href="https://manuel.bernhardt.io/2017/07/26/a-new-adaptive-accrual-failure-detector-for-akka/">A new adaptive accrual failure detector for Akka</a> - Blog post by <a href="https://github.com/manuelbernhardt">Manuel Bernhardt</a></li>
+<li><a href="https://partialflow.wordpress.com/2017/07/26/dependent-types-type-level-programming/">Dependent Types &amp; Type Level Programming</a> - Type-level programming introduction in Scala, by <a href="https://github.com/gvolpe">Gabriel Volpe</a></li>
+<li><a href="http://debasishg.blogspot.com.es/2017/07/domain-models-late-evaluation-buys-you.html">Domain Models - Late Evaluation buys you better Composition</a> - Practical example of how to improve composition by committing to a specific type at the latest possible stage, by <a href="https://github.com/debasishg">Debasish Ghosh</a></li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="https://github.com/scala/scala/releases/tag/v2.12.3">Scala 2.12.3</a></li>
+<li><a href="https://github.com/sbt/sbt/releases/tag/v0.13.16">Sbt 0.13.16</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Lessons Learned After Adopting Innovation Days]]>
     </title>
