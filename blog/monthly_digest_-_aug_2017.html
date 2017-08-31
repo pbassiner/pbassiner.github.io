@@ -1,0 +1,64 @@
+<html><head><title>Monthly Digest - Aug 2017</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="../blog.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script><script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="../blog.js"></script><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/46/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><nav class="navbar navbar-default navbar-custom navbar-fixed-top"><div class="container"><div class="navbar-header page-scroll"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span>Menu<i class="fa fa-bars"></i></button><a class="navbar-brand" href="../index.html">Pol Bassiner</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav navbar-right"><li><a href="../index.html">Home</a></li><li><a href="../archive.html">Posts</a></li><li><a href="../about.html">About</a></li></ul></div></div></nav><header class="intro-header"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>Monthly Digest - Aug 2017</h1><span class="meta">Posted on August 31, 2017 · 2 min read</span><span class="meta share"><a class="share" href="https://twitter.com/intent/tweet?text=Monthly+Digest+-+Aug+2017&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fmonthly_digest_-_aug_2017.html&amp;via=polbassiner" title="Share" target="_blank"><span class="fa fa-twitter"></span></a></span></div></div></div></div></header><div class="container post-container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="https://medium.com/@copyconstruct/the-death-of-ops-is-greatly-exaggerated-ff3bd4a67f24">Everyone is not Ops</a> - Blog post by <a href="https://twitter.com/copyconstruct">Cindy Sridharan</a></li>
+<li><a href="https://medium.com/@rakyll/the-sre-model-6e19376ef986">The SRE model</a> - Blog post about how Google deals with development vs operations teams, by <a href="https://github.com/rakyll">JBD</a></li>
+<li><a href="https://medium.com/@bfil/microservices-are-a-silver-bullet-f745d2b41dca">Microservices ARE a Silver Bullet</a> - Blog post by <a href="https://github.com/bfil">Bruno Filippone</a></li>
+<li><a href="https://softwaremill.com/what-kafka-exactly-once-really-means/">What does Kafka's exactly-once processing really mean?</a> - Blog post by <a href="https://github.com/adamw">Adam Warski</a></li>
+<li><a href="https://stackoverflow.com/questions/42831593/how-do-i-make-intellij-idea-to-highlight-scala-script-correctly-with-shebang/43115692#43115692">How to make IntelliJ Idea highlight Ammonite scrips</a> - Stack Overflow thread with a clever solution to make IntelliJ Idea highlight <a href="https://github.com/lihaoyi/Ammonite/">Ammonite</a> scripts</li>
+<li><a href="http://blog.colinbreck.com/reflections-on-using-quality-views/">Reflections on Using Quality Views</a> - Blog post by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://dev.to/stefandorresteijn/hiring-masters">Hiring Masters</a> - Nice writeup by <a href="https://github.com/StefanDorresteijn">Stefan Dorresteijn</a></li>
+<li><a href="https://blog.scalac.io/exploring-tagless-final.html">Exploring Tagless Final pattern for extensive and readable Scala code</a> - Blog post by <a href="https://github.com/pjazdzewski1990">Patryk Jażdżewski</a></li>
+<li><a href="https://dev.to/gshotwell/why-you-should-work-remotely">Why you should work remotely</a> - Blog post by <a href="https://github.com/GShotwell">Gordon Shotwell</a></li>
+<li><a href="https://alexn.org/blog/2017/08/16/automatic-releases-sbt-travis.html">Automatic Releases to Maven Central with Travis and SBT</a> - How releases are automated in the <a href="http://monix.io">Monix</a> project, by <a href="https://github.com/alexandru/">Alexandru Nedelcu</a></li>
+<li><a href="http://developer.lightbend.com/guides/k8-akka-cluster/">Deploying clustered Akka applications on Kubernetes</a> - <a href="https://www.lightbend.com/">Lightbend</a>'s guide to deploy <a href="http://akka.io">Akka</a> on <a href="https://kubernetes.io/">Kubernetes</a></li>
+<li><a href="https://lazicbrano.wordpress.com/2017/08/10/jwt-authentication-with-akka-http/">JWT authentication with Akka HTTP</a> - Implementing JWT in Akka Http, by <a href="https://github.com/BranislavLazic">Branislav Lazic</a></li>
+<li><a href="https://tech.iheart.com/why-fp-its-the-composition-f585d17b01d3">Why FP? It’s the composition</a> - Blog post about how Functional Programming enables composition, by <a href="https://github.com/kailuowang">Kailuo Wang</a></li>
+<li><a href="https://virtuslab.com/blog/cats-library/">Meow! Start using Cats in your project right now</a> - Hands-on introduction to the patterns most likely to take advantage of in Scala projects, by <a href="https://github.com/PawelLipski">Paweł Lipski</a></li>
+<li><a href="https://softwaremill.com/akka-2.5.4-features/">5 New features in Akka (Streams) 2.5.4 you may have missed</a> - Nice summary by <a href="https://github.com/mikolak-net">Mikołaj Koziarkiewicz</a></li>
+<li><a href="http://www.lihaoyi.com/post/HowtoconductagoodProgrammingInterview.html">How to conduct a good Programming Interview</a> - Excellent take on conducting programming interviews by <a href="https://github.com/lihaoyi">Li Haoyi</a></li>
+<li><a href="https://www.linkedin.com/pulse/learning-scala-terminology-root-cause-analysis-part-tomer-ben-david-1">Learning Scala By Terminology Root Cause Analysis - Part 3 - Functor</a> - Post by <a href="https://github.com/tomer-ben-david">Tomer Ben David</a></li>
+<li><a href="http://kto.so/2017/08/29/sbt-redefine-task-as-something-this-tasks-previous-self/">sbt: redefine task as &quot;something&quot; + &quot;this tasks previous self&quot;</a> - Sbt trick by <a href="https://github.com/ktoso">Konrad Malawski</a></li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="http://developer.lightbend.com/blog/2017-08-11-sbt-1-0-0/">sbt 1.0.0 is now available</a></li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li><a href="https://youtu.be/Esd1UKIpvdU">Akka Clustering on Kubernetes</a> - Talk by <a href="https://github.com/lkysow">Luke Kysow</a> at <a href="http://scalaupnorth.com">Scala Up North 2017</a></li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/46">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><hr /><footer><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center"><li><a href="https://twitter.com/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://github.com/pbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Last published on 2017-08-31<br />Copyright © Pol Bassiner 2017</p></div></div></div></footer></body></html>
