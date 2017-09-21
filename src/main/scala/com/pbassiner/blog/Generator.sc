@@ -41,6 +41,7 @@ private[this] def getSortedPosts(paths: Seq[Path]) = {
 private[this] def cleanup = {
   rm ! pwd / Files.Html.indexFilename
   rm ! pwd / Files.Html.archiveFilename
+  rm ! pwd / Files.Html.monthlyDigestsFilename
   rm ! pwd / Files.Html.aboutFilename
   rm ! pwd / Files.Html.generatedBlogPostsFolder
   rm ! pwd / Files.rssFeedFilename
@@ -52,6 +53,7 @@ private[this] def writeContent(blog: Blog) = {
   }
   write(pwd / Files.Html.indexFilename, blog.index.render)
   write(pwd / Files.Html.archiveFilename, blog.archive.render)
+  write(pwd / Files.Html.monthlyDigestsFilename, blog.monthlyDigests.render)
   write(pwd / Files.Html.aboutFilename, blog.about.render)
   write(pwd / Files.rssFeedFilename, blog.rssFeed)
 }

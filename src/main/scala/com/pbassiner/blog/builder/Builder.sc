@@ -13,19 +13,22 @@ import scala.collection.immutable.TreeMap
 
 def build(
   config: Configuration,
-  posts: Iterable[Post],
+  allPosts: Iterable[Post],
   postCommentsFooterHtml: String,
   aboutMeHtml: String,
   aboutBlogHtml: String): Blog = {
 
-  val postsHtml = buildSortedPostsHtml(posts)
+  val (monthlyDigests, regularPosts) = allPosts.partition(_.title.startsWith("Monthly Digest"))
+  val monthlyDigestsHtml = buildSortedPostsHtml(monthlyDigests)
+  val postsHtml = buildSortedPostsHtml(regularPosts)
 
   Blog(
-    buildPostsHtml(posts, postCommentsFooterHtml, config),
+    buildPostsHtml(allPosts, postCommentsFooterHtml, config),
     buildIndex(postsHtml._1),
     buildArchive(postsHtml._2),
+    buildMonthlyDigests(monthlyDigestsHtml._2),
     buildAbout(aboutMeHtml, aboutBlogHtml),
-    buildRssFeed(posts)
+    buildRssFeed(allPosts)
   )
 }
 
@@ -152,6 +155,23 @@ private[this] def buildArchive(posts: List[TypedTag[String]]) =
     )
   )
 
+private[this] def buildMonthlyDigests(posts: List[TypedTag[String]]) =
+  html(
+    headContent(Copys.monthlyDigestsTitle),
+    body(
+      navbarContent(),
+      defaultHeaderContent(Copys.monthlyDigestsTitle, Copys.blogSubtitle1, Copys.blogSubtitle2),
+      div(`class` := "container")(
+        div(`class` := "row")(
+          div(`class` := "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 archive-post-list")(
+            posts
+          )
+        )
+      ),
+      footerContent
+    )
+  )
+
 private[this] def buildAbout(aboutMeHtml: String, aboutBlogHtml: String) =
   html(
     headContent(Copys.aboutTitle),
@@ -235,6 +255,7 @@ private[this] object Common {
           ul(`class` := "nav navbar-nav navbar-right")(
             li(a(`href` := s"${path.getOrElse("")}${Files.Html.indexFilename}", Copys.homeTitle)),
             li(a(`href` := s"${path.getOrElse("")}${Files.Html.archiveFilename}", Copys.archiveTitle)),
+            li(a(`href` := s"${path.getOrElse("")}${Files.Html.monthlyDigestsFilename}", Copys.monthlyDigestsTitle)),
             li(a(`href` := s"${path.getOrElse("")}${Files.Html.aboutFilename}", Copys.aboutTitle))
           )
         )
