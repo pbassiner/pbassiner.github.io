@@ -1,4 +1,4 @@
-import $ivy.`com.atlassian.commonmark:commonmark:0.9.0`
+import $ivy.`com.atlassian.commonmark:commonmark:0.10.0`
 
 import ammonite.ops._
 import org.commonmark.node._

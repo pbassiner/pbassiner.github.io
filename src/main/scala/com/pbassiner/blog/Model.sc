@@ -1,4 +1,4 @@
-import $ivy.`com.lihaoyi::scalatags:0.6.3`
+import $ivy.`com.lihaoyi::scalatags:0.6.7`
 
 import scalatags.Text.TypedTag
 
