@@ -2,13 +2,61 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-08-31T00:00:00+0200</updated>
+        <updated>2017-09-22T00:00:00+0200</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Recording UI Tests Using Scalatest, Selenium and Akka]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/recording_ui_tests_using_scalatest,_selenium_and_akka.html"/>
+    <id>https://pbassiner.github.io/blog/recording_ui_tests_using_scalatest,_selenium_and_akka.html</id>
+    <published>2017-09-22T00:00:00+0200</published>
+    <updated>2017-09-22T00:00:00+0200</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>In any web project with some kind of UI involved it's usually convenient to have, at least, a basic suite of automated User Acceptance Tests. In contrast to unit and even integration tests, these are likely to be the most fragile and therefore, the most expensive to maintain.</p>
+<p>This is because they are typically end-to-end tests which involve all the moving pieces from a system (a UI, one or more APIs, storage, etc). A slight change on any part of the system can break those tests.</p>
+<p><img src="https://i.imgflip.com/1w4fje.jpg" alt="no_tests" /></p>
+<p>When something goes wrong during a test execution you can easily generate a screenshot, dump the current DOM and write the browser's JavaScript logs to a file for further analysis.</p>
+<p>Having all this in place, what about periodically taking a screenshot and generating a GIF with all of them?</p>
+<p>It could be useful at some point. In the meantime though, we can <em>do it for the lulz</em>.</p>
+<p><img src="https://i.imgflip.com/1w4fp3.jpg" alt="gifs_everywhere" /></p>
+<h1>Let's go for it</h1>
+<p>First of all we need a GIF generator. I found <a href="http://elliot.kroo.net/software/java/GifSequenceWriter/GifSequenceWriter.java">this one</a> by <a href="https://github.com/kroo">Elliot Kroo</a>, although I had to tweak it just a bit (the modified version is available in <a href="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-gifsequencewriter-java">this gist</a>).</p>
+<p>Now we need to continuously perform some actions while the test is executing:</p>
+<ol>
+<li>take a screenshot (using <a href="http://www.seleniumhq.org/docs/03_webdriver.jsp">Selenium Webdriver</a>)</li>
+<li>read the screenshot file</li>
+<li>write it into the GIF generator</li>
+<li>delete the screenshot file</li>
+</ol>
+<p><a href="http://doc.akka.io/docs/akka/current/java/stream/">Akka Streams</a> seems a got fit to implement it:</p>
+<script src="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d.js?file=RecorderStream.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-recorderstream-scala">https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-recorderstream-scala</a></figcaption>
+<p>Since this <code>Stream</code> is infinite, we need to return both the <code>Cancellable</code> (something that can be cancelled) and the result, wrapped in a <code>Future</code>. Then we just need to wait for the test to end to stop the stream and close the GIF generator.</p>
+<p>This is the full code of the test recorder:</p>
+<script src="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d.js?file=TestRecorder.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-testrecorder-scala">https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-testrecorder-scala</a></figcaption>
+<p>The recorder receives the test as a by-name parameter, in particular, a <em>thunk</em> (a function of zero arguments <code>() =&gt; T</code>). Then it starts the test recorder stream, runs the test and finally signals the cancellation of the stream, awaits for its result and closes all the resources.</p>
+<h1>Usage</h1>
+<p>To add this capability to a test we simply wrap the test with the recorder's <code>record</code> method and provide an instance of a <code>WebDriver</code>, the path where to store the screenshots and the function to be used to output the resulting GIF's path:</p>
+<script src="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d.js?file=UsageExample.scala"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-usageexample-scala">https://gist.github.com/pbassiner/d9c43e8279865dbc066a620e88560d8d#file-usageexample-scala</a></figcaption>
+<h1>Result</h1>
+<p>And this is the result (<i style="cursor: pointer" class="fa fa-repeat" aria-hidden="true" onClick="$('img[alt=test_recorder]').attr('src','../assets/2017-09-22.Recording_UI_Tests_Using_Scalatest,_Selenium_and_Akka.recording.gif');"> replay</i>):
+<img src="../assets/2017-09-22.Recording_UI_Tests_Using_Scalatest,_Selenium_and_Akka.recording.gif" alt="test_recorder" /></p>
+<h1>The reader's reaction</h1>
+<p><img src="http://media0.giphy.com/media/gRxjhVNfFgqI0/giphy.gif" alt="applause" /></p>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Monthly Digest - Aug 2017]]>
     </title>
