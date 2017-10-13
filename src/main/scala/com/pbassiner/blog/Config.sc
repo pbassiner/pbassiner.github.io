@@ -22,6 +22,7 @@ object Files {
   object Html {
     val indexFilename = "index.html"
     val archiveFilename = "archive.html"
+    val monthlyDigestsFilename = "monthlydigests.html"
     val aboutFilename = "about.html"
     val generatedBlogPostsFolder = "blog"
     val cssFilename = "blog.css"
@@ -42,5 +43,6 @@ object Copys {
   val homeTitle = "Home"
   val aboutTitle = "About"
   val archiveTitle = "Posts"
+  val monthlyDigestsTitle = "Monthly Digests"
   val allPosts = "All Posts →"
 }
