@@ -69,7 +69,7 @@ private[this] def fetchCommentsAndAppendJs(commentsUrl: String) = s"""
           for (var i=0; i<data.length; i++) {
             $$("#comments").append("\\
               <div>\\
-                <h4 class='blog-comment-author'>"+data[i].user.login+"</h4>\\
+                <h4 class='blog-comment-author'><a href='https://github.com/"+data[i].user.login+"'>"+data[i].user.login+"</a></h4>\\
                 <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\\
                 <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\\
               </div>\\
