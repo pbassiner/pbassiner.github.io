@@ -13,14 +13,15 @@ import scala.collection.immutable.TreeMap
 
 def build(
   config: Configuration,
-  allPosts: Iterable[Post],
+  posts: Iterable[Post],
+  monthlyDigests: Iterable[Post],
   postCommentsFooterHtml: String,
   aboutMeHtml: String,
   aboutBlogHtml: String): Blog = {
 
-  val (monthlyDigests, regularPosts) = allPosts.partition(_.title.startsWith("Monthly Digest"))
+  val allPosts = (posts ++ monthlyDigests).toSeq.sortBy(_.date).reverse
   val monthlyDigestsHtml = buildSortedPostsHtml(monthlyDigests)
-  val postsHtml = buildSortedPostsHtml(regularPosts)
+  val postsHtml = buildSortedPostsHtml(posts)
 
   Blog(
     buildPostsHtml(allPosts, postCommentsFooterHtml, config),

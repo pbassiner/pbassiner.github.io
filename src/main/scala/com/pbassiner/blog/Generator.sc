@@ -12,6 +12,7 @@ def generate(config: Configuration): Unit = {
   val blog = Builder.build(
     config,
     getSortedPosts(ls ! pwd / 'posts),
+    getSortedPosts(ls ! pwd / 'monthlydigests),
     mdFileToHtml(pwd / 'common / Files.Md.postCommentsFooterFilename),
     mdFileToHtml(pwd / 'common / Files.Md.aboutMeFilename),
     mdFileToHtml(pwd / 'common / Files.Md.aboutBlogFilename)
