@@ -34,6 +34,7 @@ def clean(env: Env): Unit = {
   env match {
     case Prod | Dev => {
       Git checkout Files.Html.indexFilename
+      Git checkout Files.Html.monthlyDigestsFilename
       Git checkout Files.Html.archiveFilename
       Git checkout Files.Html.aboutFilename
       Git checkout (Files.Html.generatedBlogPostsFolder + "/")
