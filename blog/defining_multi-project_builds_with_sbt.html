@@ -1,0 +1,132 @@
+<html><head><title>Defining Multi-project Builds with sbt</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="../blog.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script><script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="../blog.js"></script><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/53/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'><a href='https://github.com/"+data[i].user.login+"'>"+data[i].user.login+"</a></h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><nav class="navbar navbar-default navbar-custom navbar-fixed-top"><div class="container"><div class="navbar-header page-scroll"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span>Menu<i class="fa fa-bars"></i></button><a class="navbar-brand" href="../index.html">Pol Bassiner</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav navbar-right"><li><a href="../index.html">Home</a></li><li><a href="../archive.html">Posts</a></li><li><a href="../monthlydigests.html">Monthly Digests</a></li><li><a href="../about.html">About</a></li></ul></div></div></nav><header class="intro-header"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>Defining Multi-project Builds with sbt</h1><span class="meta">Posted on October 18, 2017 · 3 min read</span><span class="meta share"><a class="share" href="https://twitter.com/intent/tweet?text=Defining+Multi-project+Builds+with+sbt&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fdefining_multi-project_builds_with_sbt.html&amp;via=polbassiner" title="Share" target="_blank"><span class="fa fa-twitter"></span></a></span></div></div></div></div></header><div class="container post-container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><p>Let's setup a simple multi-project build using <code>sbt</code>, assuming we're already familiar with regular <em>single-project</em> builds.</p>
+<h1>Goal</h1>
+<p>We have two <em>deliverable</em> sub-projects (<code>multi1</code> and <code>multi2</code>) and a <em>common-stuff</em> sub-project (<code>common</code>) on which they both depend on.</p>
+<p>To simplify development and maintenance we can use a single <code>build.sbt</code> file which allows for centralized configuration, dependency and build management.</p>
+<p>Then each sub-project contains nothing but its source code, while they can depend on other sub-projects.</p>
+<p>Finally, we only need to generate artifacts for <em>deliverable</em> sub-projects.</p>
+<h1>File structure</h1>
+<p>This is the project file tree:</p>
+<ul>
+<li>sbt-multi-project-example/
+<ul>
+<li>common/
+<ul>
+<li>src/</li>
+<li>test/</li>
+</ul>
+</li>
+<li>multi1/
+<ul>
+<li>src/</li>
+<li>test/</li>
+</ul>
+</li>
+<li>multi2/
+<ul>
+<li>src/</li>
+<li>test/</li>
+</ul>
+</li>
+<li>project/
+<ul>
+<li>build.properties</li>
+<li>plugins.sbt</li>
+</ul>
+</li>
+<li>build.sbt</li>
+</ul>
+</li>
+</ul>
+<h1>Build configuration</h1>
+<p>Our build file will include all the configuration we need:</p>
+<ul>
+<li>Sub-projects definition</li>
+<li>Build settings</li>
+<li>Dependencies</li>
+<li>Artifacts generation</li>
+</ul>
+<h2>Projects definition</h2>
+<p>First of all we define our projects:</p>
+<ul>
+<li><code>global</code>: the parent project, aggregating the others</li>
+<li><code>common</code>: where the common code is</li>
+<li><code>multi1</code> and <code>multi2</code>: the two <em>deliverables</em>, which depend on <code>common</code></li>
+</ul>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=projects.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-projects-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-projects-sbt</a></figcaption>
+<p>Using  <code>aggregate</code> in <code>global</code> implies that running a task on the aggregate project will also run it on the aggregated ones. On the other hand, using <code>dependsOn</code> sets the code dependency between sub-projects.</p>
+<p>By default, dependency is set for the <code>compile</code> configuration. If we'd need to also depend on the <code>test</code> configuration (i.e. we have tests depending on other sub-project's test source code), we'd need to define dependency as follows: <code>common % &quot;compile-&gt;compile;test-&gt;test&quot;</code>.</p>
+<p>Since the <code>global</code> project is in the project root folder, we need to explicitly specify it using <code>in(file(&quot;.&quot;)</code>. There's no need to do so with the other sub-projects since they are located in a folder with the same name.</p>
+<h2>Settings</h2>
+<p>We can setup some global settings as follows:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=globalSettings.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-globalsettings-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-globalsettings-sbt</a></figcaption>
+<p>Settings that are subject to change can be defined as values that can later be used by each sub-project. Here we're defining the Scala compiler options and some extra repositories:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=settings.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-settings-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-settings-sbt</a></figcaption>
+<p>Then we can use them in the sub-projects:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=settingsInProjects.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-settingsinprojects-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-settingsinprojects-sbt</a></figcaption>
+<h2>Dependencies</h2>
+<p>We'll follow the same strategy with the dependencies. First we define our catalog of dependencies:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=dependencies.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-dependencies-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-dependencies-sbt</a></figcaption>
+<p>Then we identify the common ones used by all sub-projects:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=commonDependencies.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-commondependencies-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-commondependencies-sbt</a></figcaption>
+<p>And finally we define each sub-project's dependencies combining the common with the specific ones:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=dependenciesInProjects.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-dependenciesinprojects-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-dependenciesinprojects-sbt</a></figcaption>
+<p>The parent project, <code>global</code>, needs no dependencies since it has no code at all. The other sub-projects have the common dependencies along with some specific ones: <code>multi1</code> requires <code>monocle</code> and <code>multi2</code> requires <code>pureconfig</code>.</p>
+<h2>Artifacts generation</h2>
+<p>To generate artifacts for our <em>deliverable</em> sub-projects we'll use <a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a> to produce a <em>fat-jar</em> (if we'd need to generate Docker images we could use <a href="https://github.com/sbt/sbt-native-packager">sbt-native-packager</a> instead).</p>
+<p>First we define the corresponding settings:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=sbtAssemblySettings.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-sbtassemblysettings-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-sbtassemblysettings-sbt</a></figcaption>
+<p>And then we add them <strong>only</strong> to the settings of our <em>deliverable</em> sub-projects <code>multi1</code> and <code>multi2</code>:</p>
+<script src="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4.js?file=sbtAssemblySettingsInProjects.sbt"></script>
+<figcaption><a href="https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-sbtassemblysettingsinprojects-sbt">https://gist.github.com/pbassiner/5ec3209743f42b3f67fbb54b72b446f4#file-sbtassemblysettingsinprojects-sbt</a></figcaption>
+<h2>Putting it all together</h2>
+<p>Simply running <code>sbt clean compile test assembly</code> will clean, compile and test all the sub-projects and generate a <em>fat-jar</em> only for our two <em>deliverable</em> sub-projects.</p>
+<p>The full source code of this example can be found at <a href="https://github.com/pbassiner/sbt-multi-project-example">this repository</a>.</p>
+<h1>References</h1>
+<ul>
+<li><a href="http://www.scala-sbt.org/release/docs/Multi-Project.html">Multi-project builds section in sbt documentation</a></li>
+<li><a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a></li>
+<li><a href="https://github.com/sbt/sbt-native-packager">sbt-native-packager</a></li>
+<li><a href="https://github.com/pbassiner/sbt-multi-project-example">sbt-multi-project-example</a></li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/53">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><hr /><footer><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center"><li><a href="https://twitter.com/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://github.com/pbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Last published on 2017-10-18<br />Copyright © Pol Bassiner 2017</p></div></div></div></footer></body></html>
