@@ -27,8 +27,8 @@ The strategy on building this blog was heavily inspired by [Li Haoyi](https://tw
 * Blog posts archive shows reverse sorted list of posts, grouped by month, displaying the first 25 words
 
 ## Dependencies used
-* [Scala](http://www.scala-lang.org/) `2.12.3`
-* [Ammonite](https://github.com/lihaoyi/Ammonite) `1.0.2`
+* [Scala](http://www.scala-lang.org/) `2.12.4`
+* [Ammonite](https://github.com/lihaoyi/Ammonite) `1.0.3`
 * [scalatags](https://github.com/lihaoyi/scalatags) `0.6.7`
 * [commonmark](https://github.com/atlassian/commonmark-java) `0.10.0`
 
