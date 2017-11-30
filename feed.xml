@@ -2,13 +2,55 @@
       <title>Pol Bassiner</title>
         <link rel="self" type="application/atom+xml" href="https://pbassiner.github.io/feed.xml"/>
         <link rel="alternate" type="text/html" href="https://pbassiner.github.io/"/>
-        <updated>2017-10-31T00:00:00+0100</updated>
+        <updated>2017-11-30T00:00:00+0100</updated>
         <id>https://pbassiner.github.io/</id>
         <author>
           <name>Pol Bassiner</name>
           <uri>https://pbassiner.github.io/</uri>
         </author>
         <entry>
+    <title type="html">
+      <![CDATA[Monthly Digest - Nov 2017]]>
+    </title>
+    <link rel="alternate" type="text/html" href="https://pbassiner.github.io/blog/monthly_digest_-_nov_2017.html"/>
+    <id>https://pbassiner.github.io/blog/monthly_digest_-_nov_2017.html</id>
+    <published>2017-11-30T00:00:00+0100</published>
+    <updated>2017-11-30T00:00:00+0100</updated>
+    <author>
+      <name>Pol Bassiner</name>
+      <uri>https://pbassiner.github.io/</uri>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="https://www.farnamstreetblog.com/2017/10/how-to-remember-what-you-read/">How to Remember What You Read</a></li>
+<li><a href="http://blog.colinbreck.com/the-importance-of-agency/">The Importance of Agency</a> by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://dev.to/bosepchuk/how-to-make-time-to-repay-your-technical-debt-1lm">How to make time to repay your technical debt</a> by <a href="https://github.com/bosepchuk">Blaine Osepchuk</a></li>
+<li><a href="http://www.scala-lang.org/blog/2017/11/03/zinc-blog-1.0.html">Speed up compile times with Zinc 1.0</a> by <a href="https://github.com/jvican">Jorge Vicente</a></li>
+<li><a href="https://developer.lightbend.com/blog/2017-11-01-atotm-akka-messaging-part-2/index.html">Akka Message Delivery - At-Most-Once, At-Least-Once, and Exactly-Once - Part 2 At-Least-Once</a> by <a href="https://github.com/mckeeh3">Hugh McKee</a></li>
+<li><a href="https://alexn.org/blog/2017/11/10/minitest-no-crap-scala-library.html">Minitest: Zero Crap Scala Testing Library</a> by <a href="https://github.com/alexandru/">Alexandru Nedelcu</a></li>
+<li><a href="https://blog.codecentric.de/en/2017/11/custom-akka-http-pathmatcher/">Custom Akka HTTP PathMatcher</a> by <a href="https://github.com/daesul">Christian Börner-Schulte</a></li>
+<li><a href="https://dzone.com/articles/lambda-calculus-for-mortal-developers">Lambda Calculus for Mortal Developers</a> by <a href="https://github.com/srodrigo">Sergio Rodrigo Royo</a></li>
+<li><a href="https://dev.to/dev3l/zero-inventory-driven-development-dgd">Zero Inventory Driven Development</a> by <a href="https://github.com/DEV3L">Justin Beall</a></li>
+<li><a href="http://www.lihaoyi.com/post/SowhatswrongwithSBT.html">So, what's wrong with SBT?</a> by <a href="https://github.com/lihaoyi">Li Haoyi</a></li>
+<li><a href="https://developer.lightbend.com/blog/2017-11-27-sbt-1-0-4-hotfix-and-performance-fixes/">sbt 1.0.4 hotfix and the performance fixes</a></li>
+<li><a href="https://www.confluent.io/blog/toward-functional-programming-analogy-microservices/">Toward a Functional Programming Analogy for Microservices</a> by <a href="https://github.com/bobby">Bobby Calderwood</a></li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li><a href="https://youtu.be/ycxvmOKDHMQ">How Events Are Reshaping Modern Systems</a> by <a href="https://github.com/jboner">Jonas Bonér</a></li>
+<li><a href="https://youtu.be/wi_vLNULh9Y">The Design of the Scalaz 8 Effect System</a> by <a href="https://github.com/jdegoes">John A De Goes</a></li>
+<li><a href="https://www.youtube.com/watch?v=YXDm3WHZT5g">Plain Functional Programming</a> by <a href="https://github.com/odersky">Martin Odersky</a></li>
+<li><a href="https://www.youtube.com/watch?v=XV0o-hy1WUM">Simplicity in Composition</a> by <a href="https://github.com/adelbertc">Adelbert Chang</a></li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="https://github.com/sbt/sbt/releases/tag/v1.0.4">sbt 1.0.4 released</a></li>
+</ul>
+]]>
+    </content>
+  </entry><entry>
     <title type="html">
       <![CDATA[Monthly Digest - Oct 2017]]>
     </title>
