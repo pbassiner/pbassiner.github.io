@@ -1,0 +1,59 @@
+<html><head><title>Monthly Digest - Dec 2017</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta charset="utf-8" /><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="../blog.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script><script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="../blog.js"></script><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" /><link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <script type="text/javascript">
+  $(function() {
+    $.ajax({
+      type: 'GET',
+      url: "https://api.github.com/repos/pbassiner/pbassiner.github.io/issues/59/comments",
+      headers: {Accept: "application/vnd.github.full+json"},
+      success: function(data) {
+        if (data.length === 0) {
+          $("#comments").append("\
+            <blockquote>\
+              <p class='blog-comment'>There are no comments yet</p>\
+            </blockquote>\
+          ");
+        } else {
+          for (var i=0; i<data.length; i++) {
+            $("#comments").append("\
+              <div>\
+                <h4 class='blog-comment-author'><a href='https://github.com/"+data[i].user.login+"'>"+data[i].user.login+"</a></h4>\
+                <p class='blog-comment-meta'>"+data[i].updated_at+"</p>\
+                <blockquote><p class='blog-comment'>"+data[i].body_html+"</p></blockquote>\
+              </div>\
+            ");
+          }
+        }
+      }
+    });
+  });
+  </script>
+  </head><body><nav class="navbar navbar-default navbar-custom navbar-fixed-top"><div class="container"><div class="navbar-header page-scroll"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span>Menu<i class="fa fa-bars"></i></button><a class="navbar-brand" href="../index.html">Pol Bassiner</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav navbar-right"><li><a href="../index.html">Home</a></li><li><a href="../archive.html">Posts</a></li><li><a href="../monthlydigests.html">Monthly Digests</a></li><li><a href="../about.html">About</a></li></ul></div></div></nav><header class="intro-header"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>Monthly Digest - Dec 2017</h1><span class="meta">Posted on December 29, 2017 · 1 min read</span><span class="meta share"><a class="share" href="https://twitter.com/intent/tweet?text=Monthly+Digest+-+Dec+2017&amp;url=https%3A%2F%2Fpbassiner.github.io%2Fblog%2Fmonthly_digest_-_dec_2017.html&amp;via=polbassiner" title="Share" target="_blank"><span class="fa fa-twitter"></span></a></span></div></div></div></div></header><div class="container post-container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><p>Here's a recap of interesting stuff I've run into during this month.</p>
+<h2>Reading</h2>
+<ul>
+<li><a href="https://dzone.com/articles/learning-in-a-world-where-programming-skills-arent">Learning in a World Where Programming Skills Aren't That Important</a> by <a href="https://twitter.com/daedtech">Erik Dietrich</a></li>
+<li><a href="http://www.stephendiehl.com/posts/haskell_2018.html">Reflecting on Haskell in 2017</a> by <a href="https://github.com/sdiehl">Stephen Diehl</a></li>
+<li><a href="https://www.farnamstreetblog.com/2017/12/maker-vs-manager/">Maker vs. Manager: How Your Schedule Can Make or Break You</a></li>
+<li><a href="http://blog.colinbreck.com/maximizing-throughput-for-akka-streams/">Maximizing Throughput for Akka Streams</a> by <a href="https://twitter.com/breckcs">Colin Breck</a></li>
+<li><a href="https://www.beyondthelines.net/computing/understanding-sbt/">Making sense of SBT</a> by <a href="https://github.com/btlines">btlines</a></li>
+<li><a href="http://malaw.ski/2017/12/10/automatic-flamegraph-generation-from-jmh-benchmarks-using-sbt-jmh-extras-plain-java-too/">Automatic FlameGraph generation from JMH Benchmarks using (SBT) JMH Extras (plain Java too)</a> by <a href="https://github.com/ktoso">Konrad Malawski</a></li>
+<li><a href="https://dev.to/gavincampbell/throwing-code-over-a-different-fence-c80">Throwing code over a different fence</a> by <a href="https://github.com/gavincampbell">Gavin Campbell</a></li>
+<li><a href="https://slack.engineering/scaling-slacks-job-queue-687222e9d100">Scaling Slack’s Job Queue</a> by <a href="https://github.com/yadavsaroj">Saroj Yadav</a>, <a href="https://github.com/notmatt">Matthew Smillie</a>, <a href="https://github.com/demmer">Mike Demmer</a> and Tyler Johnson</li>
+<li><a href="https://apiumhub.com/tech-blog-barcelona/micromanaging/">Micromanaging: signs, cons &amp; advices</a></li>
+<li><a href="https://dzone.com/articles/what-is-servant-leadership-1">What Is Servant Leadership?</a> by <a href="https://github.com/jpartogi">Joshua Partogi</a></li>
+<li><a href="https://www.confluent.io/blog/enabling-exactly-kafka-streams/">Enabling Exactly-Once in Kafka Streams</a> by <a href="https://github.com/guozhangwang">Guozhang Wang</a></li>
+<li><a href="https://typelevel.org/blog/2017/12/20/who-implements-typeclass.html">Who implements the typeclass instance?</a> by <a href="https://github.com/S11001001">Stephen Compall</a></li>
+<li><a href="http://www.geekabyte.io/2017/11/exploring-typeclass-in-scala-knowledge.html">Exploring Type class in Scala: A knowledge pack</a> by <a href="https://github.com/dadepo">Dadepo Aderemi</a></li>
+</ul>
+<h2>Talks</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=po3wmq4S15A">Functional Programming with Effects</a> by <a href="https://github.com/tpolecat">Rob Norris</a></li>
+</ul>
+<h2>Code</h2>
+<ul>
+<li><a href="https://akka.io/blog/news/2017/12/08/akka-2.5.8-released">Akka 2.5.8 Released</a></li>
+</ul>
+<hr />
+<h2>Comments</h2>
+<p>Would you like to leave a comment? Since this blog is hosted on <a href="https://pages.github.com/">GitHub Pages</a> there's no straightforward way to do so.</p>
+<p>Instead, you can add a comment in <a href="https://github.com/pbassiner/pbassiner.github.io/issues/59">this GitHub issue</a>. If you'd like to see it here, refresh this page after posting the comment.</p>
+<div id="comments"></div></div></div></div><hr /><footer><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center"><li><a href="https://twitter.com/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://es.linkedin.com/in/polbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://github.com/pbassiner" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href="https://pbassiner.github.io/feed.xml" target="_blank"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Last published on 2017-12-29<br />Copyright © Pol Bassiner 2017</p></div></div></div></footer></body></html>
